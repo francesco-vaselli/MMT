@@ -9,16 +9,46 @@
 \end{flushright}
 
 In recent years, \emph{machine learning} techniques have been massively adopted by scientific collaboration around the world. In particular, a paradigm known as \emph{Deep Learning}, which leverages multiple layers of \emph{artificial neurons} trained through the use of a \emph{loss function} and \emph{backpropagation}, has achieved a wide range of applications.
-The present chapter will give to the reader a concise but hopefully complete overview of the building blocks behind the recent success of Deep Learning. Towards the conclusion we turn to the class of \emph{generative models}, paving the way for the next chapter discussion.
+
+The present chapter will give to the reader a concise but hopefully complete overview of the building blocks behind the recent success of Deep Learning. A splendid introduction, which served the writer well in its own approach to the field, is the one by Michael Nielsen \cite{nielsenneural}. Towards the conclusion we turn to the class of \emph{generative models}, paving the way for the next chapter discussion.
 	
 
 \section{Neural Networks}
 
+The name \emph{neural networks} can be understood as a beautiful biologically-inspired programming paradigm, which enables a computer to learn from data. The main idea is (or at least \emph{was}, initially) to simulate how our brains works. In particular, this requires a modelling of the basic brain unit, the neuron, and of its interactions with neighboring units.
 
 \subsection{The Perceptron}
 \graffito{Note: The content of this chapter is just some dummy text.
 It is not a real language.}
+Perhaps the earliest and most famous implementation of a learning algorithm inspired  by our biological brains is due to Rosenblatt \cite{Rosenblatt1958ThePA}. Its \emph{Perceptron} is a type of artificial neuron working exclusively on binary inputs. This scheme mimics the firing of neurons to transmit electrical signals along synapses.
 
+The architecture is illustrated in Figure \ref{fig:rosper}
+
+\begin{figure}
+    \centering
+    \includegraphics{gfx/cherubino_pant541.eps}
+    \caption[The Perceptron]{The Perceptron architecture}
+    \label{fig:rosper}
+\end{figure}
+
+It has an arbitrary number I of inputs \emph{x$_i$}, to which we associate an equal number of real numbers called \emph{weights w$_i$}. Additionally, we usually add a \emph{bias} term,  which can be seen as adding a \emph{w$_0$} associated with an input constantly set to 1. The neuron outputs a single binary value. The perceptron is a \emph{feedforward} device, meaning that the connections are only from the inputs to the output.
+
+The output $y$ is dictated by a simple algorithmic rule:
+
+\[
+\centering
+y = 
+% f(\pmb{x}) = 
+\begin{cases}
+1 \quad \text{if} \quad \sum_i w_ix_i + w_0 > 0 \\
+0 \quad \text{otherwise}
+\end{cases}
+\]
+
+where $0$ has been arbitrarily chosen as the \emph{threshold} for the neuron. 
+Intuitively, weights measure the importance of the respective inputs to the output, while the bias is a measure of how likely the neuron is to fire. 
+
+Given a set of inputs and their desired outputs, the weights can actually be tuned (or \emph{learned}) to correctly classify inputs as returning either the $0$ or $1$ outputs.
 
 \subsection{Activation Functions}
 
@@ -26,13 +56,13 @@ It is not a real language.}
 
 \subsection{Deep Learning}
 % also mention problems?
-
+% mention residual networks?
 \section{Generative Models}
 
 \subsection{State of the art}
 
 \subsection{Known issues}
-
+% low dim paper?
 
 %*****************************************
 %*****************************************
