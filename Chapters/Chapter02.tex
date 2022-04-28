@@ -20,13 +20,34 @@ The name \emph{neural networks} can be understood as a beautiful biologically-in
 \subsection{The Perceptron}
 \graffito{Note: The content of this chapter is just some dummy text.
 It is not a real language.}
-Perhaps the earliest and most famous implementation of a learning algorithm inspired  by our biological brains is due to Rosenblatt \cite{Rosenblatt1958ThePA}. Its \emph{Perceptron} is a type of artificial neuron working exclusively on binary inputs. This scheme mimics the firing of neurons to transmit electrical signals along synapses.
+Perhaps the earliest and most famous implementation of an algorithm inspired  by our biological brains is due to Rosenblatt \cite{Rosenblatt1958ThePA}. Its \emph{Perceptron} is a type of artificial neuron working exclusively on binary inputs. This scheme mimics the firing of neurons to transmit electrical signals along synapses.
 
 The architecture is illustrated in Figure \ref{fig:rosper}
 
 \begin{figure}
     \centering
-    \includegraphics{gfx/cherubino_pant541.eps}
+    
+    \begin{tikzpicture}
+        \node[functions] (left){};
+            \node[right of=left] (right) {$y$};
+            \path[draw,->] (left) -- (right);
+        \node[left=3em of left] (2) {$w_2$} -- (2) node[left of=2] (l2) {$x_2$};
+            \path[draw,->] (l2) -- (2);
+            \path[draw,->] (2) -- (left);
+        \node[below of=2] (dots) {$\vdots$} -- (dots) node[left of=dots] (ldots) {$\vdots$};
+        \node[below of=dots] (n) {$w_n$} -- (n) node[left of=n] (ln) {$x_n$};
+            \path[draw,->] (ln) -- (n);
+            \path[draw,->] (n) -- (left);
+        \node[above of=2] (1) {$w_1$} -- (1) node[left of=1] (l1) {$x_1$};
+            \path[draw,->] (l1) -- (1);
+            \path[draw,->] (1) -- (left);
+        \node[above of=1] (0) {$w_0$} -- (0) node[left of=0] (l0) {$1$};
+            \path[draw,->] (l0) -- (0);
+            \path[draw,->] (0) -- (left);
+        \node[above of=l0,font=\scriptsize] {inputs};
+        \node[above of=0,font=\scriptsize] {weights};
+    \end{tikzpicture}
+    
     \caption[The Perceptron]{The Perceptron architecture}
     \label{fig:rosper}
 \end{figure}
@@ -48,11 +69,46 @@ y =
 where $0$ has been arbitrarily chosen as the \emph{threshold} for the neuron. 
 Intuitively, weights measure the importance of the respective inputs to the output, while the bias is a measure of how likely the neuron is to fire. 
 
-Given a set of inputs and their desired outputs, the weights can actually be tuned (or \emph{learned}) to correctly classify inputs as returning either the $0$ or $1$ outputs.
+Given a set of inputs and their desired outputs, the weights can be tuned (or \emph{learned}) to correctly classify inputs as returning either the $0$ or $1$ outputs. A simple algorithm is the following:
 
-\subsection{Activation Functions}
+\begin{outline}[enumerate]
+    \1 Initialize the weights. Weights may be initialized to $0$ or to a small random value;
+    \1 For each example j in our training set D, perform the following steps over the input $\mathbf {x}_{j}$ and desired output d$_{j}$:
+    \2 Calculate the actual output: $y(t)_j = \mathbf{w}\cdot\mathbf{x} + w_0 $
+    \2 Update the weights:  $w_{i}(t+1)=w_{i}(t)\;{\boldsymbol {+}}\;r\cdot (d_{j}-y_{j}(t))x_{j,i}$
+    \1 The second step may be repeated until the iteration error \\
+    $\frac{1}{s} \sum_{j=1}^{s}|d_{j}-y_{j}(t)|$ is less than a user-specified error threshold $\gamma$, or a predetermined number of iterations have been completed.
+\end{outline}
 
-\subsection{Loss functions and Backpropagation}
+This first example of \emph{learning algorithms} is showing how we can actually use artificial neurons in a way which is radically different to conventional logic gates. Instead of explicitly laying out a circuit of NAND and other gates, our neural networks can simply learn to solve problems, sometimes problems where it would be extremely difficult to directly design a conventional circuit. Despite this, the single Perceptron presents several limitations. Ultimately, it is a \emph{linear classifier}, meaning that:
+
+\begin{outline}
+    \1 It cannot solve a problem if it is not \emph{linearly separable}, so for example even a simple XOR division of the binary plane is unsolvable;
+    \1 It is only capable of addressing classification problems, and cannot tackle our generation task.
+\end{outline}
+
+Nonetheless, the simple ideas behind this architecture are actually at the heart of the more modern and refined approaches of deep learning.
+
+\subsection{Neural Networks and Backpropagation}
+
+Turning back once more to our biological brain, we can observe that it is actually made up by \emph{billions} of neurons. Intuitively, we would expect that an artificial network made up of multiple artificial neurons would demonstrate better capacities than a single neuron--and unsurprisingly that's how it is.
+
+\begin{figure}
+    \centering
+    \begin{neuralnetwork}[height=4]
+        \newcommand{\x}[2]{$x_#2$}
+        \newcommand{\y}[2]{$\hat{y}_#2$}
+        \newcommand{\hfirst}[2]{\small $h^{(1)}_#2$}
+        \newcommand{\hsecond}[2]{\small $h^{(2)}_#2$}
+        \inputlayer[count=3, bias=true, title=Input\\layer, text=\x]
+        \hiddenlayer[count=4, bias=false, title=Hidden\\layer $1$, text=\hfirst] \linklayers
+        \hiddenlayer[count=3, bias=false, title=Hidden\\layer $2$, text=\hsecond] \linklayers
+        \outputlayer[count=2, title=Output\\layer, text=\y] \linklayers
+    \end{neuralnetwork}
+    \caption[A simple neural network]{A simple neural network architecture with two \emph{hidden} layers.}
+    \label{fig:firstnn}
+\end{figure}
+
 
 \subsection{Deep Learning}
 % also mention problems?

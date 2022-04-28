@@ -121,15 +121,24 @@
 
 
 % ****************************************************************************************************
-% 4. Setup floats: tables, (sub)figures, and captions
+% 4. Setup floats: tables, (sub)figures, and captions as well as oultines
 % ****************************************************************************************************
 \usepackage{tabularx} % better tables
   \setlength{\extrarowheight}{3pt} % increase table row height
 \newcommand{\tableheadline}[1]{\multicolumn{1}{l}{\spacedlowsmallcaps{#1}}}
 \newcommand{\myfloatalign}{\centering} % to be used with each float for alignment
 \usepackage{subfig}
+\usepackage{outlines}
 % ****************************************************************************************************
 
+% ****************************************************************************************************
+% tikz stuff
+% ****************************************************************************************************
+% \usepackage{tikz}
+% \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+% \tikzset{basic/.style={draw,text width=1em,text badly centered}}
+% \tikzset{functions/.style={basic,circle}}
+% ****************************************************************************************************
 
 % ****************************************************************************************************
 % 5. Setup code listings
@@ -269,4 +278,14 @@
 % https://bitbucket.org/amiede/classicthesis/issues/139/italics-in-pallatino-capitals-chapter
 % https://bitbucket.org/amiede/classicthesis/issues/45/problema-testatine-su-classicthesis-style
 % ********************************************************************
+% ****************************************************************************************************
+
+% ****************************************************************************************************
+% tikz stuff
+% ****************************************************************************************************
+\usepackage{tikz}
+\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+\tikzset{basic/.style={draw,text width=1em,text badly centered}}
+\tikzset{functions/.style={basic,circle}}
+\usepackage{neuralnetwork}
 % ****************************************************************************************************
