@@ -18,11 +18,10 @@ The present chapter will give to the reader a concise but hopefully complete ove
 The name \emph{neural networks} can be understood as a beautiful biologically-inspired programming paradigm, which enables a computer to learn from data. The main idea is (or at least \emph{was}, initially) to simulate how our brains works. In particular, this requires a modelling of the basic brain unit, the neuron, and of its interactions with neighboring units.
 
 \subsection{The Perceptron}
-\graffito{Note: The content of this chapter is just some dummy text.
-It is not a real language.}
-Perhaps the earliest and most famous implementation of an algorithm inspired  by our biological brains is due to Rosenblatt \cite{Rosenblatt1958ThePA}. Its \emph{Perceptron} is a type of artificial neuron working exclusively on binary inputs. This scheme mimics the firing of neurons to transmit electrical signals along synapses.
 
-The architecture is illustrated in Figure \ref{fig:rosper}
+One of the earliest implementation of an algorithm inspired  by our biological brains is due to Rosenblatt \cite{Rosenblatt1958ThePA}. Its \emph{Perceptron} is a type of artificial neuron working exclusively on binary inputs. This scheme mimics the firing of neurons to transmit electrical signals along synapses.
+
+The architecture is illustrated in Figure \ref{fig:rosper}.
 
 \begin{figure}
     \centering
@@ -66,10 +65,10 @@ y =
 \end{cases}
 \]
 
-where $0$ has been arbitrarily chosen as the \emph{threshold} for the neuron. 
+where $0$ has been chosen as the \emph{threshold} for the neuron. 
 Intuitively, weights measure the importance of the respective inputs to the output, while the bias is a measure of how likely the neuron is to fire. 
 
-Given a set of inputs and their desired outputs, the weights can be tuned (or \emph{learned}) to correctly classify inputs as returning either the $0$ or $1$ outputs. A simple algorithm is the following:
+Given a set of inputs and their desired outputs, the weights can be tuned (or \emph{learned}) to correctly classify inputs as returning either the $0$ or $1$ outputs. A simple algorithm for doing so is the following:
 
 \begin{outline}[enumerate]
     \1 Initialize the weights. Weights may be initialized to $0$ or to a small random value;
@@ -80,18 +79,22 @@ Given a set of inputs and their desired outputs, the weights can be tuned (or \e
     $\frac{1}{s} \sum_{j=1}^{s}|d_{j}-y_{j}(t)|$ is less than a user-specified error threshold $\gamma$, or a predetermined number of iterations have been completed.
 \end{outline}
 
-This first example of \emph{learning algorithms} is showing how we can actually use artificial neurons in a way which is radically different to conventional logic gates. Instead of explicitly laying out a circuit of NAND and other gates, our neural networks can simply learn to solve problems, sometimes problems where it would be extremely difficult to directly design a conventional circuit. Despite this, the single Perceptron presents several limitations. Ultimately, it is a \emph{linear classifier}, meaning that:
+This first example of \emph{learning algorithms} is showing how we can actually use artificial neurons in a way which is radically different to conventional logic gates. Instead of explicitly laying out a circuit of NAND and other gates, our neural networks can simply learn to solve problems, sometimes problems where it would be extremely difficult to directly design a conventional circuit.
+
+Despite this, the single Perceptron presents several limitations. Ultimately, it is a \emph{linear classifier}, meaning that:
 
 \begin{outline}
     \1 It cannot solve a problem if it is not \emph{linearly separable}, so for example even a simple XOR division of the binary plane is unsolvable;
     \1 It is only capable of addressing classification problems, and cannot tackle our generation task.
 \end{outline}
 
-Nonetheless, the simple ideas behind this architecture are actually at the heart of the more modern and refined approaches of deep learning.
+Nonetheless, the simple ideas behind this architecture are actually at the heart of the more modern and refined approach of deep learning.
 
 \subsection{Neural Networks and Backpropagation}
 
-Turning back once more to our biological brain, we can observe that it is actually made up by \emph{billions} of neurons. Intuitively, we would expect that an artificial network made up of multiple artificial neurons would demonstrate better capacities than a single neuron--and unsurprisingly that's how it is.
+Turning back once more to our biological brain, we can observe that it is actually made up by \emph{billions} of neurons. Intuitively, we would expect that an artificial network made up of multiple artificial neurons would demonstrate better capacities than a single neuron--and unsurprisingly that's how it is. 
+
+Figure \ref{fig:firstnn} shows a first example of a proper feedforward neural \emph{network}: an ensemble of neurons organized in \emph{layers}, where each layer is \emph{fully connected} to the neurons in the previous one. One early result, sparking the interest in the field, showed that a neural network with just \emph{one} hidden layer with a large enough number of neurons can approximate any arbitrary function \emph{f} \cite{HORNIK1989359}.
 
 \begin{figure}
     \centering
@@ -109,6 +112,80 @@ Turning back once more to our biological brain, we can observe that it is actual
     \label{fig:firstnn}
 \end{figure}
 
+Intuitively, this architecture is taking advantage of its various neurons by letting the first hidden layer process the input data, and then allowing subsequent layers to act on the previous outputs. The relevant information gets extracted from the high level features in the input data, and the network allows only the important bits to travel further down in the architecture. 
+
+But if the single neuron was modelled as the Perceptron, the outputs would be only $0$s and $1$s--not that different from the actual binary inputs. Besides, we would also like to move away from the binary-inputs-only limitation. With just a few tweaks to the original Perceptron architecture, we may obtain something more general and more well suited to our new architecture.
+
+\paragraph{Neurons and activation functions}
+
+First of all, we allow for continuous inputs. Then, we would like to employ a neuron with the following property: \emph{a small change in the \emph{weights} or \emph{biases} causes a small change in the \emph{outputs}}. This seems reasonable to allow the overall network to learn by gradually adjusting its parameters, and may also be translated in more physical terms by the following expression:
+
+\begin{equation}\label{eqn:yderiv}
+  \Delta y = \sum_j \frac{\delta y}{\delta w_j}\Delta w_j + \frac{\delta y}{\delta w_0}\Delta w_0
+\end{equation}
+
+
+
+where we have introduced the partial derivatives over the weights and the bias.
+
+It is clear that the Perceptron does not respect this property, since an arbitrary small change could cause an abrupt shift in the output from $0$ to $1$ or vice-versa. This issue is easily resolved by adding an \emph{activation function} to the output, as shown in Figure \ref{fig:artneur}.
+
+\begin{figure}
+    \centering
+    
+    \begin{tikzpicture}
+        \node[functions] (left){};
+            \node[right = 1.0cm of left] (right) {$y=f(\mathbf{w}\cdot\mathbf{x} + w_0)$};
+            %\node[right of = right] (rright) {$=f(\mathbf{w}\cdot\mathbf{x} + w_0)$};
+            \path[draw,->] (left) -- (right);
+        \node[left=3em of left] (2) {$w_2$} -- (2) node[left of=2] (l2) {$x_2$};
+            \path[draw,->] (l2) -- (2);
+            \path[draw,->] (2) -- (left);
+        \node[below of=2] (dots) {$\vdots$} -- (dots) node[left of=dots] (ldots) {$\vdots$};
+        \node[below of=dots] (n) {$w_n$} -- (n) node[left of=n] (ln) {$x_n$};
+            \path[draw,->] (ln) -- (n);
+            \path[draw,->] (n) -- (left);
+        \node[above of=2] (1) {$w_1$} -- (1) node[left of=1] (l1) {$x_1$};
+            \path[draw,->] (l1) -- (1);
+            \path[draw,->] (1) -- (left);
+        \node[above of=1] (0) {$w_0$} -- (0) node[left of=0] (l0) {$1$};
+            \path[draw,->] (l0) -- (0);
+            \path[draw,->] (0) -- (left);
+        \node[above of=l0,font=\scriptsize] {inputs};
+        \node[above of=0,font=\scriptsize] {weights};
+    \end{tikzpicture}
+    
+    \caption[Generic artificial neuron]{A more generic architecture for the artificial neuron, leveraging an activation function \emph{f}.}
+    \label{fig:artneur}
+\end{figure}
+
+The particular choice of activation function defines the type of the neuron. The key characteristic is that the activation function should be \emph{differentiable}, to allow the computation of \eqref{eqn:yderiv}. Many possible choices have been explored and proposed in past years.
+\graffito{Note: The Perceptron can be seen as a generic neuron with the activation function set to the step function in $0$.}
+Historically, the \emph{sigmoid} function has been the most popular choice:
+
+\[
+y=f(\mathbf{w}\cdot\mathbf{x} + w_0) = \frac{1}{1 + e^{-\mathbf{w}\cdot\mathbf{x} - w_0}}
+\]
+
+which has the nice property of presenting a smooth transition between the two saturating extremes of the Perceptron. Nowadays, the \emph{Rectified Linear Unit} (ReLU) function has demonstrated better capabilities, especially in large and complex networks:
+
+\[
+y=f(\mathbf{w}\cdot\mathbf{x} + w_0) = 
+\begin{cases}
+\mathbf{w}\cdot\mathbf{x} + w_0 \quad \text{if} \quad \mathbf{w}\cdot\mathbf{x} + w_0 > 0 \\
+0 \quad \text{otherwise}
+\end{cases}
+\]
+
+despite not being analytically differentiable in $0$ (it is standard practice to set the derivative in the point to $0$).
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4]{gfx/ch2/sigmvsrelu.png}
+    \caption[Activation functions]{The sigmoid activation function compared to the ReLU.}
+    \label{fig:actfunc}
+\end{figure}
+\paragraph{Backpropagation}
 
 \subsection{Deep Learning}
 % also mention problems?
