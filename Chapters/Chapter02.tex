@@ -28,7 +28,7 @@ The architecture is illustrated in Figure \ref{fig:rosper}.
     
     \begin{tikzpicture}
         \node[functions] (left){};
-            \node[right of=left] (right) {$y$};
+            \node[right = 1.0cm of left] (right) {$y$};
             \path[draw,->] (left) -- (right);
         \node[left=3em of left] (2) {$w_2$} -- (2) node[left of=2] (l2) {$x_2$};
             \path[draw,->] (l2) -- (2);
@@ -72,11 +72,11 @@ Given a set of inputs and their desired outputs, the weights can be tuned (or \e
 
 \begin{outline}[enumerate]
     \1 Initialize the weights. Weights may be initialized to $0$ or to a small random value;
-    \1 For each example j in our training set D, perform the following steps over the input $\mathbf {x}_{j}$ and desired output d$_{j}$:
-    \2 Calculate the actual output: $y(t)_j = \mathbf{w}\cdot\mathbf{x} + w_0 $
-    \2 Update the weights:  $w_{i}(t+1)=w_{i}(t)\;{\boldsymbol {+}}\;r\cdot (d_{j}-y_{j}(t))x_{j,i}$
+    \1 For each example j in our training set D, perform the following steps over the input $\mathbf {x}_{j}$ and desired output t$_{j}$:
+    \2 Calculate the actual output: $y(n)_j = \mathbf{w}\cdot\mathbf{x} + w_0 $
+    \2 Update the weights:  $w_{i}(n+1)=w_{i}(n)\;{\boldsymbol {+}}\;r\cdot (t_{j}-y_{j}(n))x_{j,i}$
     \1 The second step may be repeated until the iteration error \\
-    $\frac{1}{s} \sum_{j=1}^{s}|d_{j}-y_{j}(t)|$ is less than a user-specified error threshold $\gamma$, or a predetermined number of iterations have been completed.
+    $\frac{1}{s} \sum_{j=1}^{s}|t_{j}-y_{j}(n)|$ is less than a user-specified error threshold $\gamma$, or a predetermined number of iterations have been completed.
 \end{outline}
 
 This first example of \emph{learning algorithms} is showing how we can actually use artificial neurons in a way which is radically different to conventional logic gates. Instead of explicitly laying out a circuit of NAND and other gates, our neural networks can simply learn to solve problems, sometimes problems where it would be extremely difficult to directly design a conventional circuit.
@@ -161,13 +161,13 @@ It is clear that the Perceptron does not respect this property, since an arbitra
 
 The particular choice of activation function defines the type of the neuron. The key characteristic is that the activation function should be \emph{differentiable}, to allow the computation of \eqref{eqn:yderiv}. Many possible choices have been explored and proposed in past years.
 \graffito{Note: The Perceptron can be seen as a generic neuron with the activation function set to the step function in $0$.}
-Historically, the \emph{sigmoid} function has been the most popular choice:
+Historically, the \emph{Sigmoid} function has been the most popular choice:
 
 \[
 y=f(\mathbf{w}\cdot\mathbf{x} + w_0) = \frac{1}{1 + e^{-\mathbf{w}\cdot\mathbf{x} - w_0}}
 \]
 
-which has the nice property of presenting a smooth transition between the two saturating extremes of the Perceptron. Nowadays, the \emph{Rectified Linear Unit} (ReLU) function has demonstrated better capabilities, especially in large and complex networks:
+which has the nice property of presenting a smooth transition between the two saturating extremes of the Perceptron, as well as having a derivative which can be easily re-expressed in term of the Sigmoid itself. Nowadays, the \emph{Rectified Linear Unit} (ReLU) function has demonstrated better capabilities, especially in large and complex networks:
 
 \[
 y=f(\mathbf{w}\cdot\mathbf{x} + w_0) = 
@@ -177,15 +177,49 @@ y=f(\mathbf{w}\cdot\mathbf{x} + w_0) =
 \end{cases}
 \]
 
-despite not being analytically differentiable in $0$ (it is standard practice to set the derivative in the point to $0$).
+despite not being analytically differentiable in $0$ (it is standard practice to set the derivative in the point to $0$). Figure \ref{fig:actfunc} shows a comparison between the two.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.4]{gfx/ch2/sigmvsrelu.png}
-    \caption[Activation functions]{The sigmoid activation function compared to the ReLU.}
+    \includegraphics[scale=0.50]{gfx/ch2/activ.pdf}
+    \caption[Activation functions]{The Sigmoid activation function compared to the ReLU, along with the respective derivatives w.r.t. the full input vector.}
     \label{fig:actfunc}
 \end{figure}
-\paragraph{Backpropagation}
+
+We will discuss other useful properties of the ReLu function in the following.
+
+\paragraph{Gradient descent and backpropagation}
+
+Now that we have devised a well suited neuron for the architecture of Figure \ref{fig:firstnn}, the objective is straightforward: \emph{find the optimal set of \emph{model parameters} (the weights) for solving the current problem.} 
+
+Typically an \emph{objective function} or \emph{loss function} is defined, as a function
+of $\mathbf{w}$, to measure how well the network with weights set to $\mathbf{w}$ solves the task. 
+The objective function is a sum of terms, one for each input/target pair ($\mathbf{x}$, $\mathbf{t}$),
+measuring how close the output $y$($\mathbf{x}$, $\mathbf{t}$) is to the target $\mathbf{t}$. We can denote it with $\mathcal{L}$($\mathbf{x}$, $\mathbf{t}$).
+
+The training process is an exercise in \emph{function minimization} – i.e., adjusting $\mathbf{w}$ in such a way as to find a $\mathbf{w}$ that minimizes the objective function. Our physical intuition suggests that this might have something to do with the \emph{gradients} of the loss function. As we have already discussed, we can write the following relationship:
+
+\[
+    \Delta \mathcal{L} = \frac{\delta \mathcal{L}}{\delta \mathbf{w}} \cdot \Delta \mathbf{w} = \nabla_w \mathcal{L} \cdot \Delta \mathbf{w} 
+\]
+ where we have introduced the \emph{gradients vector} $\nabla_w \mathcal{L}$. If we now change the parameters at each step by an amount $ \Delta \mathbf{w} = - \eta \nabla_w \mathcal{L}$, where $\eta$ is an hyperparameter called \emph{learning rate}, we will get a corresponding change in the loss function of:
+ 
+ \[
+    \Delta \mathcal{L} = -\eta \nabla_w \mathcal{L} \cdot \nabla_w \mathcal{L} = - \eta \|  \nabla_w \mathcal{L} \|^2
+\]
+
+that is, we have updated the parameters in a way which is reducing the loss, meaning that the outputs of our network are actually getting closer to our targets--i.e. the network is \emph{learning} the optimal parameters directly from the training data! This is the idea behind \emph{gradient descent} learning algorithms, which are the current standard for training deep neural networks. The main steps are as follows:
+
+\begin{outline}[enumerate]
+    \1 Select a \emph{batch} of input/target pairs ($\mathbf{x}$, $\mathbf{t}$)$^n$ and compute the outputs y$^n$ = \emph{f}($\mathbf{x}$, $\mathbf{t}$)$^n$;
+    \1 Compute $\mathcal{L}$($y^n$), $\nabla_w \mathcal{L}^n$ and find $ \Delta \mathbf{w}^n = - \eta \nabla_w \mathcal{L}^n$;
+    \1 For each batch, update the weights as $ \Delta \mathbf{w} = - \eta \sum_n \nabla_w \mathcal{L}^n$
+\end{outline}
+
+where we are assuming that the loss function may be expressed as an average of over cost functions for individual training examples. The dataset is processed multiple times as finite batches until the network reach some sort of global minimum for the loss function.
+
+The only non trivial thing which remains to do is define the best way to compute $\nabla_w \mathcal{L}$. This can be done efficiently, with just one forward and one backward pass through the network, through the \emph{backpropagation} algorithm.
+
 
 \subsection{Deep Learning}
 % also mention problems?
