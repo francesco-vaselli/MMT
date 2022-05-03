@@ -284,8 +284,33 @@
 % tikz stuff
 % ****************************************************************************************************
 \usepackage{tikz}
-\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+\usetikzlibrary{calc, fit, matrix,chains,positioning,decorations.pathreplacing,arrows}
 \tikzset{basic/.style={draw,text width=1em,text badly centered}}
 \tikzset{functions/.style={basic,circle}}
 \usepackage{neuralnetwork}
+\usepackage{xstring}
+
+\newcommand\drawNodes[2]{
+  % #1 (str): namespace
+  % #2 (list[list[str]]): list of labels to print in the node of each neuron
+  \foreach \neurons [count=\lyrIdx] in #2 {
+    \StrCount{\neurons}{,}[\lyrLength] % use xstring package to save each layer size into \lyrLength macro
+    \foreach \n [count=\nIdx] in \neurons
+      \node[neuron] (#1-\lyrIdx-\nIdx) at (2*\lyrIdx, \lyrLength/2-1.4*\nIdx) {\n};
+  }
+}
+
+\newcommand\denselyConnectNodes[2]{
+  % #1 (str): namespace
+  % #2 (list[int]): number of nodes in each layer
+  \foreach \n [count=\lyrIdx, remember=\lyrIdx as \previdx, remember=\n as \prevn] in #2 {
+    \foreach \y in {1,...,\n} {
+      \ifnum \lyrIdx > 1
+        \foreach \x in {1,...,\prevn}
+          \draw[->] (#1-\previdx-\x) -- (#1-\lyrIdx-\y);
+      \fi
+    }
+  }
+}
+
 % ****************************************************************************************************

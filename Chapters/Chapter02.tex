@@ -233,11 +233,139 @@ The only non trivial thing which remains to do is define the best way to compute
 \subsection{Deep Learning}
 % also mention problems?
 % mention residual networks?
-\section{Generative Models}
+We now know how to define efficient artificial neurons and how to combine them into networks, which can then be efficiently trained through gradient descent. 
+The term \emph{deep learning} simply refers to neural networks made up of many different hidden layers, thus possessing a greater depth than most simple models. Over the years, researchers have shown how deep learning models made up of millions of parameters can actually achieve remarkable results, taking full advantage of their large number of neurons.
+
+A great number of models and architectures have also been proposed as an alternative to the feedforward, layer-to-layer approach. A simple variation, widely adopted and also employed in the present work, is that of \emph{residual networks}, introduced by \cite{DBLP:journals/corr/HeZRS15}. The basic idea is illustrated in Figure \ref{fig:resnet}.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.50]{gfx/ch2/residual.png}
+    \caption[A residual block]{A residual block illustrated--taken from \cite{DBLP:journals/corr/HeZRS15}.}
+    \label{fig:resnet}
+\end{figure}
+
+The idea is to define different blocks composed of one or more layers, and then to feed to te following block the input of the previous one as well as its output. Instead of hoping each stack of layers directly fits a desired underlying mapping, we explicitly let these layers fit a residual mapping. The original mapping is recast into $\mathcal{F}(x) + x$. We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping. To the extreme, if an identity mapping were optimal, it would be easier to push the residual to zero than to fit an identity mapping by a stack of nonlinear layers. 
+
+This simple modification addresses a common problem in deep architectures. When the model saturates the problem, it starts to overfit, especially in later layers; by defining a residual block we may simply allow the network to learn an identity mapping and avoid the issue.
+
+The training and the convergence of deep learning models is also plagued by others problems, making the training of complex models somewhat of an empirical process. We limit ourselves to mentioning the most relevant issues for our use-case in the following section.
+
+\section{Generative Models} 
+
+A well developed subset of deep learning models, \emph{Generative models} are a class of architectures which aim to produce novel and original samples from the ones presented during training, usually starting from randomly distributed noise. The most well know use case is the field of \emph{image generation}, and two specific architectures are the most widely adopted.
 
 \subsection{State of the art}
 
+\paragraph{Generative Adversarial Networks}
+
+Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GANs for short) are a framework for training powerful generative models. Two neural networks contest with each other in a game (in the form of a zero-sum game, where one agent's gain is another agent's loss): the generative network G learns to map from a latent (usually gaussian) space to a data distribution of interest, while the discriminator network D distinguishes candidates produced by the generator from the true data distribution. G's training objective is to increase the error rate of D by producing samples so close to the target that D misclassifies them consistently as coming from the real samples. The framework is illustrated in Figure \ref{fig:gan}.
+
+
+\begin{figure}
+    \centering
+    
+    \begin{tikzpicture}[
+        ->, thick,
+        node/.style={circle, fill=teal!60},
+        label/.style={below, font=\footnotesize},
+      ]
+    
+      \node[node] (zin) {$\vec z_\text{in}$};
+      \node[node, right=5em of zin] (fake) {$\vec x_\text{fake}$};
+      \draw (zin) -- node[above] {$G(\vec x)$} node[label] {generator} (fake);
+    
+      \draw[<-] (zin) -- node[above] {$p_\theta(\vec z)$} node[label] {latent noise} ++(-3,0);
+      \node[node, above=of fake] (real) {$\vec x_\text{real}$};
+      \draw[<-] (real) -- node[above] {$p_\text{data}(\vec x)$} ++(-3,0);
+      \node[node, right=6em of fake] (D) at ($(fake)!0.5!(real)$) {$\vec x$};
+      \node[right=7em of D] (out) {real?};
+      \draw (D) -- node[above] {$D(\vec x)$} node[label] {discriminator} (out);
+    
+      \coordinate[right=2.5em of fake, circle, fill, inner sep=0.15em] (pt1);
+      \coordinate[right=2.5em of real, circle, fill, inner sep=0.15em] (pt2);
+    
+      \draw[-, dashed] (pt1) edge[bend left] coordinate[circle, fill=orange, inner sep=1mm, pos=0.7] (pt3) (pt2);
+      \draw (fake) -- (pt1) (real) -- (pt2) (pt3) -- (D);
+    
+    \end{tikzpicture}
+    \caption[GAN]{The GAN training framework illustrated.}
+    \label{fig:gan}
+\end{figure}
+
+\paragraph{Variational Autoencoders}
+
+The main idea behind the \emph{Variational Autoencoder} (VAE) architecture, theorized by Kingma et al \cite{vae}, is to employ a network made up of two parts: the \emph{encoder} and the \emph{decoder}. The encoder learns to map input data to a set of parameters $\pmb{\mu}$ and $\pmb{\sigma}$, which together make up a \emph{latent} Gaussian representation $\pmb{z}$. The decoder is trained to scale up the parameters from the new latent space back to the original training space.
+
+The network is trained to correctly encode and decode the data, and once trained the decoder may receive as input random Gaussian noise and produce new original samples. The idea is illustrated in Figure \ref{fig:vae}.
+
+\begin{figure}
+    \centering
+    \scalebox{0.65}{
+    \begin{tikzpicture}[
+        shorten >=1pt, shorten <=1pt,
+        neuron/.style={circle, draw, minimum size=4ex, thick},
+        legend/.style={font=\large\bfseries},
+      ]
+    
+      % encoder
+      \drawNodes{encoder}{{{,,,,}, {,,,}, {,,}}}
+      \denselyConnectNodes{encoder}{{5, 4, 3}}
+    
+      % decoder
+      \begin{scope}[xshift=11cm]
+        \drawNodes{decoder}{{{,,}, {,,,}, {,,,,}}}
+        \denselyConnectNodes{decoder}{{3, 4, 5}}
+      \end{scope}
+    
+      % mu, sigma, sample nodes
+      \foreach \idx in {1,...,3} {
+          \coordinate[neuron, right=2 of encoder-3-2, yshift=\idx cm,, fill=yellow, fill opacity=0.2] (mu-\idx);
+          \coordinate[neuron, right=2 of encoder-3-2, yshift=-\idx cm, fill=blue, fill opacity=0.1] (sigma-\idx);
+          \coordinate[neuron, right=4 of encoder-3-2, yshift=\idx cm-2cm, fill=green, fill opacity=0.1] (sample-\idx);
+        }
+    
+      % mu, sigma, sample boxes
+      \node [label=$\pmb{\mu}$, fit=(mu-1) (mu-3), draw, fill=yellow, opacity=0.45] (mu) {};
+      \node [label=$\pmb{\sigma}$, fit=(sigma-1) (sigma-3), draw, fill=blue, opacity=0.3] (sigma) {};
+      \node [label=$\pmb{z}$, fit=(sample-1) (sample-3), draw, fill=green, opacity=0.3] (sample) {};
+    
+      % mu, sigma, sample connections
+      \draw[->] (mu.east) edge (sample.west) (sigma.east) -- (sample.west);
+      \foreach \a in {1,2,3}
+      \foreach \b in {1,2,3} {
+          \draw[->] (encoder-3-\a) -- (mu-\b);
+          \draw[->] (encoder-3-\a) -- (sigma-\b);
+          \draw[->] (sample-\a) -- (decoder-1-\b);
+        }
+    
+      % input + output labels
+      \foreach \idx in {1,...,5} {
+          \node[left=0 of encoder-1-\idx] {$x_\idx$};
+          \node[right=0 of decoder-3-\idx] {$\hat x_\idx$};
+        }
+      \node[above=0.1 of encoder-1-1] {input};
+      \node[above=0.1 of decoder-3-1] {output};
+    
+    \end{tikzpicture}}
+    \caption[VAE]{The Variational Autoencoder illustrated.}
+    \label{fig:vae}
+\end{figure}
+
 \subsection{Known issues}
+
+This two architectures have achieved remarkable results. However, there are still many issues related to their applicability. The following is a brief and incomplete list:
+
+\begin{outline}
+    \1 GANs are affected by numerous training instabilities, as their peculiar training system must be carefully engineered to avoid that one of the two agents surpasses the other too much too fast, thus invalidating the training;
+    \1 GANs are also plagued by  \emph{mode collapse}, where the generator over-optimizes for a particular discriminator, and the discriminator never manages to learn its way out of the trap. As a result the generators rotate through a small set of output types, degrading the statistical significance of generated samples;
+    \1 VAEs with Gaussian posteriors / priors are noisy. VAEs are poor models of data whenever insufficiently flexible posterior / prior / decoder distributions are used;
+    \1 More generally, almost all of the model in the literature are usually geared towards the task of image generation and recognition. This type of architectures often perform poorly when simply re-adapted to the HEP use case, which typically consists of lower dimensional, sparse data structures. 
+\end{outline}
+
+Both GANs and VAEs have already been extensively investigated by the collaborations at CERN (see \cite{2019glhc} and \cite{otten2021event}); despite this, there is still a limited literature regarding behavior in low dimensionality as in our case, e.g. \cite{523096}.
+
+Fortunately, there exist another type of latent generative model, which, despite being definitely less popular than the ones already discussed, is more well suited to our application and makes up the backbone of the present work. We thus turn to the following chapter for a more in depth discussion.
 % low dim paper?
 
 %*****************************************
