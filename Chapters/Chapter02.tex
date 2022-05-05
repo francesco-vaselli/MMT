@@ -121,7 +121,7 @@ But if the single neuron was modelled as the Perceptron, the outputs would be on
 First of all, we allow for continuous inputs. Then, we would like to employ a neuron with the following property: \emph{a small change in the \emph{weights} or \emph{biases} causes a small change in the \emph{outputs}}. This seems reasonable to allow the overall network to learn by gradually adjusting its parameters, and may also be translated in more physical terms by the following expression:
 
 \begin{equation}\label{eqn:yderiv}
-  \Delta y = \sum_j \frac{\delta y}{\delta w_j}\Delta w_j + \frac{\delta y}{\delta w_0}\Delta w_0
+  \Delta y = \sum_j \frac{\partial y}{\partial w_j}\Delta w_j + \frac{\partial y}{\partial w_0}\Delta w_0
 \end{equation}
 
 
@@ -200,7 +200,7 @@ measuring how close the output $y$($\mathbf{x}$, $\mathbf{t}$) is to the target 
 The training process is an exercise in \emph{function minimization} – i.e., adjusting $\mathbf{w}$ in such a way as to find a $\mathbf{w}$ that minimizes the objective function. Our physical intuition suggests that this might have something to do with the \emph{gradients} of the loss function. As we have already discussed, we can write the following relationship:
 
 \[
-    \Delta \mathcal{L} = \frac{\delta \mathcal{L}}{\delta \mathbf{w}} \cdot \Delta \mathbf{w} = \nabla_w \mathcal{L} \cdot \Delta \mathbf{w} 
+    \Delta \mathcal{L} = \frac{\partial \mathcal{L}}{\partial \mathbf{w}} \cdot \Delta \mathbf{w} = \nabla_w \mathcal{L} \cdot \Delta \mathbf{w} 
 \]
  where we have introduced the \emph{gradients vector} $\nabla_w \mathcal{L}$. If we now change the parameters at each step by an amount $ \Delta \mathbf{w} = - \eta \nabla_w \mathcal{L}$, where $\eta$ is an hyperparameter called \emph{learning rate}, we will get a corresponding change in the loss function of:
  
@@ -226,7 +226,7 @@ The only non trivial thing which remains to do is define the best way to compute
     \emph{y}$^l$ = \emph{f}(\emph{y}$^{(l-1)}$) at each layer \emph{l} (feedforward pass);
     \1 Get the \emph{output error} $\delta^L = \nabla_w^L \mathcal{L} \odot y^L$:
     \1 For each previous layer, compute $\delta^l = ((w^{l+1})^T\delta^{l+1})\odot y^l$ (backward pass);
-    \1 Finally, get $\nabla_w^l \mathcal{L} = \frac{\delta \mathcal{L}}{\delta w^l_{jk}} = y^{l-1}_k\delta^l_j$
+    \1 Finally, get $\nabla_w^l \mathcal{L} = \frac{\partial \mathcal{L}}{\partial w^l_{jk}} = y^{l-1}_k\delta^l_j$
 \end{outline}
 
 
