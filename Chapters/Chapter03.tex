@@ -1,101 +1,73 @@
 %************************************************
 \chapter{Normalizing Flows}\label{ch:mathtest} % $\mathbb{ZNR}$
 %************************************************
-Ei choro aeterno antiopam mea, labitur bonorum pri no. His no decore
-nemore graecis. In eos meis nominavi, liber soluta vim cu. Sea commune
-suavitate interpretaris eu, vix eu libris efficiantur.
+\begin{flushright}{\slshape
+    Know from the rivers \\
+    in clefts and in crevices: \\
+    those in small channels flow noisily, \\
+    the great flow silent. \\
+    Whatever’s not full makes noise.\\
+    Whatever is full is quiet. } \\ \medskip
+    --- Buddha, Nalaka Sutta
+\end{flushright}
 
-\section{Some Formulas}
-Due to the statistical nature of ionisation energy loss, large
-fluctuations can occur in the amount of energy deposited by a particle
-traversing an absorber element\footnote{Examples taken from Walter
-Schmidt's great gallery: \\
-\url{http://home.vrweb.de/~was/mathfonts.html}}.  Continuous processes
-such as multiple
-scattering and energy loss play a relevant role in the longitudinal
-and lateral development of electromagnetic and hadronic
-showers, and in the case of sampling calorimeters the
-measured resolution can be significantly affected by such fluctuations
-in their active layers.  The description of ionisation fluctuations is
-characterised by the significance parameter $\kappa$, which is
-proportional to the ratio of mean energy loss to the maximum allowed
-energy transfer in a single collision with an atomic electron:
-\graffito{You might get unexpected results using math in chapter or
-section heads. Consider the \texttt{pdfspacing} option.}
-\begin{equation}
-\kappa =\frac{\xi}{E_{\textrm{max}}} %\mathbb{ZNR}
-\end{equation}
-$E_{\textrm{max}}$ is the maximum transferable energy in a single
-collision with an atomic electron.
+In standard probabilistic modeling practice, we represent our beliefs over unknown continuous quantities with simple parametric distributions like the normal, exponential, and Laplacian distributions. However, using such simple forms, which are commonly symmetric and unimodal (or have a fixed number of modes when we take a mixture of them), restricts the performance and flexibility of our methods. For instance, standard variational inference in the Variational Autoencoder uses independent univariate normal distributions to represent the variational family. The true posterior is neither independent nor normally distributed, which results in suboptimal inference and simplifies the model that is learnt. In other scenarios, we are likewise restricted by not being able to model multimodal distributions and heavy or light tails, widespread in HEP.
+
+\emph{Normalizing Flows} are a type of \emph{latent generative model}, capable of producing new, original samples from a latent space, usually a Gaussian one. The main advantage of this approach, when compared to the previous ones, is that it has been specifically engineered to define explicit \emph{densities}--making it particularly well suited to our use case.
+
+The present chapter serves as a general explanation of the basic concepts and ideas for defining and implementing Normalizing Flows (NF for short). We also briefly discuss in a more general way the possible use cases of this architecture. For the interested reader, an excellent review is the one by Papamakarios et al \cite{papanf}.
+
+\section{Definitions}
+
+Normalizing flows are a family of methods for constructing flexible learnable probability distributions, often with neural networks, which allow us to surpass the limitations of simple parametric forms to represent complex high-dimensional distributions.
+
+\subsection{Basics}
+
+The basic idea is to define a complex distribution $p_x(\mathbf{x})$ by passing \emph{random variables} $\mathbf{z} \in \mathbb{R}^D$ drawn from a simple \emph{base distribution} $p_z(\mathbf{z})$ through a non-linear, \emph{invertible} transformation \emph{f}: $\mathbb{R}^D \rightarrow \mathbb{R}^D$, $\mathbf{x} = f(\mathbf{z})$. The base distribution is usually chosen to be simple, for example a standard i.i.d. normal distribution, $\mathbf{z}\sim\mathcal{N}(\mathbf{0},I_{D\times D})$, which makes it very simple to sample and evaluate. 
+
+We may now use the change-of-variable formula to express $p_x(\mathbf{x})$ as:
+
 \[
-E_{\textrm{max}} =\frac{2 m_{\textrm{e}} \beta^2\gamma^2 }{1 +
-2\gamma m_{\textrm{e}}/m_{\textrm{x}} + \left ( m_{\textrm{e}}
-/m_{\textrm{x}}\right)^2}\ ,
+p_x(\mathbf{x}) = p_z(\mathbf{z})\det\left|\frac{d\mathbf{z}}{d\mathbf{x}}\right|
 \]
-where $\gamma = E/m_{\textrm{x}}$, $E$ is energy and
-$m_{\textrm{x}}$ the mass of the incident particle,
-$\beta^2 = 1 - 1/\gamma^2$ and $m_{\textrm{e}}$ is the electron mass.
-$\xi$ comes from the Rutherford scattering cross section
-and is defined as:
-\begin{eqnarray*} \xi  = \frac{2\pi z^2 e^4 N_{\textrm{Av}} Z \rho
-\delta x}{m_{\textrm{e}} \beta^2 c^2 A} =  153.4 \frac{z^2}{\beta^2}
-\frac{Z}{A}
-  \rho \delta x \quad\textrm{keV},
-\end{eqnarray*}
-where
 
-\begin{tabular}{ll}
-$z$          & charge of the incident particle \\
-$N_{\textrm{Av}}$     & Avogadro's number \\
-$Z$          & atomic number of the material \\
-$A$          & atomic weight of the material \\
-$\rho$       & density \\
-$ \delta x$  & thickness of the material \\
-\end{tabular}
+and remembering that \emph{f} is invertible, taking the logarithm of both sides we get:
 
-$\kappa$ measures the contribution of the collisions with energy
-transfer close to $E_{\textrm{max}}$.  For a given absorber, $\kappa$
-tends
-towards large values if $\delta x$ is large and/or if $\beta$ is
-small.  Likewise, $\kappa$ tends towards zero if $\delta x $ is small
-and/or if $\beta$ approaches $1$.
-
-The value of $\kappa$ distinguishes two regimes which occur in the
-description of ionisation fluctuations:
-
-\begin{enumerate}
-\item A large number of collisions involving the loss of all or most
-    of the incident particle energy during the traversal of an absorber.
-
-    As the total energy transfer is composed of a multitude of small
-    energy losses, we can apply the central limit theorem and describe
-    the fluctuations by a Gaussian distribution.  This case is
-    applicable to non-relativistic particles and is described by the
-    inequality $\kappa > 10 $ (\ie, when the mean energy loss in the
-    absorber is greater than the maximum energy transfer in a single
-    collision).
-
-\item Particles traversing thin counters and incident electrons under
-    any conditions.
-
-    The relevant inequalities and distributions are $ 0.01 < \kappa < 10
-    $,
-    Vavilov distribution, and $\kappa < 0.01 $, Landau distribution.
-\end{enumerate}
-
-
-\section{Various Mathematical Examples}
-If $n > 2$, the identity
 \[
-    t[u_1,\dots,u_n] = t\bigl[t[u_1,\dots,u_{n_1}], t[u_2,\dots,u_n]
-    \bigr]
+	\begin{aligned}
+		\log(p_x(x)) &= \log(p_z(f^{-1}(\mathbf{x})))+\log\left(\det\left|\frac{d\mathbf{z}}{d\mathbf{x}}\right|\right)\\
+		&= \log(p_z(f^{-1}(\mathbf{x})))-\log\left(\det\left|\frac{d\mathbf{x}}{d\mathbf{z}}\right|\right)
+	\end{aligned}
 \]
-defines $t[u_1,\dots,u_n]$ recursively, and it can be shown that the
-alternative definition
-\[
-    t[u_1,\dots,u_n] = t\bigl[t[u_1,u_2],\dots,t[u_{n-1},u_n]\bigr]
-\]
-gives the same result.
+
+where $d\mathbf{z}/d\mathbf{x}$ denotes the Jacobian matrix of $f^{-1}(\mathbf{x})$.
+Intuitively, this equation says that the density of $x$ is equal to the density at the corresponding point in $z$ plus a term that corrects for the warp in volume around an infinitesimally small volume around $x$ caused by the transformation.
+	We can compose such bijective transformations to produce even more complex distributions. It is clear that, if we have $L$ transforms $f_{(0)}, f_{(1)},\ldots,f_{(L-1)}$, then the log-density of the transformed variable $\mathbf{x}=(f_{(0)}\circ f_{(1)}\circ\cdots\circ f_{(L-1)})(\mathbf{z})$ is:
+	
+	\begin{equation*}
+		\begin{aligned}
+			\log(p_x(\mathbf{x})) &= \log\left(p_z\left(\left(f_{(L-1)}^{-1}\circ\cdots\circ f_{(0)}^{-1}\right)\left(\mathbf{x}\right)\right)\right)+\\
+			&+\sum^{L-1}_{l=0}\log\left(\left|\frac{df^{-1}_{(l)}(\mathbf{x}_{(l)})}{d\mathbf{x}'}\right|\right)
+		\end{aligned}
+	\end{equation*}
+	
+Based on this relationship, the idea is to define some kind of divergence measure between the two pdfs, which can then be used as the objective function to minimize to learn the optimal transformation \emph{f}.
+
+\subsection{Loss functions}
+
+As the idea is to leverage deep learning, we let our transformation \emph{f} depend on a set of parameters $\pmb{\phi}$, $f = f(\mathbf{x}; \pmb{\phi})$.
+We can now distinguish two main cases.
+
+\paragraph{Forward KL Divergence}
+Suppose that we have samples from the target distribution (or we are able to generate them), but we cannot evaluate the underlying pdf $p_x(\mathbf{x})$. This is precisely our case in HEP, with billions of available Montecarlo data and no analytical pdf.
+
+\section{Constructing flows}
+
+\subsection{Coupling Layers}
+
+\subsection{Splines}
+
+\section{Applications}
 
 %*****************************************
 %*****************************************
