@@ -1,213 +1,372 @@
-%************************************************
-\chapter{Normalizing Flows}\label{ch:mathtest} % $\mathbb{ZNR}$
-%************************************************
+%*****************************************
+\chapter{Deep Learning and Generative Models}\label{ch:dlgm}
+%*****************************************
+%Acronym testing: \ac{UML} -- \acs{UML} -- \acf{UML} -- \acp{UML}
 \begin{flushright}{\slshape
-    Know from the rivers \\
-    in clefts and in crevices: \\
-    those in small channels flow noisily, \\
-    the great flow silent. \\
-    Whatever’s not full makes noise.\\
-    Whatever is full is quiet. } \\ \medskip
-    --- Buddha, Nalaka Sutta
+        By far, the greatest danger of Artificial Intelligence \\
+        is that people conclude too early that they understand it.} \\ \medskip
+    --- Eliezer Yudkowsky
 \end{flushright}
 
-In standard probabilistic modeling practice, we represent our beliefs over unknown continuous quantities with simple parametric distributions like the normal, exponential, and Laplacian distributions. However, using such simple forms, which are commonly symmetric and unimodal (or have a fixed number of modes when we take a mixture of them), restricts the performance and flexibility of our methods. For instance, standard variational inference in the Variational Autoencoder uses independent univariate normal distributions to represent the variational family. The true posterior is neither independent nor normally distributed, which results in suboptimal inference and simplifies the model that is learnt. In other scenarios, we are likewise restricted by not being able to model multimodal distributions and heavy or light tails, widespread in HEP.
+In recent years, \emph{machine learning} techniques have been massively adopted by scientific collaboration around the world. In particular, a paradigm known as \emph{Deep Learning}, which leverages multiple layers of \emph{artificial neurons} trained through the use of a \emph{loss function} and \emph{backpropagation}, has achieved a wide range of applications.
 
-\emph{Normalizing Flows} are a type of \emph{latent generative model}, capable of producing new, original samples from a latent space, usually a Gaussian one. The main advantage of this approach, when compared to the previous ones, is that it has been specifically engineered to define explicit \emph{densities}--making it particularly well suited to our use case.
-
-The present chapter serves as a general explanation of the basic concepts and ideas for defining and implementing Normalizing Flows (NF for short). We also briefly discuss in a more general way the possible use cases of this architecture. For the interested reader, an excellent review is the one by Papamakarios et al \cite{papanf}.
-
-\section{Definitions}
-
-Normalizing flows are a family of methods for constructing flexible learnable probability distributions, often with neural networks, which allow us to surpass the limitations of simple parametric forms to represent complex high-dimensional distributions.
-
-\subsection{Basics}
-
-The basic idea is to define a complex distribution $p_x(\mathbf{x})$ by passing \emph{random variables} $\mathbf{z} \in \mathbb{R}^D$ drawn from a simple \emph{base distribution} $p_z(\mathbf{z})$ through a non-linear, \emph{invertible} and \emph{differentiable} transformation \emph{f}: $\mathbb{R}^D \rightarrow \mathbb{R}^D$, $\mathbf{x} = f(\mathbf{z})$. \emph{f} can also be called a \emph{bijection}. The base distribution is usually chosen to be simple, for example a standard i.i.d. normal distribution, $\mathbf{z}\sim\mathcal{N}(\mathbf{0},I_{D\times D})$, which makes it very simple to sample and evaluate. 
-
-We may now use the change-of-variable formula to express $p_x(\mathbf{x})$ as:
-
-\[
-p_x(\mathbf{x}) = p_z(\mathbf{z})\det\left|\frac{d\mathbf{z}}{d\mathbf{x}}\right|
-\]
-
-and remembering that \emph{f} is invertible, taking the logarithm of both sides we get:
-
-\begin{equation}\label{eqn:logpdf}
-	\begin{aligned}
-		\log(p_x(x)) &= \log(p_z(f^{-1}(\mathbf{x})))+\log\left(\det\left|\frac{d\mathbf{z}}{d\mathbf{x}}\right|\right)\\
-		&= \log(p_z(f^{-1}(\mathbf{x})))-\log\left(\det\left|\frac{d\mathbf{x}}{d\mathbf{z}}\right|\right)
-	\end{aligned}
-\end{equation}
-
-where $d\mathbf{z}/d\mathbf{x}$ denotes the Jacobian matrix of $f^{-1}(\mathbf{x})$, $\mathbb{J}_{f^{-1}}(\mathbf{x})$.
-Intuitively, this equation says that the density of $x$ is equal to the density at the corresponding point in $z$ plus a term that corrects for the warp in volume around an infinitesimally small volume around $x$ caused by the transformation.
-	We can compose such bijective transformations to produce even more complex distributions. It is clear that, if we have $L$ transforms $f_{(0)}, f_{(1)},\ldots,f_{(L-1)}$, then the log-density of the transformed variable $\mathbf{x}=(f_{(0)}\circ f_{(1)}\circ\cdots\circ f_{(L-1)})(\mathbf{z})$ is:
+The present chapter will give to the reader a concise but hopefully complete overview of the building blocks behind the recent success of Deep Learning. A great introduction, which served the writer well in its own approach to the field, is the one by Michael Nielsen \cite{nielsenneural}. Towards the conclusion we turn to the class of \emph{generative models}, paving the way for the next chapter discussion.
 	
-	\begin{equation*}
-		\begin{aligned}
-			\log(p_x(\mathbf{x})) &= \log\left(p_z\left(\left(f_{(L-1)}^{-1}\circ\cdots\circ f_{(0)}^{-1}\right)\left(\mathbf{x}\right)\right)\right)+\\
-			&+\sum^{L-1}_{l=0}\log\left(\left|\frac{df^{-1}_{(l)}(\mathbf{x}_{(l)})}{d\mathbf{x}'}\right|\right)
-		\end{aligned}
-	\end{equation*}
-	
-This relationship between the base distribution and the transformed one through this chain of invertible transforms is at the core of the NF approach and is illustrate in Figure \ref{fig:nf}.
+
+\section{Neural Networks}
+
+The name \emph{neural networks} can be understood as a beautiful biologically-inspired programming paradigm, which enables a computer to learn from data. The main idea is (or at least \emph{was}, initially) to simulate how our brains works. In particular, this requires a modelling of the basic brain unit, the neuron, and of its interactions with neighboring units.
+
+\subsection{The Perceptron}
+
+One of the earliest implementation of an algorithm inspired  by our biological brains is due to Rosenblatt \cite{Rosenblatt1958ThePA}. Its \emph{Perceptron} is a type of artificial neuron working exclusively on binary inputs. This scheme mimics the firing of neurons to transmit electrical signals along synapses.
+
+The architecture is illustrated in Figure \ref{fig:rosper}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\columnwidth]{gfx/ch3/normalizing-flow.png}
-    \caption[Normalizing Flows]{The main idea behind Normalizing Flows: how can we find a chain of invertible transformations to send $p_z(\mathbf{z})$ to $p_x(\mathbf{x})$? Taken from \cite{nffig}.}
-    \label{fig:nf}
+    
+    \begin{tikzpicture}
+        \node[functions] (left){};
+            \node[right = 1.0cm of left] (right) {$y$};
+            \path[draw,->] (left) -- (right);
+        \node[left=3em of left] (2) {$w_2$} -- (2) node[left of=2] (l2) {$x_2$};
+            \path[draw,->] (l2) -- (2);
+            \path[draw,->] (2) -- (left);
+        \node[below of=2] (dots) {$\vdots$} -- (dots) node[left of=dots] (ldots) {$\vdots$};
+        \node[below of=dots] (n) {$w_n$} -- (n) node[left of=n] (ln) {$x_n$};
+            \path[draw,->] (ln) -- (n);
+            \path[draw,->] (n) -- (left);
+        \node[above of=2] (1) {$w_1$} -- (1) node[left of=1] (l1) {$x_1$};
+            \path[draw,->] (l1) -- (1);
+            \path[draw,->] (1) -- (left);
+        \node[above of=1] (0) {$w_0$} -- (0) node[left of=0] (l0) {$1$};
+            \path[draw,->] (l0) -- (0);
+            \path[draw,->] (0) -- (left);
+        \node[above of=l0,font=\scriptsize] {inputs};
+        \node[above of=0,font=\scriptsize] {weights};
+    \end{tikzpicture}
+    
+    \caption[The Perceptron]{The Perceptron architecture}
+    \label{fig:rosper}
 \end{figure}
-	
-Based on this, the idea is to define some kind of measure, which can then be used as the objective function to minimize, to learn the optimal transformation \emph{f}.
 
-\subsection{Loss functions}
+It has an arbitrary number I of inputs \emph{x$_i$}, to which we associate an equal number of real numbers called \emph{weights w$_i$}. Additionally, we usually add a \emph{bias} term,  which can be seen as adding a \emph{w$_0$} associated with an input constantly set to 1. The neuron outputs a single binary value. The perceptron is a \emph{feedforward} device, meaning that the connections are only from the inputs to the output.
 
-As the idea is to leverage deep learning, we let our transformation \emph{f} depend on a set of parameters $\phi$, $f = f(\mathbf{x};\, \phi)$.
-For the sake of completeness, we distinguish two main cases.
-
-\paragraph{Forward KL Divergence}
-Suppose that we have samples from the target distribution (or we are able to generate them), but we cannot evaluate the underlying pdf $p_x^*(\mathbf{x})$. This is precisely our case in HEP, with billions of available Monte Carlo data and no analytical pdf. Then, we may define as our loss function the \emph{forward Kullback-Leibler divergence} between the target distribution $p_x^*(\mathbf{x})$ and the flow-defined one $p_x(\mathbf{x}; \, \phi)$:
+The output $y$ is dictated by a simple algorithmic rule:
 
 \[
-\begin{aligned}
-    \mathcal{L}(\phi) &= \mathcal{D}_{KL}[p_x^*(\mathbf{x})||p_x(\mathbf{x}; \, \phi)]\\
-    &= -\mathbb{E}_{p_x^*(\mathbf{x})}[\log(p_x(\mathbf{x}; \, \phi))] +\; \text{const.}\\
-    &= -\mathbb{E}_{p_x^*(\mathbf{x})}[\log(p_z(f^{-1}(\mathbf{x}; \, \phi)))+\log\left(\det\mathbb{J}_{f^{-1}}(\mathbf{x}; \, \phi)\right)] +\; \text{const.}
-\end{aligned}
+\centering
+y = 
+% f(\pmb{x}) = 
+\begin{cases}
+1 \quad \text{if} \quad \sum_i w_ix_i + w_0 > 0 \\
+0 \quad \text{otherwise}
+\end{cases}
 \]
 
-where we have used Eq. \ref{eqn:logpdf}. Supposing we had a set of training samples $\{\mathbf{x}\}^N_n$ from the target pdf, we may estimate the expectation value over $p_x^*(\mathbf{x})$ by Monte Carlo as:
+where $0$ has been chosen as the \emph{threshold} for the neuron. 
+Intuitively, weights measure the importance of the respective inputs to the output, while the bias is a measure of how likely the neuron is to fire. 
+
+Given a set of inputs and their desired outputs, the weights can be tuned (or \emph{learned}) to correctly classify inputs as returning either the $0$ or $1$ outputs. A simple algorithm for doing so is the following:
+
+\begin{outline}[enumerate]
+    \1 Initialize the weights. Weights may be initialized to $0$ or to a small random value;
+    \1 For each example j in our training set D, perform the following steps over the input $\mathbf {x}_{j}$ and desired output t$_{j}$:
+    \2 Calculate the actual output: $y(n)_j = \mathbf{w}\cdot\mathbf{x} + w_0 $
+    \2 Update the weights:  $w_{i}(n+1)=w_{i}(n)\;{\boldsymbol {+}}\;r\cdot (t_{j}-y_{j}(n))x_{j,i}$
+    \1 The second step may be repeated until the iteration error \\
+    $\frac{1}{s} \sum_{j=1}^{s}|t_{j}-y_{j}(n)|$ is less than a user-specified error threshold $\gamma$, or a predetermined number of iterations have been completed.
+\end{outline}
+
+This first example of \emph{learning algorithms} is showing how we can actually use artificial neurons in a way which is radically different to conventional logic gates. Instead of explicitly laying out a circuit of NAND and other gates, our neural networks can simply learn to solve problems, sometimes problems where it would be extremely difficult to directly design a conventional circuit.
+
+Despite this, the single Perceptron presents several limitations. Ultimately, it is a \emph{linear classifier}, meaning that:
+
+\begin{outline}
+    \1 It cannot solve a problem if it is not \emph{linearly separable}, so for example even a simple XOR division of the binary plane is unsolvable;
+    \1 It is only capable of addressing classification problems, and cannot tackle our generation task.
+\end{outline}
+
+Nonetheless, the simple ideas behind this architecture are actually at the heart of the more modern and refined approach of deep learning.
+
+\subsection{Neural Networks and Backpropagation}
+
+Turning back once more to our biological brain, we can observe that it is actually made up by \emph{billions} of neurons. Intuitively, we would expect that an artificial network made up of multiple artificial neurons would demonstrate better capacities than a single neuron--and unsurprisingly that's how it is. 
+
+Figure \ref{fig:firstnn} shows a first example of a proper feedforward neural \emph{network}: an ensemble of neurons organized in \emph{layers}, where each layer is \emph{fully connected} to the neurons in the previous one. One early result, sparking the interest in the field, showed that a neural network with just \emph{one} hidden layer with a large enough number of neurons can approximate any arbitrary function \emph{f} \cite{HORNIK1989359}.
+
+\begin{figure}
+    \centering
+    \begin{neuralnetwork}[height=4]
+        \newcommand{\x}[2]{$x_#2$}
+        \newcommand{\y}[2]{$\hat{y}_#2$}
+        \newcommand{\hfirst}[2]{\small $h^{(1)}_#2$}
+        \newcommand{\hsecond}[2]{\small $h^{(2)}_#2$}
+        \inputlayer[count=3, bias=true, title=Input\\layer, text=\x]
+        \hiddenlayer[count=4, bias=false, title=Hidden\\layer $1$, text=\hfirst] \linklayers
+        \hiddenlayer[count=3, bias=false, title=Hidden\\layer $2$, text=\hsecond] \linklayers
+        \outputlayer[count=2, title=Output\\layer, text=\y] \linklayers
+    \end{neuralnetwork}
+    \caption[A simple neural network]{A simple neural network architecture with two \emph{hidden} layers.}
+    \label{fig:firstnn}
+\end{figure}
+
+Intuitively, this architecture is taking advantage of its various neurons by letting the first hidden layer process the input data, and then allowing subsequent layers to act on the previous outputs. The relevant information gets extracted from the high level features in the input data, and the network allows only the important bits to travel further down in the architecture. 
+
+But if the single neuron was modelled as the Perceptron, the outputs would be only $0$s and $1$s--not that different from the actual binary inputs. Besides, we would also like to move away from the binary-inputs-only limitation. With just a few tweaks to the original Perceptron architecture, we may obtain something more general and more well suited to our new architecture.
+
+\paragraph{Neurons and activation functions}
+
+First of all, we allow for continuous inputs. Then, we would like to employ a neuron with the following property: \emph{a small change in the \emph{weights} or \emph{biases} causes a small change in the \emph{outputs}}. This seems reasonable to allow the overall network to learn by gradually adjusting its parameters, and may also be translated in more physical terms by the following expression:
+
+\begin{equation}\label{eqn:yderiv}
+  \Delta y = \sum_j \frac{\partial y}{\partial w_j}\Delta w_j + \frac{\partial y}{\partial w_0}\Delta w_0
+\end{equation}
+
+
+
+where we have introduced the partial derivatives over the weights and the bias.
+
+It is clear that the Perceptron does not respect this property, since an arbitrary small change could cause an abrupt shift in the output from $0$ to $1$ or vice-versa. This issue is easily resolved by adding an \emph{activation function} to the output, as shown in Figure \ref{fig:artneur}.
+
+\begin{figure}
+    \centering
+    
+    \begin{tikzpicture}
+        \node[functions] (left){};
+            \node[right = 1.0cm of left] (right) {$y=f(\mathbf{w}\cdot\mathbf{x} + w_0)$};
+            %\node[right of = right] (rright) {$=f(\mathbf{w}\cdot\mathbf{x} + w_0)$};
+            \path[draw,->] (left) -- (right);
+        \node[left=3em of left] (2) {$w_2$} -- (2) node[left of=2] (l2) {$x_2$};
+            \path[draw,->] (l2) -- (2);
+            \path[draw,->] (2) -- (left);
+        \node[below of=2] (dots) {$\vdots$} -- (dots) node[left of=dots] (ldots) {$\vdots$};
+        \node[below of=dots] (n) {$w_n$} -- (n) node[left of=n] (ln) {$x_n$};
+            \path[draw,->] (ln) -- (n);
+            \path[draw,->] (n) -- (left);
+        \node[above of=2] (1) {$w_1$} -- (1) node[left of=1] (l1) {$x_1$};
+            \path[draw,->] (l1) -- (1);
+            \path[draw,->] (1) -- (left);
+        \node[above of=1] (0) {$w_0$} -- (0) node[left of=0] (l0) {$1$};
+            \path[draw,->] (l0) -- (0);
+            \path[draw,->] (0) -- (left);
+        \node[above of=l0,font=\scriptsize] {inputs};
+        \node[above of=0,font=\scriptsize] {weights};
+    \end{tikzpicture}
+    
+    \caption[Generic artificial neuron]{A more generic architecture for the artificial neuron, leveraging an activation function \emph{f}.}
+    \label{fig:artneur}
+\end{figure}
+
+The particular choice of activation function defines the type of the neuron. The key characteristic is that the activation function should be \emph{differentiable}, to allow the computation of \eqref{eqn:yderiv}. Many possible choices have been explored and proposed in past years.
+\graffito{Note: The Perceptron can be seen as a generic neuron with the activation function set to the step function in $0$.}
+Historically, the \emph{Sigmoid} function has been the most popular choice:
 
 \[
-\mathcal{L}(\phi) \approx -\frac{1}{N} \sum_n \log(p_z(f^{-1}(\mathbf{x}; \, \phi)))+\log\left(\det\mathbb{J}_{f^{-1}}(\mathbf{x}_n; \, \phi)\right) +\; \text{const.}
+y=f(\mathbf{w}\cdot\mathbf{x} + w_0) = \frac{1}{1 + e^{-\mathbf{w}\cdot\mathbf{x} - w_0}}
 \]
 
-For computing this loss we need to calculate $f^{-1}$, its Jacobian determinant and the density $p_z(f^{-1}(\mathbf{x}; \, \phi))$. 
-
-\paragraph{Reverse KL Divergence} If instead we have the ability to easily evaluate $p_x^*(\mathbf{x})$ but not to sample from it, the \emph{reverse Kullback-Leibler divergence} is more well suited:
+which has the nice property of presenting a smooth transition between the two saturating extremes of the Perceptron, as well as having a derivative which can be easily re-expressed in term of the Sigmoid itself. Nowadays, the \emph{Rectified Linear Unit} (ReLU) function has demonstrated better capabilities, especially in large and complex networks:
 
 \[
-\begin{aligned}
-    \mathcal{L}(\phi) &= \mathbb{E}_{p_x(\mathbf{x}, \, \phi)}[\log(p_x(\mathbf{x}; \, \phi)) - \log(p_x^*(\mathbf{x}))]\\
-    &= \mathbb{E}_{p_x(\mathbf{x}, \, \phi)}[\log(p_z(\mathbf{z}))-\log\left(\det\mathbb{J}_{f}(\mathbf{x}; \, \phi)\right)-\log(p_x(\mathbf{x}; \, \phi))]
-\end{aligned}
+y=f(\mathbf{w}\cdot\mathbf{x} + w_0) = 
+\begin{cases}
+\mathbf{w}\cdot\mathbf{x} + w_0 \quad \text{if} \quad \mathbf{w}\cdot\mathbf{x} + w_0 > 0 \\
+0 \quad \text{otherwise}
+\end{cases}
 \]
 
-\section{Constructing flows}
-For an actual implementation, the main challenge is in designing parametrizable multivariate bijections that have closed form expressions for both $f$ and $f^{-1}$, a tractable Jacobian whose calculation scales with $O(D)$ rather than $O(D^3)$, and can express a flexible class of functions.
+despite not being analytically differentiable in $0$ (it is standard practice to set the derivative in the point to $0$). Figure \ref{fig:actfunc} shows a comparison between the two.
 
-\subsection{Coupling Layers}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.50]{gfx/ch2/activ.pdf}
+    \caption[Activation functions]{The Sigmoid activation function compared to the ReLU, along with the respective derivatives w.r.t. the full input vector.}
+    \label{fig:actfunc}
+\end{figure}
 
-One simple way to reduce the computational complexity of the Jacobian is to introduce \emph{coupling layers}. The basic idea is illustrated in Figure \ref{fig:coupla}.
+There are other useful properties of the ReLu which help in the convergence of more complex models. The constant derivative helps especially to avoid the \emph{vanishing gradients} effect, where small gradients prevent the network from learning according to the algorithms presented in the next paragraph.
+
+\paragraph{Gradient descent and backpropagation}
+
+Now that we have devised a well suited neuron for the architecture of Figure \ref{fig:firstnn}, the objective is straightforward: \emph{find the optimal set of \emph{model parameters} (the weights) for solving the current problem.} 
+
+Typically an \emph{objective function} or \emph{loss function} is defined, as a function
+of $\mathbf{w}$, to measure how well the network with weights set to $\mathbf{w}$ solves the task. 
+The objective function is a sum of terms, one for each input/target pair ($\mathbf{x}$, $\mathbf{t}$),
+measuring how close the output $y$($\mathbf{x}$, $\mathbf{t}$) is to the target $\mathbf{t}$. We can denote it with $\mathcal{L}$($\mathbf{x}$, $\mathbf{t}$).
+
+The training process is an exercise in \emph{function minimization} – i.e., adjusting $\mathbf{w}$ in such a way as to find a $\mathbf{w}$ that minimizes the objective function. Our physical intuition suggests that this might have something to do with the \emph{gradients} of the loss function. As we have already discussed, we can write the following relationship:
+
+\[
+    \Delta \mathcal{L} = \frac{\partial \mathcal{L}}{\partial \mathbf{w}} \cdot \Delta \mathbf{w} = \nabla_w \mathcal{L} \cdot \Delta \mathbf{w} 
+\]
+ where we have introduced the \emph{gradients vector} $\nabla_w \mathcal{L}$. If we now change the parameters at each step by an amount $ \Delta \mathbf{w} = - \eta \nabla_w \mathcal{L}$, where $\eta$ is an hyperparameter called \emph{learning rate}, we will get a corresponding change in the loss function of:
+ 
+ \[
+    \Delta \mathcal{L} = -\eta \nabla_w \mathcal{L} \cdot \nabla_w \mathcal{L} = - \eta \|  \nabla_w \mathcal{L} \|^2
+\]
+
+that is, we have updated the parameters in a way which is reducing the loss, meaning that the outputs of our network are actually getting closer to our targets--i.e. the network is \emph{learning} the optimal parameters directly from the training data! This is the idea behind \emph{gradient descent} learning algorithms, which are the current standard for training deep neural networks. The main steps are as follows:
+
+\begin{outline}[enumerate]
+    \1 Select a \emph{batch} of input/target pairs ($\mathbf{x}$, $\mathbf{t}$)$^n$ and compute the outputs \emph{y}$^n$ = \emph{f}($\mathbf{x}$, $\mathbf{t}$)$^n$;
+    \1 Compute $\mathcal{L}$($y^n$), $\nabla_w \mathcal{L}^n$ and find $ \Delta \mathbf{w}^n = - \eta \nabla_w \mathcal{L}^n$;
+    \1 For each batch, update the weights as $ \Delta \mathbf{w} = - \eta \sum_n \nabla_w \mathcal{L}^n$
+\end{outline}
+
+where we are assuming that the loss function may be expressed as an average of over cost functions for individual training examples. The dataset is processed multiple times as finite batches until the network reach some sort of global minimum for the loss function.
+
+\graffito{Get an appendix for this?}
+The only non trivial thing which remains to do is define the best way to compute $\nabla_w \mathcal{L}$. This can be done efficiently, with just one forward and one backward pass through the network, through the \emph{backpropagation} algorithm. Letting $\odot$ denote the \emph{elementwise} product of two vectors, we do as follows:
+
+\begin{outline}[enumerate]
+    \1 Pass the inputs through the network and get the outputs\\
+    \emph{y}$^l$ = \emph{f}(\emph{y}$^{(l-1)}$) at each layer \emph{l} (feedforward pass);
+    \1 Get the \emph{output error} $\delta^L = \nabla_w^L \mathcal{L} \odot y^L$:
+    \1 For each previous layer, compute $\delta^l = ((w^{l+1})^T\delta^{l+1})\odot y^l$ (backward pass);
+    \1 Finally, get $\nabla_w^l \mathcal{L} = \frac{\partial \mathcal{L}}{\partial w^l_{jk}} = y^{l-1}_k\delta^l_j$
+\end{outline}
+
+
+\subsection{Deep Learning}
+% also mention problems?
+% mention residual networks?
+We now know how to define efficient artificial neurons and how to combine them into networks, which can then be efficiently trained through gradient descent. 
+The term \emph{deep learning} simply refers to neural networks made up of many different hidden layers, thus possessing a greater depth than most simple models. Over the years, researchers have shown how deep learning models made up of millions of parameters can actually achieve remarkable results, taking full advantage of their large number of neurons.
+
+A great number of models and architectures have also been proposed as an alternative to the feedforward, layer-to-layer approach. A simple variation, widely adopted and also employed in the present work, is that of \emph{residual networks}, introduced by \cite{DBLP:journals/corr/HeZRS15}. The basic idea is illustrated in Figure \ref{fig:resnet}.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.50]{gfx/ch2/residual.png}
+    \caption[A residual block]{A residual block illustrated--taken from \cite{DBLP:journals/corr/HeZRS15}.}
+    \label{fig:resnet}
+\end{figure}
+
+The idea is to define different blocks composed of one or more layers, and then to feed to te following block the input of the previous one as well as its output. Instead of hoping each stack of layers directly fits a desired underlying mapping, we explicitly let these layers fit a residual mapping. The original mapping is recast into $\mathcal{F}(x) + x$. We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping. To the extreme, if an identity mapping were optimal, it would be easier to push the residual to zero than to fit an identity mapping by a stack of nonlinear layers. 
+
+This simple modification addresses a common problem in deep architectures. When the model saturates the problem, it starts to overfit, especially in later layers; by defining a residual block we may simply allow the network to learn an identity mapping and avoid the issue.
+
+The training and the convergence of deep learning models is also plagued by others problems, making the training of complex models somewhat of an empirical process. We limit ourselves to mentioning the most relevant issues for our use-case in the following section.
+
+\section{Generative Models} 
+
+A well developed subset of deep learning models, \emph{Generative models} are a class of architectures which aim to produce novel and original samples from the ones presented during training, usually starting from randomly distributed noise. The most well know use case is the field of \emph{image generation}, and two specific architectures are the most widely adopted.
+
+\subsection{State of the art}
+
+\paragraph{Generative Adversarial Networks}
+
+Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GANs for short) are a framework for training powerful generative models. Two neural networks contest with each other in a game (in the form of a zero-sum game, where one agent's gain is another agent's loss): the generative network G learns to map from a latent (usually gaussian) space to a data distribution of interest, while the discriminator network D distinguishes candidates produced by the generator from the true data distribution. G's training objective is to increase the error rate of D by producing samples so close to the target that D misclassifies them consistently as coming from the real samples. The framework is illustrated in Figure \ref{fig:gan}.
+
+
+\begin{figure}
+    \centering
+    \scalebox{0.90}{
+    \begin{tikzpicture}[
+        ->, thick,
+        node/.style={circle, fill=teal!60},
+        label/.style={below, font=\footnotesize},
+      ]
+    
+      \node[node] (zin) {$\vec z_\text{in}$};
+      \node[node, right=5em of zin] (fake) {$\vec x_\text{fake}$};
+      \draw (zin) -- node[above] {$G(\vec x)$} node[label] {generator} (fake);
+    
+      \draw[<-] (zin) -- node[above] {$p_\theta(\vec z)$} node[label] {latent noise} ++(-3,0);
+      \node[node, above=of fake] (real) {$\vec x_\text{real}$};
+      \draw[<-] (real) -- node[above] {$p_\text{data}(\vec x)$} ++(-3,0);
+      \node[node, right=6em of fake] (D) at ($(fake)!0.5!(real)$) {$\vec x$};
+      \node[right=7em of D] (out) {real?};
+      \draw (D) -- node[above] {$D(\vec x)$} node[label] {discriminator} (out);
+    
+      \coordinate[right=2.5em of fake, circle, fill, inner sep=0.15em] (pt1);
+      \coordinate[right=2.5em of real, circle, fill, inner sep=0.15em] (pt2);
+    
+      \draw[-, dashed] (pt1) edge[bend left] coordinate[circle, fill=orange, inner sep=1mm, pos=0.7] (pt3) (pt2);
+      \draw (fake) -- (pt1) (real) -- (pt2) (pt3) -- (D);
+    
+    \end{tikzpicture}}
+    \caption[GAN]{The GAN training framework illustrated.}
+    \label{fig:gan}
+\end{figure}
+
+\paragraph{Variational Autoencoders}
+
+The main idea behind the \emph{Variational Autoencoder} (VAE) architecture, theorized by Kingma et al \cite{vae}, is to employ a network made up of two parts: the \emph{encoder} and the \emph{decoder}. The encoder learns to map input data to a set of parameters $\pmb{\mu}$ and $\pmb{\sigma}$, which together make up a \emph{latent} Gaussian representation $\pmb{z}$. The decoder is trained to scale up the parameters from the new latent space back to the original training space.
+
+The network is trained to correctly encode and decode the data, and once trained the decoder may receive as input random Gaussian noise and produce new original samples. The idea is illustrated in Figure \ref{fig:vae}.
 
 \begin{figure}
     \centering
     \scalebox{0.65}{
     \begin{tikzpicture}[
-        thick, node distance=15mm,
-        set/.style={draw, diamond, text width=8mm, align=center},
-        op/.style={draw, circle, text width=5mm, align=center, fill=orange!40},
+        shorten >=1pt, shorten <=1pt,
+        neuron/.style={circle, draw, minimum size=4ex, thick},
+        legend/.style={font=\large\bfseries},
       ]
     
-      \node[set, fill=blue!20] (z1) {$\vec z_{1:d}$};
-      \node[op, right=of z1] (eq) {\raisebox{-1ex}=};
-      \node[set, right=of eq, fill=blue!20] (x1) {$\vec x_{1:d}$};
-      \draw[->] (z1) edge (eq) (eq) edge (x1);
+      % encoder
+      \drawNodes{encoder}{{{,,,,}, {,,,}, {,,}}}
+      \denselyConnectNodes{encoder}{{5, 4, 3}}
     
-      \node[set, below=1 of z1, fill=green!30] (z2) {$\mathclap{\vec z_{d+1:D}}$};
-      \node[op, right=of z2] (g) {$f$};
-      \node[below=1em of g] (forward) {forward pass};
-      \node[set, right=of g, fill=yellow!40] (x2) {$\mathclap{\vec x_{d+1:D}}$};
-      \draw[->] (z2) edge (g) (g) edge (x2);
-    
-      \node[op] (m) at ($(z1)!0.5!(g)$) {$\phi$};
-      \draw[->] (z1) edge (m) (m) edge (g);
-    
-      \begin{scope}[xshift=9cm]
-    
-        \node[set, fill=blue!20] (z1) {$\vec z_{1:d}$};
-        \node[op, right=of z1] (eq) {\raisebox{-1ex}=};
-        \node[set, right=of eq, fill=blue!20] (x1) {$\vec x_{1:d}$};
-        \draw[<-] (z1) edge (eq) (eq) edge (x1);
-    
-        \node[set, below=1 of z1, fill=green!30] (z2) {$\mathclap{\vec z_{d+1:D}}$};
-        \node[op, right=of z2] (g) {$\mathclap{f^{-1}}$};
-        \node[below=1em of g] (inverse) {inverse pass};
-        \node[set, right=of g, fill=yellow!40] (x2) {$\mathclap{\vec x_{d+1:D}}$};
-        \draw[<-] (z2) edge (g) (g) edge (x2);
-    
-        \node[op] (m) at ($(x1)!0.5!(g)$) {$\phi$};
-        \draw[->] (x1) edge (m) (m) edge (g);
-    
+      % decoder
+      \begin{scope}[xshift=11cm]
+        \drawNodes{decoder}{{{,,}, {,,,}, {,,,,}}}
+        \denselyConnectNodes{decoder}{{3, 4, 5}}
       \end{scope}
     
+      % mu, sigma, sample nodes
+      \foreach \idx in {1,...,3} {
+          \coordinate[neuron, right=2 of encoder-3-2, yshift=\idx cm,, fill=yellow, fill opacity=0.2] (mu-\idx);
+          \coordinate[neuron, right=2 of encoder-3-2, yshift=-\idx cm, fill=blue, fill opacity=0.1] (sigma-\idx);
+          \coordinate[neuron, right=4 of encoder-3-2, yshift=\idx cm-2cm, fill=green, fill opacity=0.1] (sample-\idx);
+        }
+    
+      % mu, sigma, sample boxes
+      \node [label=$\pmb{\mu}$, fit=(mu-1) (mu-3), draw, fill=yellow, opacity=0.45] (mu) {};
+      \node [label=$\pmb{\sigma}$, fit=(sigma-1) (sigma-3), draw, fill=blue, opacity=0.3] (sigma) {};
+      \node [label=$\pmb{z}$, fit=(sample-1) (sample-3), draw, fill=green, opacity=0.3] (sample) {};
+    
+      % mu, sigma, sample connections
+      \draw[->] (mu.east) edge (sample.west) (sigma.east) -- (sample.west);
+      \foreach \a in {1,2,3}
+      \foreach \b in {1,2,3} {
+          \draw[->] (encoder-3-\a) -- (mu-\b);
+          \draw[->] (encoder-3-\a) -- (sigma-\b);
+          \draw[->] (sample-\a) -- (decoder-1-\b);
+        }
+    
+      % input + output labels
+      \foreach \idx in {1,...,5} {
+          \node[left=0 of encoder-1-\idx] {$x_\idx$};
+          \node[right=0 of decoder-3-\idx] {$\hat x_\idx$};
+        }
+      \node[above=0.1 of encoder-1-1] {input};
+      \node[above=0.1 of decoder-3-1] {output};
+    
     \end{tikzpicture}}
-    \caption[Coupling layer]{The two possible passes through a coupling layer.}
-    \label{fig:coupla}
+    \caption[VAE]{The Variational Autoencoder illustrated.}
+    \label{fig:vae}
 \end{figure}
 
-We partition the input $\mathbf{z} \in \mathbb{R}^D$ into two subsets $(\vec z_{1:d}, \, \vec z_{d+1:D}) \in \mathbb{R}^d \times \mathbb{R}^{D-d}$, where \emph{d} is an integer between 1 and \emph{D}, and is usually taken as $D/2$. Then, at each step, the transformation $f_i$ is defined as:
+\subsection{Known issues}
 
-\[
-f_i(\mathbf{z}; \, \phi) = f_i(\vec z_{d+1:D}; \, \phi(\vec z_{1:d}))
-\]
+This two architectures have achieved remarkable results. However, there are still many issues related to their applicability. The following is a brief and incomplete list:
 
-that is, the single transformation acts only on a \emph{subset} of the input, keeping the other part unchaged and using it as \emph{conditioning} for the actual parameters. 
+\begin{outline}
+    \1 GANs are affected by numerous training instabilities, as their peculiar training system must be carefully engineered to avoid that one of the two agents surpasses the other too much too fast, thus invalidating the training;
+    \1 GANs are also plagued by  \emph{mode collapse}, where the generator over-optimizes for a particular discriminator, and the discriminator never manages to learn its way out of the trap. As a result the generators rotate through a small set of output types, degrading the statistical significance of generated samples;
+    \1 VAEs with Gaussian posteriors / priors are noisy. VAEs are poor models of data whenever insufficiently flexible posterior / prior / decoder distributions are used;
+    \1 More generally, almost all of the model in the literature are usually geared towards the task of image generation and recognition. This type of architectures often perform poorly when simply re-adapted to the HEP use case, which typically consists of lower dimensional, sparse data structures. 
+\end{outline}
 
-At the end, the two subset are joined together to form the input for the next layer; by applying arbitrary permutations between the indexes we can ensure that eventually all values of the input get transformed. What is more, this also means that because we condition on the different indexes of the same input instance the transformation can correctly learn to model \emph{correlations} between single values.
+Both GANs and VAEs have already been extensively investigated by the collaborations at CERN (see \cite{2019glhc} and \cite{otten2021event}); despite this, there is still a limited literature regarding behavior in low dimensionality as in our case, e.g. \cite{523096}.
 
-But the greatest advantage is that now the single transformation depends only on one subset of inputs, and thus its jacoban is \emph{block triangular}:
-
-\[
-\mathbb{J}_{f}(\mathbf{x}; \, \phi) = 
-\begin{pmatrix}
-\frac{\partial \vec x_{1:d}}{\partial \vec z_{1:d}} & \frac{\partial \vec x_{1:d}}{\partial \vec z_{d+1:D}}\\
-\frac{\partial \vec x_{d+1:D}}{\partial \vec z_{1:d}} & \frac{\partial \vec x_{d+1:D}}{\partial \vec z_{d+1:D}}
-\end{pmatrix}
-=
-\begin{pmatrix}
-\mathbb{I} & 0\\
-A & \mathbb{J}^*
-\end{pmatrix}
-\]
-
-The full Jacobian determinant can simply be calculated from the product of the diagonal elements of $\mathbb{J}^*$, which are simply the partial derivatives over ($d+1, \dots D$). A similar reasoning holds for the Jacobian of the inverse.
-This significantly speeds up the calculations.
-
-\subsection{Splines}
-
-There are many possible bijections which one can use in building a NF. Recent advancements have demonstrated the suitability of \emph{rational-quadratic spline transforms} (see \cite{durkan}). 
-
-A monotonic spline is a piecewise function consisting of K segments, where each segment is a simple function that is easy to invert. Specifically, given a set of K+1 input locations $l_{0}, \dots, l_K$ , the transformation
-is taken to be a simple monotonic function (e.g. a low-degree polynomial) in each interval
-[$l_{k}, l_{k+1}$], under the constraint that the K segments meet at the endpoints.
-Outside the interval [$l_{0}, l_K$], the transformer can default to a simple function such as the
-identity. Typically, the parameters $\phi$ of the transformations are the input locations, 
-the corresponding output locations and (depending on the type of spline) the
-derivatives (i.e. slopes) at $l_{0}, \dots, l_K$. An example is illustrated in Figure \ref{fig:rqs}.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\columnwidth]{gfx/ch3/D9F0PDyWsAAWKHf.png}
-    \caption[Rational quadratic spline]{A rational quadratic spline $g_{\theta}(x)$ and its derivative $g_{\theta}^{'}(x)$}
-    \label{fig:rqs}
-\end{figure}
-
-Spline-based transformers are as fast to invert as to evaluate, while
-maintaining exact analytical invertibility. Evaluating or inverting a spline-based transformer
-is done by first locating the right segment--which can be done in $\mathcal{O}$(log K) time using binary
-search—and then evaluating or inverting that segment, which is assumed to be analytically
-tractable. By increasing the number of segments K, a spline-based transformer can be
-made arbitrarily flexible.
-
-\subsection{Conditional distributions}
-
-The theory of Normalizing Flows is also easily generalized to conditional distributions. We denote the variable to condition on by $C=\mathbf{c}\in\mathbb{R}^M$. A simple multivariate source of noise, for example a standard i.i.d. normal distribution, $\mathbf{z}\sim\mathcal{N}(\mathbf{0},I_{D\times D})$, is passed through a vector-valued bijection that also conditions on C, $f:\mathbb{R}^D\times\mathbb{R}^M\rightarrow\mathbb{R}^D$, to produce the more complex transformed variable $\mathbf{x}=f(\mathbf{z};\,C=\mathbf{c}, \phi)$. In practice, this is usually accomplished by making the parameters for a known normalizing flow bijection $f$ the output of a neural network that inputs $\mathbf{c}$ as well as $\phi$. It is thus straightforward to condition event generation on some ground truth, e.g. the Monte Carlo Gen values matched to our target generation.
-
-
-\section{Applications}
+Fortunately, there exist another type of latent generative model, which, despite being definitely less popular than the ones already discussed, is more well suited to our application and makes up the backbone of the present work. We thus turn to the following chapter for a more in depth discussion.
+% low dim paper?
 
 %*****************************************
 %*****************************************
