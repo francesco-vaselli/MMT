@@ -181,7 +181,7 @@ despite not being analytically differentiable in $0$ (it is standard practice to
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.50]{gfx/ch2/activ.pdf}
+    \includegraphics[width=\columnwidth]{gfx/ch3/activ.pdf}
     \caption[Activation functions]{The Sigmoid activation function compared to the ReLU, along with the respective derivatives w.r.t. the full input vector.}
     \label{fig:actfunc}
 \end{figure}
@@ -230,6 +230,18 @@ The only non trivial thing which remains to do is define the best way to compute
 \end{outline}
 
 
+In practice, the loss function is monitored during training. This is usually done by evaluating it at each epoch (one full pass through the training data) on both the training data and a smaller partition reserved for testing, which the network has not seen during training. This helps to avoid \emph{overfitting}, a typical issue where the model over-optimizes for the training set, losing generalization power on previously unseen samples. This behaviour is illustrated in Figure \ref{fig:overf}.
+
+\begin{figure}
+    \centering
+    \includesvg[width=\columnwidth]{gfx/ch3/2d-epochs-overfitting}
+    \caption[Overfitting]{The typical behaviour of the loss (error) function during training.
+    Taken from \cite{overfig}.}
+    \label{fig:overf}
+\end{figure}
+
+At first, both the training and testing partition show a decrease. However, as the training goes on, the network adapts itself to the specific, stochastic features of the training data and the performance on the test partition gets worse. The dashed line is usually recognized as the best moment to interrupt training. 
+
 \subsection{Deep Learning}
 % also mention problems?
 % mention residual networks?
@@ -240,7 +252,7 @@ A great number of models and architectures have also been proposed as an alterna
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.50]{gfx/ch2/residual.png}
+    \includegraphics[width=\columnwidth]{gfx/ch3/residual.png}
     \caption[A residual block]{A residual block illustrated--taken from \cite{DBLP:journals/corr/HeZRS15}.}
     \label{fig:resnet}
 \end{figure}
