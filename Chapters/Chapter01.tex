@@ -234,7 +234,7 @@ As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileu
 
 \section{Physics program and measurements}
 
-Being a general-purpose experiment, CMS is capable of performing a wide range of interesting and insightful measurements. Aside from the discovery of the Higgs boson, and the study of its couplings, which will be discussed below in greater detail, we mention briefly the other directions of CMS research:
+Being a general-purpose experiment, CMS is capable of performing a wide range of interesting and insightful measurements. Aside from the discovery of the Higgs boson and the study of its couplings, which will be discussed below in greater detail, we mention briefly the other directions of CMS research:
 
 \begin{outline}
     \1 \emph{SM physics}: All the studies of the LHC data with the goals of measuring fundamental parameters of the Standard Model of particle physics. The cross-sections of a large variety of processes happening during the beam collisions are determined with the best precision possible and compared to the most up-to-date theory calculations, from the most common to the rarest of them all. Fundamental parameters of the theory such as masses of elementary particles and gauge couplings are measured to verify the effectiveness of the predictions, and any deviations of data from the Standard Model are quantified;
@@ -248,9 +248,9 @@ Being a general-purpose experiment, CMS is capable of performing a wide range of
     \1 \emph{Exotica}: Generic searches for processes beyond the SM and not related to SUSY.
 \end{outline}
 
-\subsection{The Higgs discovery}
+\subsection{The Higgs discovery and searches}
 
-The main driver for the construction of the LHC and the deployment of the CMS experiment was certainly the Higgs boson. 
+The main driver for the construction of the LHC and the deployment of the CMS experiment is certainly the Higgs boson and the detailed study of its properties. 
 
 \graffito{Do we have to explain the Higgs mechanism in detail?}
 
@@ -266,7 +266,7 @@ After having established the mass of the new fermions, along with the major coup
     {\includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-17-031_Figure_005-a.pdf}} \quad
     \subfloat[]
     { \includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-17-031_Figure_005-b.pdf}} \\
-    \caption[Signal strength modifiers]{Summary plot showing the signal measured signal strength per
+    \caption[Signal strength modifiers]{Summary plot showing the measured signal strength per
     production mode at $\sqrt{s}$ = 13 Tev (a) and the measured signal
     strength per decay channel at $\sqrt{s}$ = 13 Tev (b). Taken from \cite{Sirunyan_2019}.}\label{fig:sigsm}
 \end{figure}
@@ -279,27 +279,46 @@ They are expressed as the \emph{signal strength modifier} $\mu$, a measure of th
 
 where we have distinguished between the \emph{production} and \emph{decay} modifiers, and $\mu = \mu_P \cdot \mu^D$.
 
-\subsection{The VBF Channel and the H$\rightarrow\mu\mu$ decay}
+During Run 3, which is just starting at the time of writing, the
+physics of the Higgs boson at the LHC is entering a time of precision measurements and
+search for rare decays. Precision measurements are motivated by the need to go beyond the SM: deviations from the theoretical predictions could appear in precision measurements and hint at physics beyond the Standard Model.
 
-Here we briefly mention the \emph{Vector Boson Fusion} production channel, as well as the decay of the Higgs boson in two muons, an interesting decay channel employed for a comparison of the results of this thesis.
+\subsection{The VBF Channel and the H$\rightarrow\mu^+\mu^-$ decay}
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-17-031_Figure_002-a.pdf}} \quad
+    \subfloat[]
+    { \includegraphics[width=.45\linewidth]{gfx/ch1/Figure_001-b.pdf}} \\
+    \caption[ggF and VBF]{Leading Feynman diagrams for Higgs boson production via ggF (a) and VBF (b).}\label{fig:feypro}
+\end{figure}
+
+Due to their relevance in a later chapter of this work, here we briefly mention the \emph{Vector Boson Fusion} production channel, as well as the decay of the Higgs boson in two muons.
 
 In the SM, the phenomenology of the Higgs boson decays depends crucially on its mass,
 which defines the branching fractions. The production modes instead have a milder Higgs
 mass dependence.In proton-proton collisions at the center-of-mass energies currently reached by the LHC
 (up to 13 TeV) four main production mechanisms are expected. The gluon-gluon fusion
 production mode has the largest cross section, followed by vector boson fusion, associated
-WH and ZH production, and production in association with a $\tau \overline{\tau}$  or b$\overline{\text{b}}$ pair.
-
-The gluon-gluon fusion (ggF) is the dominant production mode with a cross section of
-approximately ∼85$\%$ of the total. The leading diagram involves a quark loop: the main
+WH and ZH production, and production in association with a t$\overline{\text{t}}$  or b$\overline{\text{b}}$ pair. The gluon-gluon fusion (ggF) is the dominant production mode with a cross section of
+approximately 85$\%$ of the total. The leading diagram involves a quark loop: the main
 contribution to the SM amplitude arises from the top quark loop, though the amplitude is
 potentially sensitive to the presence of new massive particles with non zero color charge.
-The vector boson fusion (VBF) has a cross section of about a tenth of the gluon-gluon fu-
-sion one. The leading diagrams involve a qq scattering in the t or in the u channel, with a
-vector boson exchange and the emission of a Higgs boson. Since the momentum exchange
-is typically lower than the center-of-mass energy of the two quarks, the channel is charac-
-terized by two separated high-rapidity quarks in the final state, detectable as high rapidity
-jets. Their presence can therefore serve as a signature of the VBF production channel. Ad-
-ditionally, as VBF is a pure electroweak process, low hadronic activity is expected in the
-rapidity gap between the two jets, where the Higgs decay products are typically found.
 
+The vector boson fusion (VBF) has a cross section of about a tenth of the gluon-gluon fusion one. The leading diagrams involve a qq scattering in the t or in the u channel, with a
+vector boson exchange and the emission of a Higgs boson. Since the momentum exchange
+is typically lower than the center-of-mass energy of the two quarks, the channel is characterized by two separated high-rapidity quarks in the final state, detectable as high rapidity
+jets. Their presence can therefore serve as a signature of the VBF production channel. Additionally, as VBF is a pure electroweak process, low hadronic activity is expected in the
+rapidity gap between the two jets, where the Higgs decay products are typically found. The Feynman diagrams for the two dominant production processes are showed in Figure \ref{fig:feypro}.
+
+To this date, the coupling of the Higgs to fermions of the second generation has not yet been observed up to the 5$\sigma$ threshold. However, the CMS collaboration has managed to provide evidence of the H$\rightarrow\mu^+\mu^-$ up to 3$\sigma$ (see \cite{Sirunyan_2021}): the clear signature of the VBF channel, along with the presence of two highly energetic muons with opposite charge, have proven decisive in obtaining this results. Some relevant plots are shown in Figure \ref{fig:vbfmm}.
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-19-006_Figure_012-a.pdf}} \quad
+    \subfloat[]
+    { \includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-19-006_Figure_010-a.pdf}} \\
+    \caption[H$\rightarrow\mu^+\mu^-$]{(a) The $m_{\mu\mu}$ distribution for the weighted combination of VBF-SB and VBF-SR events. The lower panel shows the residuals after subtracting the background prediction from the S+B fit. (b) Observed local p-values as a function of $m_H$, extracted from the combined fit as well as from each individual production category. It is clear that the VBF channel is the one providing the greatest evidence around the Higgs mass region. From \cite{Sirunyan_2021}.}\label{fig:vbfmm}
+\end{figure}
