@@ -49,6 +49,7 @@ design therefore collisions happen every 25 ns, for a final event rate of about 
 
 The collision rate of an accelerator is measured by its \emph{luminosity}. The luminosity $L$
 is the ratio of the rate of produced events to the interaction cross section, $R = L \cdot \sigma$.
+A related quantity is the \emph{integrated} luminosity, which is simply defined as the integral of the luminosity over time.
 
 Searching rare events requires a large number of collisions; for this reason, the
 beams are \emph{compressed} in the transverse plane just before entering in the experiments, in order to increase the luminosity of each bunch crossing. Rare events searches need high luminosity, but at high luminosity the rate
@@ -59,16 +60,23 @@ bunch crossing. This effect is known
 as \emph{pile-up}. Pile-up interactions produce noise and tracks that make object
 reconstruction more difficult, therefore
 a compromise has to be found: the higher
-the luminosity is, the rarer the events that can
+the luminosity, the rarer the events that can
 be searched, but simultaneously we also have a worse event reconstruction.
 
 \paragraph{Reference frame}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\columnwidth]{gfx/ch1/img_cms_coordinates.png}
+    \caption[Reference frame]{The reference frame at LHC. The z-axis is pointing along the beam direction. Taken from \cite{Lenzi:1551944}.}
+    \label{fig:reff}
+\end{figure}
+
 The coordinate system used by the experiments at the LHC has its origin fixed at the nominal collision point. The x axis points towards the center of the LHC ring, the y axis points
 upwards and the z axis points along the counter-clockwise beam direction. The \emph{azimuthal}
 angle $\phi$ is measured from the positive x direction in the xy plane and the \emph{polar} angle $\theta$ is
-measured from the positive z direction. The coordinate r usually indicates the distance from
-the beam line ($r = \sqrt{x^2 + y^2}$)
+measured from the positive z direction. The coordinate R usually indicates the distance from
+the beam line (R $= \sqrt{x^2 + y^2}$)
 
 In a typical collision, the center-of-mass of the interaction process is boosted along the
 z axis with respect to the laboratory frame. The kinematics of the collision products are
@@ -89,6 +97,7 @@ The rapidity can be approximated for ultra-relativistic particles by the \emph{p
 \end{equation*}
 
 which is computed using just the polar angle $\theta$ and is invariant under change of reference frame.
+The reference frame is illustrated inf Figure \ref{fig:reff}.
 
 \section{The CMS Experiment}
 
@@ -113,7 +122,7 @@ of iron and ensures enough bending power to measure the momentum of the highly e
 cross the detector.
 
 Starting from the interaction point a particle crosses the\emph{ silicon tracker}, the \emph{electromagnetic calorimeter} (ECAL) and the \emph{hadron calorimeter} (HCAL) before reaching
-the solenoid. Outside the coil the muon detection system is inserted in the iron of the
+the solenoid. Outside the coil the \emph{muon detection system} is inserted in the iron of the
 yoke of the magnet. The endcaps are shaped in layers perpendicular to the beam
 line and they have ECAL and HCAL sections as well as the the muon system.
 
@@ -204,27 +213,93 @@ for physics analysis in any case, due the to fact that the total proton-proton c
 is more than 6 orders of magnitude larger compared to the cross section of interesting processes. The data needs to be reduced and selected trough a trigger system, whose crucial
 aspect is a fast and efficient real-time selection to record the useful events.
 
-In CMS the data reduction happens in two steps. The Level-1 (or L1) Trigger consists of programmable electronic devices, reducing  the event rate from an input of 40 MHz to an output of about 100 kHz. The
-High Level Trigger (HLT) further decreases the event rate from about 100 kHz to about 1 kHz for data storage. The HLT is implemented by a computer farm composed of more than 30000 CPUs
+In CMS the data reduction happens in two steps. The \emph{Level-1} (or L1) Trigger consists of programmable electronic devices, reducing  the event rate from an input of 40 MHz to an output of about 100 kHz. The
+\emph{High Level Trigger} (HLT) further decreases the event rate from about 100 kHz to about 1 kHz for data storage. The HLT is implemented by a computer farm composed of more than 30000 CPUs
 running software modules similar to the ones used for the offline reconstruction. 
 
 Once the event has been selected by the trigger, other crucial processing aspects are the \emph{track reconstruction}, the \emph{primary vertex reconstruction} and the \emph{particle flow} algorithm for particle identification. For the sake of brevity, we do not discuss them here.
 
 \paragraph{Luminosity and Pile-up}
 
- The CMS designed luminosity of 1034 cm$^{-1}$ s$^{–1}$ has been achieved and exceeded in the last three years of data taking. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{–1}$ for 2016, 41.53 fb$^{–1}$ for 2017, and 60.0 fb$^{–1}$ for 2018.
+ The CMS designed luminosity of 1034 cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
 
-As discussed this also means an increase in pile-up: Figure \ref{fig:pileup} shows its increase over the various years.
+As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileup} shows its increase over the various years.
 
 \begin{figure}
     \centering
      \includegraphics[width=\columnwidth]{gfx/ch1/pileup_allYears_run2.pdf}
-    \caption[Pile-up]{The distribution of the average number of interactions per crossing (pile-up) for pp collisions in 2011 (red), 2012 (blue), 2015 (purple), 2016 (orange), 2017 (light blue), and 2018 (navy blue). The overall mean values and the minimum bias cross sections are also shown}
+    \caption[Pile-up]{The distribution of the average number of interactions per crossing (pile-up) for pp collisions in 2011 (red), 2012 (blue), 2015 (purple), 2016 (orange), 2017 (light blue), and 2018 (navy blue).}
     \label{fig:pileup}
 \end{figure}
 
-\section{Physics program and measuraments}
+\section{Physics program and measurements}
+
+Being a general-purpose experiment, CMS is capable of performing a wide range of interesting and insightful measurements. Aside from the discovery of the Higgs boson, and the study of its couplings, which will be discussed below in greater detail, we mention briefly the other directions of CMS research:
+
+\begin{outline}
+    \1 \emph{SM physics}: All the studies of the LHC data with the goals of measuring fundamental parameters of the Standard Model of particle physics. The cross-sections of a large variety of processes happening during the beam collisions are determined with the best precision possible and compared to the most up-to-date theory calculations, from the most common to the rarest of them all. Fundamental parameters of the theory such as masses of elementary particles and gauge couplings are measured to verify the effectiveness of the predictions, and any deviations of data from the Standard Model are quantified;
+    
+    \1 \emph{Top Quark physics}: The precision measurements of the properties of the top quark, the heaviest particle in the standard model. The top-quark mass is one of the most important properties as it is a key parameter for calculations in the standard model. The top group also aims to establish measurements of rare production modes of the top quark in association with other particles, and search for new couplings of the top quark. It also aim to improve our understanding of top quark production and decay processes in order to improve background predictions for physics searches beyond the standard model;
+    
+    \1 \emph{Supersymmetry (SUSY) studies}:  The search for physics signatures involving large missing transverse momentum, together with other features such as jets, muons, electrons, taus, photons, and b-jets. If we discover such signatures with yields significantly in excess of standard model backgrounds, our goal will be to characterize the event samples as fully as possible, as possible evidence of a supersymmetric theory;
+    
+    \1 \emph{B physics}: All the heavy flavor (beauty and charm, but not top) studies. These activities involve precision measurements of heavy-quark hadron production, decay and properties, and the search for associated new and rare processes;
+    
+    \1 \emph{Exotica}: Generic searches for processes beyond the SM and not related to SUSY.
+\end{outline}
 
 \subsection{The Higgs discovery}
 
-\subsection{The VBF Channel}
+The main driver for the construction of the LHC and the deployment of the CMS experiment was certainly the Higgs boson. 
+
+\graffito{Do we have to explain the Higgs mechanism in detail?}
+
+The Higgs particle is a \emph{scalar boson}, i.e. with spin $0$, whose presence in the theory is needed in order to explain the masses of the \emph{gauge bosons} through the \emph{Higgs mechanisms}: a spontaneous symmetry breaking of the scalar Higgs field, where the mass of the Higgs particle is actually a \emph{free parameter} of the theory. The Higgs boson is also expected to  interact with the entire fermion sector trough \emph{Yukawa}-like vertices, with a coupling proportional to the fermion mass.
+
+A Higgs-like particle, which is consistent with the SM Higgs according to the current experimental data, was discovered in 2012 at the LHC (see \cite{Aad_2012} and \cite{Chatrchyan_2012}). The mass of the new particle, approximately 125 GeV, sets the boundaries of today well-know Higgs phenomenology.
+
+After having established the mass of the new fermions, along with the major couplings during Run 1, both ATLAS and CMS renewed their efforts to improve the previous results and investigate the couplings of the Higgs to the fermions through Run 2 data. The most recent results published for the branching ratio signals are showed in Figure \ref{fig:sigsm}.
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-17-031_Figure_005-a.pdf}} \quad
+    \subfloat[]
+    { \includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-17-031_Figure_005-b.pdf}} \\
+    \caption[Signal strength modifiers]{Summary plot showing the signal measured signal strength per
+    production mode at $\sqrt{s}$ = 13 Tev (a) and the measured signal
+    strength per decay channel at $\sqrt{s}$ = 13 Tev (b). Taken from \cite{Sirunyan_2019}.}\label{fig:sigsm}
+\end{figure}
+
+They are expressed as the \emph{signal strength modifier} $\mu$, a measure of the agreement between the SM prediction and the observed value, defined as:
+
+\[
+\mu_P = \frac{\sigma_i}{\sigma_{i, SM}} \quad \mu^D = \frac{\text{BR}_i}{\text{BR}_{i, SM}}
+\]
+
+where we have distinguished between the \emph{production} and \emph{decay} modifiers, and $\mu = \mu_P \cdot \mu^D$.
+
+\subsection{The VBF Channel and the H$\rightarrow\mu\mu$ decay}
+
+Here we briefly mention the \emph{Vector Boson Fusion} production channel, as well as the decay of the Higgs boson in two muons, an interesting decay channel employed for a comparison of the results of this thesis.
+
+In the SM, the phenomenology of the Higgs boson decays depends crucially on its mass,
+which defines the branching fractions. The production modes instead have a milder Higgs
+mass dependence.In proton-proton collisions at the center-of-mass energies currently reached by the LHC
+(up to 13 TeV) four main production mechanisms are expected. The gluon-gluon fusion
+production mode has the largest cross section, followed by vector boson fusion, associated
+WH and ZH production, and production in association with a $\tau \overline{\tau}$  or b$\overline{\text{b}}$ pair.
+
+The gluon-gluon fusion (ggF) is the dominant production mode with a cross section of
+approximately ∼85$\%$ of the total. The leading diagram involves a quark loop: the main
+contribution to the SM amplitude arises from the top quark loop, though the amplitude is
+potentially sensitive to the presence of new massive particles with non zero color charge.
+The vector boson fusion (VBF) has a cross section of about a tenth of the gluon-gluon fu-
+sion one. The leading diagrams involve a qq scattering in the t or in the u channel, with a
+vector boson exchange and the emission of a Higgs boson. Since the momentum exchange
+is typically lower than the center-of-mass energy of the two quarks, the channel is charac-
+terized by two separated high-rapidity quarks in the final state, detectable as high rapidity
+jets. Their presence can therefore serve as a signature of the VBF production channel. Ad-
+ditionally, as VBF is a pure electroweak process, low hadronic activity is expected in the
+rapidity gap between the two jets, where the Higgs decay products are typically found.
+

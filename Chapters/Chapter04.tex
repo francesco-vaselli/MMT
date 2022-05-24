@@ -1,15 +1,6 @@
 %************************************************
 \chapter{Normalizing Flows}\label{ch:mathtest} % $\mathbb{ZNR}$
 %************************************************
-\begin{flushright}{\slshape
-    Know from the rivers \\
-    in clefts and in crevices: \\
-    those in small channels flow noisily, \\
-    the great flow silent. \\
-    Whatever’s not full makes noise.\\
-    Whatever is full is quiet. } \\ \medskip
-    --- Buddha, Nalaka Sutta
-\end{flushright}
 
 In standard probabilistic modeling practice, we represent our beliefs over unknown continuous quantities with simple parametric distributions like the normal, exponential, and Laplacian distributions. However, using such simple forms, which are commonly symmetric and unimodal (or have a fixed number of modes when we take a mixture of them), restricts the performance and flexibility of our methods. For instance, standard variational inference in the Variational Autoencoder uses independent univariate normal distributions to represent the variational family. The true posterior is neither independent nor normally distributed, which results in suboptimal inference and simplifies the model that is learnt. In other scenarios, we are likewise restricted by not being able to model multimodal distributions and heavy or light tails, widespread in HEP.
 
