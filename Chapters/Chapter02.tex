@@ -87,12 +87,71 @@ Undoubtedly, the de-facto standard for such a task is the \texttt{Geant4} toolki
 \end{figure}
 
 
-However, \texttt{Geant4} can only provide us with a description of the single physical processes and materials, so we need to provide him with the actual \emph{detector description} (see Figure \ref{fig:decmod}). Every piece of the detector has to be put together, with the right material assigned to each. We have a detector description with over five million (!) volumes and about 400 different materials (from Xenon to Argon to Air to Aerogel and Kapton Cable). There are a few heroes of ATLAS who spend a lot of time taking technical drawings (and photographs, because the technical drawings aren’t always right!) of the detector and translating them into something Geant4 can use. You can’t put every wire and pipe in – the simulation would take an eternity! – so you have to find shortcuts sometimes. It’s a painstaking process that’s still ongoing today. We continuously refine and improve our description, adding pieces that weren’t important at the beginning several years ago but are starting to be important now (like polyboron neutron shielding in our forward region; few people thought early on that we would be able to model low-energy neutron flux in our detector with Geant4, because it’s really complex nuclear physics, but we’re getting so close to being able to do so that we’ve gone back to re-check that our materials’ neutron capture properties are correct). And sometimes we go back and revise things that were done approximately in the beginning because we think we can do better. This part also involves making a detailed magnetic field map. We can’t measure the field everywhere in the detector (like deep in the middle of the calorimeter), and it takes too much time to constantly simulate the currents flowing through the magnets and their effect on the particles moving through the detector, so we do that simulation once and save the magnetic field that results.
+However, \texttt{Geant4} can only provide us with a description of the single physical processes and materials, so we need to provide the actual \emph{detector description} (see Figure \ref{fig:decmod}). 
+
+Every piece of the detector has to be put together, with the right material assigned to each. The full detector description has millions of volumes and hundreds of different materials. There is a selected group in CMS realizing technical drawings (and photographs, as the technical drawings are not always accurate) of the detector and translating them into something \texttt{Geant4} can use. As the simulation would be far too expensive if we considered all of the actual components, at time it is necessary to define specific \emph{shortcuts} which do not impare the reliability of the simulation too much. It’s a painstaking process, still ongoing today as a continuous refinement and improvement of the current model.
+
+Next comes the set of physics models. The toolkit has a whole lot of them that you can use and they have a default quite suited to the HEP use case. Those physics models describe each process (e.g. the photoelectric effect, Compton scattering, bremsstrahlung, ionization, multiple scattering, decays, nuclear interactions, $\dots$) for each particle. Some calculations can be very complicated and costly, so we have to choose, at this point, what physics we aree interested in. \texttt{Geant4} can be used for simulation of space, simulation of cells and DNA, and simulations of radioactive environments. It is usual to take the fastest model whose results we cannot really distinguish from the most detailed models. That is, we turn off everything that we don’t really notice in our detector anyway.
+
+The last part is to specify the \emph{saving} options. \texttt{Geant4} does not inherently know the difference between some silicon that is a part of a computer chip somewhere in the detector and the silicon that makes up the sensors in the inner detector. So we specify the parts of the detector that are the most crucial, called \emph{sensitive} detectors. There are a lot of technicalities to optimizing the storage, but in the end we want to write files with all the energy deposits that  \texttt{Geant4} has made, their time and location – and sometimes information (called \emph{truth}) about what really happened in the simulation, so later we can find out how good our reconstruction software was at correctly identifying photons and their conversions into electron-positron pairs, for example.
+
+At the end of this costly step, we are left with a long list of energy deposits, times, and locations in our detector. 
+
 \subsection{Digitization and Reconstruction} 
+
+The last part of the simulation process consists in turning the energy deposits into the actual signal outputted by the detector-- a process called \emph{digitization}, once again specific for the CMS detector.
+
+The simple idea is to change the energies into the detector outputs – usually times, voltages, and currents, for example. We have to build in all the detector effects that we care about. Some are well known such as Birks’ law, for example; others are more complicated, like the change in light collected from a scintillator tile in the calorimeter depending on whether the energy is deposited right in the middle or on the edge. We can use the digitization to model some of the very low-energy physics that we don’t want to have to simulate in detail with \texttt{Geant4} but want to approximate to an average. Those are effects like the spread and collection of charge in a silicon module or the drift of ionized gas towards a wire at low voltage.
+
+Digitization is where some other effects are put in, like the pile-up, the extra proton-proton collisions in a single bunch crossing. Those are usually pre-simulated and add on top of the important signal events. We can add other background effects if we want to, like cosmic rays crossing the detector, or proton collisions with remnant gas particles floating around in the beampipe, or muons running down parallel to the beamline from protons that hit collimators upstream. 
+
+Finally, we also have to pass our simulated data to the track reconstruction and particle flow algorithms to obtain a collection of physical objects as reconstructed by the detector readout. This is the \emph{reconstruction} step, resulting in events similar to the one shown in Figure \ref{fig:cmsev} . Detector hits after the simulation and reconstruction steps are called \emph{SimHits}
+and \emph{RecHits} respectively.
+
+\begin{figure}
+    \centering
+     \includegraphics[width=\columnwidth]{gfx/ch2/HIG-19-006_VBF_white.png}
+    \caption[CMS Event]{Event in which a candidate Higgs boson produced by vector boson fusion (VBF) decays into two muons, with an invariant mass of 125.01 GeV and per-event mass uncertainty of 1.83 GeV. The forward jets from the VBF are depicted by the orange cones and the muons are drawn as long red lines. Courtesy of the CMS Collection.}
+    \label{fig:cmsev}
+\end{figure}
+
+
+At the end of the process we have something that looks exactly like the real data – except we know exactly what it is, without any ambiguity. With that, we can build up some simulated data that includes all the different processes that we already know exist in nature, like the production of top quarks, W bosons, Z bosons, and the Higgs bosons. And we can build another set that has all of those, but also includes other alternative theories. The last part, which is really what much of the data analysis is concerned with, is trying to figure out what makes events under the new hypothesis different from the other ones we expect to see – and trying to isolate them from the others. We can look at the reconstructed energy in the event, the number of particles we find, any oddities like heavy particles decaying away from the collision point – anything that helps. And we have to know a relevant information about the simulation, so that we don’t end up using properties of the events that are very hard to simulate to separate new particles from known ones. This is usually the first part of almost all the data analyses at the LHC, while the last one is the \emph{unblinding}, where we eventually check the data that has all the features we request – passes all our requirements – and see whether it looks more like the null or alternate hypothesis. Sometimes it can be useful to use \emph{data-driven} methods to estimate the backgrounds (or tweak the estimates from our simulation), but almost every time it is common to start from the simulation itself.
 
 \subsection{Computing Costs}
 
-\subsection{FastSim}
+Due to the length and the complexity of the process, its tremendous computation costs should not come as a surprise. Figure \ref{fig:cpuusage} shows the public approved HL-LHC CMS projections for the CPU usage at CMS.
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=.65\columnwidth]{gfx/ch2/cpu_cms2021.pdf}} \\
+    \subfloat[]
+    { \includegraphics[width=.65\columnwidth]{gfx/ch2/cpu_pie_cms2021.pdf}} 
+    \caption[Computing estimates]{The total CPU utilization projections (a) and the approximate breakdown of CPU time into primary processing and analysis activities (b) for the CMS experiment.}\label{fig:cpuusage}
+\end{figure}
+
+The plots show estimates from 2021 made for the CMS contribution to the LHCC November review of HL-LHC computing and common software, which supersede previous results from CMS. Coherently with the CMS Phase-2 Upgrade HLT TDR, an integrated luminosity of 270 fb$^{-1}$ per year at 140 pileup events (5 KHz high level trigger rate) and a 1.2 million seconds heavy-ions run is considered during Run 4. For what concerns Run 5, an integrated luminosity of 350 fb$^{-1}$ per year at 200 pileup events (7.5 KHz high level trigger rate) is considered during Run 5. Two scenarios are considered: the first one is a baseline, which does not include any improvement due to ongoing R\&D activity, and the second one incorporates the most probable outcome of the ongoing R\&D activities. The blue curves (and points) show the annual projected needs, summed across Tier-0, Tier-1 and Tier-2 resource needs in each of these scenarios. The gray band shows the projected resource availability for an example scenario that extrapolates the 2018 CMS pledged resources using an annual increase in available resources of between 10$\%$ and 20$\%$. Results are derived from a bottoms-up model of CMS offline processing activities, including prompt reconstruction, Monte Carlo simulation, data re-reconstruction and all phases of analysis activities. 
+
+We also show the approximate breakdown of CPU time into primary processing and analysis activities during a typical HL-LHC year. The plot corresponds to a snapshot of the year 2029. The baseline scenario is considered, i.e. projected effects from on-going R\&D that will reduce the computing resources needed by CMS are not considered.
+
+The presented figures make it clear that:
+
+\begin{outline}
+    \1 Both the future and the present CPU (as well as Disk) utilization are completely dominated by the event simulation tasks, which leaves out only about 6$\%$ of resources for other necessities;
+    \1 Without improvements from the R\&D sector we risk not being able to meet the future necessities of the collaboration.
+\end{outline}
+
+
+\subsection{Fast simulation}
+
+Clearly, the possibility of performing fast simulations would be a major improvement over the current simulation pipeline, and there are already many different studies and approaches for doing so.
+
+\paragraph{Top-down approach}
+
+In this type of approach, we search for the slowest part of our process and find ways of making it as fast as possible with specific parametric shortcuts. The CMS Collaboration has actually a dedicated approach called CMS \emph{FastSim}.
+
+\paragraph{Bottom-up approach}
 
 \section{The NanoAOD format}
 
