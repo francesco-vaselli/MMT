@@ -21,7 +21,7 @@ Without a proper simulation, we also would not know the expected performance of 
 
 \section{Modelling an event}
 
-There are three major, distinct steps in modelling a physical event at CMS. The first one is more generally related to the physical theories and calculations, while the other two are specific to the CMS detector.
+There are three major, distinct steps in modelling a physical event at CMS. The first one is more generally related to the physical theories and calculations, while the other two are specific to the CMS detector. The whole process is often referred to as \emph{FullSim} (full simulation).
 
 \subsection{Event generation}
 
@@ -91,7 +91,7 @@ However, \texttt{Geant4} can only provide us with a description of the single ph
 
 Every piece of the detector has to be put together, with the right material assigned to each. The full detector description has millions of volumes and hundreds of different materials. There is a selected group in CMS realizing technical drawings (and photographs, as the technical drawings are not always accurate) of the detector and translating them into something \texttt{Geant4} can use. As the simulation would be far too expensive if we considered all of the actual components, at time it is necessary to define specific \emph{shortcuts} which do not impare the reliability of the simulation too much. It’s a painstaking process, still ongoing today as a continuous refinement and improvement of the current model.
 
-Next comes the set of physics models. The toolkit has a whole lot of them that you can use and they have a default quite suited to the HEP use case. Those physics models describe each process (e.g. the photoelectric effect, Compton scattering, bremsstrahlung, ionization, multiple scattering, decays, nuclear interactions, $\dots$) for each particle. Some calculations can be very complicated and costly, so we have to choose, at this point, what physics we aree interested in. \texttt{Geant4} can be used for simulation of space, simulation of cells and DNA, and simulations of radioactive environments. It is usual to take the fastest model whose results we cannot really distinguish from the most detailed models. That is, we turn off everything that we don’t really notice in our detector anyway.
+Next comes the set of physics models. The toolkit has a great variety of them that you can use and they have a default quite suited to the HEP use case. Those physics models describe each process (e.g. the photoelectric effect, Compton scattering, bremsstrahlung, ionization, multiple scattering, decays, nuclear interactions, $\dots$) for each particle. Some calculations can be very complicated and costly, so we have to choose, at this point, what physics we aree interested in. \texttt{Geant4} can be used for simulation of space, simulation of cells and DNA, and simulations of radioactive environments. It is usual to take the fastest model whose results we cannot really distinguish from the most detailed models. That is, we turn off everything that we don’t really notice in our detector anyway.
 
 The last part is to specify the \emph{saving} options. \texttt{Geant4} does not inherently know the difference between some silicon that is a part of a computer chip somewhere in the detector and the silicon that makes up the sensors in the inner detector. So we specify the parts of the detector that are the most crucial, called \emph{sensitive} detectors. There are a lot of technicalities to optimizing the storage, but in the end we want to write files with all the energy deposits that  \texttt{Geant4} has made, their time and location – and sometimes information (called \emph{truth}) about what really happened in the simulation, so later we can find out how good our reconstruction software was at correctly identifying photons and their conversions into electron-positron pairs, for example.
 
@@ -149,9 +149,60 @@ Clearly, the possibility of performing fast simulations would be a major improve
 
 \paragraph{Top-down approach}
 
-In this type of approach, we search for the slowest part of our process and find ways of making it as fast as possible with specific parametric shortcuts. The CMS Collaboration has actually a dedicated approach called CMS \emph{FastSim}.
+In this type of approach, we search for the slowest part of our process and find ways of making it as fast as possible with specific parametric shortcuts. The CMS Collaboration has actually a dedicated approach called CMS \emph{FastSim}, see \cite{https://doi.org/10.48550/arxiv.1701.03850}. 
+
+While FullSim uses the exact detector geometry, tracks particles in small steps, and uses
+detailed models for material interactions, FastSim uses a simplified geometry with infinitely thin material layers and simple analytical material interaction models that are parametrized
+and tuned to agree with FullSim. For the digitization step, both FullSim and FastSim do a detailed
+emulation of detector electronics and trigger, with small exceptions in FastSim. In the reconstruction step, FullSim employs the standard event reconstruction used for reconstructing the real CMS
+data. FastSim uses standard reconstruction for calorimetry and muon systems, but a simplified
+reconstruction for tracking, based on smearing and truth information, in order to reduce CPU time.
+
+Performance of FastSim is validated regularly within the official CMS software release val-
+idation framework; overall, distributions in FastSim agree with FullSim within $\approx 10\%$.
 
 \paragraph{Bottom-up approach}
+
+The bottom-up approach means that we try to skip detector simulation and digitization all together and go directly to the final objects that we would have reconstructed (electrons, muons, jets, missing transverse momentum, $\dots$). A popular framework is the one of \texttt{DELPHES} fast-simulation, see \cite{de_Favereau_2014}.
+
+It takes as input the most common event generator output and performs a fast and realistic simulation of
+a general purpose collider detector. To do so, long-lived particles emerging from the hard
+scattering are propagated to the calorimeters within a uniform magnetic field parallel to
+the beam direction. The particle energies are computed by smearing the initial long-lived
+visible particles momenta according to the detector resolution. As a result, jets, missing
+energy, isolated electrons, muons and photons, and taus can be reconstructed. It is oviously not meant to
+be used for advanced detector studies, for which more accurate tools are needed, but it can nonetheless perform quickly realistic physics studies without in-depth knowledge of the technicalities.
+
+
+\begin{table}
+\begin{adjustbox}{width={\textwidth},totalheight={\textheight},keepaspectratio}%
+    \begin{tabular}{lll} \toprule
+        \tableheadline{Simulation framework} & \tableheadline{key aspects} & \tableheadline{speed} \\ \midrule
+        FullSim & \tabitem detailed geometry; &  $\mathcal{O}(40$ s) for a t$\overline{\text{t}}$ event \\
+        & \tabitem small-step tracking; & \\
+        & \tabitem \texttt{Geant4} material modelling; & \\
+        & \tabitem  detailed digitization; & \\
+        & \tabitem full reconstruction & \\
+        \midrule
+        FastSim & \tabitem simplified geometry; &  $\mathcal{O}(5$ s) for a t$\overline{\text{t}}$ event \\
+        & \tabitem thin material layers; & \\
+        & \tabitem simple analytical material modelling; & \\
+        & \tabitem  detailed digitization; & \\
+        & \tabitem full reconstruction with exceptions & \\
+        %postulant quo & westeuropee & sanctificatec \\
+        \midrule
+        Delphes & \tabitem simple tracking system; &  $\mathcal{O}(0.01$ s) for a t$\overline{\text{t}}$ event \\
+        & \tabitem smearing & \\
+        %autem vulputate ex & parola & romanic \\
+        %usu mucius iisque & studio & sanctificatef \\
+        \bottomrule
+    \end{tabular}
+    \end{adjustbox}
+    \caption[Simulation frameworks]{An at-glance comparison between the various simulation frameworks employed at the CMS experiment.}
+    \label{tab:simfram}
+\end{table}
+
+As Table \ref{tab:simfram} shows, the various fast simulation approaches allow us to obtain significant speedups. However, while CMS FastSim accuracy is constantly being improved, its speed is still somewhat lacking; while \texttt{DELPHES} achieves a marked speedup but sacrifices the realistic detector simulation.
 
 \section{The NanoAOD format}
 
