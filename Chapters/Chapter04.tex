@@ -61,13 +61,13 @@ For the sake of completeness, we distinguish two main cases.
 \paragraph{Forward KL Divergence}
 Suppose that we have samples from the target distribution (or we are able to generate them), but we cannot evaluate the underlying pdf $p_x^*(\mathbf{x})$. This is precisely our case in HEP, with billions of available Monte Carlo data and no analytical pdf. Then, we may define as our loss function the \emph{forward Kullback-Leibler divergence} between the target distribution $p_x^*(\mathbf{x})$ and the flow-defined one $p_x(\mathbf{x}; \, \phi)$:
 
-\[
-\begin{aligned}
+\begin{equation}\label{eqn:kldiv}
+    \begin{aligned}
     \mathcal{L}(\phi) &= \mathcal{D}_{KL}[p_x^*(\mathbf{x})||p_x(\mathbf{x}; \, \phi)]\\
     &= -\mathbb{E}_{p_x^*(\mathbf{x})}[\log(p_x(\mathbf{x}; \, \phi))] +\; \text{const.}\\
     &= -\mathbb{E}_{p_x^*(\mathbf{x})}[\log(p_z(f^{-1}(\mathbf{x}; \, \phi)))+\log\left(\det\mathbb{J}_{f^{-1}}(\mathbf{x}; \, \phi)\right)] +\; \text{const.}
-\end{aligned}
-\]
+    \end{aligned}
+\end{equation}
 
 where we have used Eq. \ref{eqn:logpdf}. Supposing we had a set of training samples $\{\mathbf{x}\}^N_n$ from the target pdf, we may estimate the expectation value over $p_x^*(\mathbf{x})$ by Monte Carlo as:
 
@@ -202,14 +202,36 @@ In practice, this is usually accomplished by making the parameters for a known n
 
 \section{Applications}
 
-Besides the generation of samples, the use cases of Normalzing Flows are numerous. 
+The use cases of Normalzing Flows are numerous. 
 Here we simply limit ourselves to those that we deem more interesting from the point of view a physicist.
 
 \paragraph{Density estimation and generation}
 
+Due to their ability to be expressive while still allowing for exact likelihood calculations, Normalizing Flows are often used for probabilistic modeling of data. For this application, we assume access to a finite number of draws $\mathbf{x})$ from some unknown generative process $p^*_x(\mathbf{x})$. We then train the Flow according to Eq. \ref{eqn:kldiv}: we can now use the model to estimate densities, expectations, marginals, or other quantities of interest on never-before-seen data; as well as sampling from the model novel instances that could have plausibly been sampled from $p^*_x(\mathbf{x})$. The latter use case, generation, has been a popular application of flows in machine learning, for various categories of data. It is also the one upon which the present work is based.
+
 \paragraph{Inference}
+We can also turn to \emph{inference}: estimating unknown quantities within a model. The most common setting is the computation of high-dimensional, analytically intractable integrals of the form: 
+
+\[
+\int \text{d}\eta \pi(\eta)
+\]
+
+as, for example, the posterior’s normalizing constant or when computing expectations under the posterior in Bayesian inference. Common approaches to this problem include \emph{importance sampling}, where integrals are converted to an expectation under an auxiliary distribution $q(\eta)$:
+
+\[
+\int \text{d}\eta \pi(\eta) = \int \text{d}\eta q(\eta) \frac{\pi(\eta)}{q(\eta)} \approx \frac{1}{S}\sum_s \frac{\pi(\eta_s)}{q(\eta_s)}
+\]
+
+where $q(\eta)$ is a user-specified density function and $\eta_s$ is a sample from $q(\eta)$. Clearly, this requires both sampling and density evaluation. Since both operations are tractable for many
+flows, they make for an attractive model from which to construct the proposal.
+Additionally, Flows may also be employed as part of \emph{rejection sampling}, \emph{Markov chain Monte Carlo} and \emph{Variational Inference}, to fit distributions over latent variables or model parameters.
 
 \paragraph{Anomaly detection}
+
+Finally, one last application, which proved successful in the recent LHC Olympics \cite{Kasieczka_2021}, is that of \emph{anomaly detection}, aimed at revealing anomalous feature of data signalling potentially new and insightful physical processes.
+
+The best performance on the first black box in the LHCO challenge, as measured by finding and correctly characterising the anomalous signals, was by a team of cosmologists at Berkeley (George Stein, Uros Seljak and Biwei Dai) who compared the phase-space density between a sliding signal region and sidebands using Flows to model the densities directly from data.
+
 %*****************************************
 %*****************************************
 %*****************************************
