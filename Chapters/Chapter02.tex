@@ -5,7 +5,7 @@ The LHC produces -at design parameters- over 600 millions collisions ($\approx 1
 
 The trigger systems alleviate the problem by reducing the amount of data by a factor of 1000 or 10000; despite this, the constant need of cutting-edge resources and solutions, both in hardware and software, have been driving extremely fruitful research in the history of the LHC.
 
-One major necessity, whose importance and scale may not be appreciated by people outside of the field, is the one for \emph{simulations}.
+One major necessity, whose importance and scale may not be appreciated by people outside of the field, is the one for \emph{simulations}. We explain the concept more in detail in the following, drawing from \cite{sims} as our main reference.
 
 \section{The necessity of simulations}
 
@@ -82,7 +82,7 @@ Undoubtedly, the de-facto standard for such a task is the \texttt{Geant4} toolki
 \begin{figure}
     \centering
      \includegraphics[width=\columnwidth]{gfx/ch2/cms_160518_01_Scene_2.png}
-    \caption[CMS model]{ Representation of the CMS detector based on the actual \texttt{Geant4} CMS Detector Description. It accurately and precisely reproduces the geometry of all CMS detector subsystems, including the geometries of the original CMS detector, phase 1 and phase 2 upgrades.  From \cite{decmod}}
+    \caption[CMS model]{ Representation of the CMS detector based on the actual \texttt{Geant4} CMS Detector Description. It accurately and precisely reproduces the geometry of all CMS detector subsystems, including the geometries of the original CMS detector, phase 1 and phase 2 upgrades.  From \cite{decmod}.}
     \label{fig:decmod}
 \end{figure}
 
@@ -158,8 +158,7 @@ emulation of detector electronics and trigger, with small exceptions in FastSim.
 data. FastSim uses standard reconstruction for calorimetry and muon systems, but a simplified
 reconstruction for tracking, based on smearing and truth information, in order to reduce CPU time.
 
-Performance of FastSim is validated regularly within the official CMS software release val-
-idation framework; overall, distributions in FastSim agree with FullSim within $\approx 10\%$.
+Performance of FastSim is validated regularly within the official CMS software release validation framework; overall, distributions in FastSim agree with FullSim within $\approx 10\%$.
 
 \paragraph{Bottom-up approach}
 
@@ -227,7 +226,7 @@ Despite this, the potential advantages of the NanoAOD are still partially hamper
 single CPU core. This, in turn, means that we are bound to have an underling AOD file, which implies that we still need to perform all the computationally expensive steps of Section \ref{sec:modelling}.
 However, the consistently reduced size of the NanoAOD opens up new possibilities for its production thorugh non-conventional, non-\texttt{Geant4} based approaches. 
 
-Specifically, in the present work we are interested to investigate \emph{state-of-the-art deep learning} techniques as a way of bypassing the Simulation and Digitization steps and directly produce new, original events in the NanoAOD format in a fraction of the time and using only a subset of the resources.
+Specifically, in the present work we are interested in investigating \emph{state-of-the-art deep learning} techniques as a way of bypassing the Simulation and Digitization steps and directly produce new, original events in the NanoAOD format in a fraction of the time and using only a subset of the resources.
 
 %*****************************************
 %*****************************************
