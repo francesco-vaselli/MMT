@@ -1,31 +1,36 @@
 %************************************************
 \chapter{Data Analysis at the LHC}\label{ch:introduction}
 %************************************************
-The LHC produces -at design parameters- over 600 millions collisions ($\approx 10^9$ collisions) proton-proton per second in ATLAS or CMS detectors. The amount of data collected for each event is around 1 MB (1 Megabyte). This means that we are reaching 1 PB/s (1 \emph{Peta}byte/second) of data--far too much for any detector data acquisition system to handle.
+The LHC produces -at design parameters- over 600 millions collisions ($\approx 10^9$ collisions) proton-proton per second in ATLAS or CMS detectors. The amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte). This means that we are reaching 40 TB/s of data--far too much for any detector data acquisition system to handle.
 
-The trigger systems alleviate the problem by reducing the amount of data by a factor of 1000 or 10000; despite this, the constant need of cutting-edge resources and solutions, both in hardware and software, have been driving extremely fruitful research in the history of the LHC.
+The trigger systems alleviate the problem by reducing the amount of data by a factor or 10$^{4}$; despite this, the constant need of cutting-edge resources and solutions, both in hardware and software, have been driving extremely fruitful research in the history of the LHC.
 
-One major necessity, whose importance and scale may not be appreciated by people outside of the field, is the one for \emph{simulations}. We explain the concept more in detail in the following, drawing from \cite{sims} as our main reference.
+One major necessity, whose importance and scale may not be appreciated by people outside of the field, is the one for \emph{simulations}. We explain the concept more in detail in the following, drawing from \cite{sims} as an informal reference.
 
 \section{The necessity of simulations}
 
-First of all, why do we need simulations in the first place?
+First of all, we have to understand why do we need simulations in the first place.
 The simulation is a crucial aspect of any high energy physics experiments. In CMS it is used both
-at analysis level and for testing the algorithms before deployment with data. The simulation targets relatively rare processes originating from a hard interaction between two
-proton components, which are signal or background for specific analyses. Single particles
-or hadronic jets can also be simulated for specific purposes.
+at analysis level and for testing the algorithms before deployment with data. 
+Simulations help in a wide range of scenarios:
 
-Simulations are a necessity if we have to test a physical theory: we need to know what reality would look like if the proposed theory was true or not. Then we can check which hypothesis our data looks like, and we can either validate or disprove the theory.
+\begin{outline}
+   \1  The simulation can provide us with detailed studies of the expected SM background processes, allowing us to optimize our analysis according to the theoretical expectations;
 
-Without a proper simulation, we also would not know the expected performance of the detector and the regions of interest for our process, making it impossible to correctly operate the apparatus and obtain reasonable results.
+\1 It can also target relatively rare processes originating from a hard interaction between twoproton components, which are signal or background for specific analyses. Single particles
+or hadronic jets can also be simulated for specific purposes;
 
+\1 Simulations are a necessity if testing possible extension of a physical theory, allowing us to understand what would we expect in this case. Then we can check which hypothesis our data looks like, and we can either validate or disprove the theory;
+
+\1 Without a proper simulation, we also would not know the expected performance of the detector and the regions of interest for our process, making it impossible to properly operate the apparatus and obtain reasonable results.
+\end{outline}
 \section{Modelling an event} \label{sec:modelling}
 
-There are three major, distinct steps in modelling a physical event at CMS. The first one is more generally related to the physical theories and calculations, while the other two are specific to the CMS detector. The whole process is often referred to as \emph{FullSim} (full simulation).
+There are three major, distinct steps in modelling a physical event at CMS. The first one,  \emph{generation}, is more generally related to the physical theories and calculations, while the other two, \emph{simulation} and \emph{digitization}, are specific to the CMS detector. The whole process is often referred to as \emph{FullSim} (full simulation).
 
 \subsection{Event generation}
 
-The first step to any good simulation is called \emph{generation}, that is all the calculations based on Quantum Chromodynamics which describes how the quarks and gluons inside the protons scatter off one another, how they might create new particles, and how those new particles behave after they have been created. 
+The first step to simulation is called generation, based on the theoretical calculations which describes how the quarks and gluons inside the protons scatter off one another, how they might create new particles, and how those new particles behave after they have been created. 
 
 Proton-proton collisions are very complex and difficult to model accurately. Protons are
 composed of 3 quarks, called \emph{valence} quarks, by virtual gluons and virtual quark anti-quark
@@ -42,7 +47,7 @@ states that the hadronic cross-section $\sigma_{pp}$ is a convolution of the par
 where function $f_i(x)$ is probability density that a parton of type i has a fraction x of the
 hadron energy. The final cross section may be evaluated by the single, non-trivial contributions $\hat{\sigma}_{ij}$.
 
-Apart from the hard interaction, the other constituents of the proton can also interact. This
+Apart from the hard interactions, i.e. parton-parton interactions with large momentum transfer which results into hard partons and jets, the other constituents of the proton can also interact. This
 usually results in a spray of softer particles, called \emph{underlying event} (UE). Any high momentum particle involved in the collision will emit additional hard QCD radiation. Radiation
 from particles before the hard interaction is called \emph{initial-state-radiation} (ISR), whereas radiation off particles produced in the collision is called \emph{final-state-radiation} (FSR). Quarks and gluons can emit additional radiation via the strong interaction. All the quarks
 and gluons go through the hadronization process, forming colorless hadrons. Finally, unstable particles are going to decay. A representation of all these elements is shown in Figure \ref{fig:evgen}.          
@@ -50,7 +55,7 @@ and gluons go through the hadronization process, forming colorless hadrons. Fina
 \begin{figure}
     \centering
      \includegraphics[width=.65\linewidth]{gfx/ch2/event_800px.png}
-    \caption[Event generation]{ Representation of a proton-proton collision event. The red part includes the hard interaction and the decay of the products. Initial and final state radiation are in blue. A secondary
+    \caption[Event generation]{ We can get a better understanding of a proton-proton collision event through this visualization. The red part includes the hard interaction and the decay of the products. Initial and final state radiation are in blue. A secondary
 interaction can take place, in purple, before the final-state partons hadronize. The hadronization is
 represented by the green blobs, and the hadron decay in dark green. Photon radiation is in yellow. From \cite{evgen}.}
     \label{fig:evgen}
@@ -70,9 +75,10 @@ All the various parts involved in this step can be summarized as:
 \end{outline}
 
 The first two are usually included in \emph{Matrix Elements generators}, while the last three are
-included in Parton Showering programs. Both use Monte Carlo techniques; some popular multi-purpose generators include \texttt{Pythia8}, \texttt{MadGraph} and \texttt{Sherpa}.
+included in Parton Showering programs. Both use Monte Carlo techniques; some popular multi-purpose generators include \texttt{Pythia8} \cite{Bierlich:2022pfr}, \texttt{MadGraph} \cite{Alwall_2014} and \texttt{Sherpa} \cite{Bothmann_2019}.
 
-We can thus obtain a complete description of all the (stable) particles that come out of a collision between two protons under our theory only after a complex process involving several months of modelling and calculations.
+We can thus obtain a complete description of all the (stable) particles that come out of a collision between two protons under our theory only after a complex process involving several steps of modelling and calculations. The usual list of final state particles includes:
+
 
 \subsection{Detector Simulation through GEANT4}
 
@@ -82,7 +88,7 @@ Undoubtedly, the de-facto standard for such a task is the \texttt{Geant4} toolki
 \begin{figure}
     \centering
      \includegraphics[width=\columnwidth]{gfx/ch2/cms_160518_01_Scene_2.png}
-    \caption[CMS model]{ Representation of the CMS detector based on the actual \texttt{Geant4} CMS Detector Description. It accurately and precisely reproduces the geometry of all CMS detector subsystems, including the geometries of the original CMS detector, phase 1 and phase 2 upgrades.  From \cite{decmod}.}
+    \caption[CMS model]{ This representation of the CMS detector is based on the actual \texttt{Geant4} CMS Detector Description discussed in the text. It accurately and precisely reproduces the geometry of all CMS detector subsystems, including the geometries of the original CMS detector, phase 1 and phase 2 upgrades.  From \cite{decmod}.}
     \label{fig:decmod}
 \end{figure}
 
@@ -99,7 +105,7 @@ At the end of this costly step, we are left with a long list of energy deposits,
 
 \subsection{Digitization and Reconstruction} 
 
-The last part of the simulation process consists in turning the energy deposits into the actual signal outputted by the detector-- a process called \emph{digitization}, once again specific for the CMS detector.
+The last part of the simulation process consists in turning the energy deposits into the actual signal outputted by the detector-- a process called digitization, once again specific for the CMS detector.
 
 The simple idea is to change the energies into the detector outputs – usually times, voltages, and currents, for example. We have to build in all the detector effects that we care about. Some are well known such as Birks’ law, for example; others are more complicated, like the change in light collected from a scintillator tile in the calorimeter depending on whether the energy is deposited right in the middle or on the edge. We can use the digitization to model some of the very low-energy physics that we don’t want to have to simulate in detail with \texttt{Geant4} but want to approximate to an average. Those are effects like the spread and collection of charge in a silicon module or the drift of ionized gas towards a wire at low voltage.
 
@@ -111,7 +117,7 @@ and \emph{RecHits} respectively.
 \begin{figure}
     \centering
      \includegraphics[width=\columnwidth]{gfx/ch2/HIG-19-006_VBF_white.png}
-    \caption[CMS Event]{Event in which a candidate Higgs boson produced by vector boson fusion (VBF) decays into two muons, with an invariant mass of 125.01 GeV and per-event mass uncertainty of 1.83 GeV. The forward jets from the VBF are depicted by the orange cones and the muons are drawn as long red lines. Courtesy of the CMS Collection.}
+    \caption[CMS Event]{As an example of the final high-level event description, we show a final event description  where a candidate Higgs boson produced by vector boson fusion (VBF) decays into two muons, with an invariant mass of 125.01 GeV and per-event mass uncertainty of 1.83 GeV. The forward jets from the VBF are depicted by the orange cones and the muons are drawn as long red lines. Courtesy of the CMS Collection.}
     \label{fig:cmsev}
 \end{figure}
 
@@ -128,7 +134,7 @@ Due to the length and the complexity of the process, its tremendous computation 
     {\includegraphics[width=.65\columnwidth]{gfx/ch2/cpu_cms2021.pdf}} \\
     \subfloat[]
     { \includegraphics[width=.65\columnwidth]{gfx/ch2/cpu_pie_cms2021.pdf}} 
-    \caption[Computing estimates]{The total CPU utilization projections (a) and the approximate breakdown of CPU time into primary processing and analysis activities (b) for the CMS experiment.}\label{fig:cpuusage}
+    \caption[Computing estimates]{The R$\&$D are necessary for the future of the experiment, as showed by the total CPU utilization projections (a) and the approximate breakdown of CPU time into primary processing and analysis activities (b) for the CMS experiment.}\label{fig:cpuusage}
 \end{figure}
 
 The plots show estimates from 2021 made for the CMS contribution to the LHCC November review of HL-LHC computing and common software, which supersede previous results from CMS. Coherently with the CMS Phase-2 Upgrade HLT TDR, an integrated luminosity of 270 fb$^{-1}$ per year at 140 pileup events (5 KHz high level trigger rate) and a 1.2 million seconds heavy-ions run is considered during Run 4. For what concerns Run 5, an integrated luminosity of 350 fb$^{-1}$ per year at 200 pileup events (7.5 KHz high level trigger rate) is considered during Run 5. Two scenarios are considered: the first one is a baseline, which does not include any improvement due to ongoing R\&D activity, and the second one incorporates the most probable outcome of the ongoing R\&D activities. The blue curves (and points) show the annual projected needs, summed across Tier-0, Tier-1 and Tier-2 resource needs in each of these scenarios. The gray band shows the projected resource availability for an example scenario that extrapolates the 2018 CMS pledged resources using an annual increase in available resources of between 10$\%$ and 20$\%$. Results are derived from a bottoms-up model of CMS offline processing activities, including prompt reconstruction, Monte Carlo simulation, data re-reconstruction and all phases of analysis activities. 
@@ -197,7 +203,7 @@ be used for advanced detector studies, for which more accurate tools are needed,
         \bottomrule
     \end{tabular}
     \end{adjustbox}
-    \caption[Simulation frameworks]{An at-glance comparison between the various simulation frameworks employed at the CMS experiment.}
+    \caption[Simulation frameworks]{An at-glance comparison between the various simulation frameworks employed at the CMS experiment, useful for understanding the current approaches.}
     \label{tab:simfram}
 \end{table}
 
