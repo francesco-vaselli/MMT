@@ -31,7 +31,7 @@ collisions. LHCb is an experiment designed to perform precision measurement of p
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{gfx/ch1/CERN's-accelerator-complex2013.jpg}
-    \caption[The LHC]{The LHC along with its accelerator complex.}
+    \caption[The LHC]{To understand the basic design, we show here the LHC along with its accelerator complex. From \cite{acccomplex}.}
     \label{fig:cernacc}
 \end{figure}
 
@@ -40,17 +40,17 @@ The first one is a linear accelerator that injects particles in a chain of three
 accelerators. Finally, they are injected in the LHC with opposite directions in
 two separate beam pipes with an energy of 450 GeV. The particles are accelerated
 inside LHC by \emph{radio-frequency cavities} from 450 GeV to a desing-energy of 7 TeV, therefore
-the center of mass energy of particles collision is 14 TeV. They circulate
+the center of mass energy of particles collision is nominally 14 TeV. They circulate
 grouped in \emph{bunches}; each beam pipe contains about 2800 bunches in LHC and each
 proton bunch has $\approx 10^{11}$ protons. The bunches are spaced 25 ns in time in the nominal
 design therefore collisions happen every 25 ns, for a final event rate of about 40 MHz.
 
 \paragraph{Luminosity and pile-up}
 
-The collision rate of an accelerator is measured by its \emph{luminosity}. It´s a measurement of the number of collisions that can be produced in a detector per cm$^{2}$ and per second. The bigger is the value of L, the bigger is the number of collisions; a key parameter in the design of an accelerator.
-Semi-qualitatively, if we define N$^2 \approx (1.15*10^{11})^2$ as the square of the nummber of protons per bunch, $t$ = 25 ns as the time between bunches and $S_{eff} = 4\pi\sigma$ as the \emph{effective section of collision}, depending on the transversal size of the bunch at Interaction Point ($\sigma \approx 16 \; \mu$m), we obtain L as:
+The collision rate of an accelerator is measured by its \emph{luminosity}. It's a measurement of the number of collisions that can be produced in a detector per cm$^{2}$ and per second. The bigger is the value of L, the bigger is the number of collisions, making L a key parameter in the design of an accelerator.
+Semi-qualitatively, if we define N$^2 \approx (1.15\cdot10^{11})^2$ as the square of the number of protons per bunch, $t$ = 25 ns as the time between bunches and $S_{eff} = 4\pi\sigma$ as the \emph{effective section of collision}, depending on the transversal size of the bunch at Interaction Point ($\sigma \approx 16 \; \mu$m), we obtain L as:
 
-\[ L = \frac{N^2}{tS_{eff}} \approx 10^{34} \text{cm}^2 \text{s}^{-1}
+\[ \text{L} = \frac{N^2}{tS_{eff}} \approx 10^{34} \; \text{cm}^2 \text{s}^{-1}
 \]
 
 A related quantity is the \emph{integrated} luminosity, which is simply defined as the integral of the luminosity over time.
@@ -92,7 +92,7 @@ p\sin\theta = \sqrt{p_x^2 + p_y^2}$. Letting $y$ denote the \emph{rapidity}, def
     y = \frac{1}{2}\ln(\frac{E + p_z}{E - p_z})
 \end{equation*}
 
-the transverse momentum, the azimuthal angle and the mass are invariant under boosts
+we note that the transverse momentum, the azimuthal angle and the mass are invariant under boosts
 along the z direction, while the rapidity is simply additive. The difference in rapidity between two particles is therefore invariant under boosts along the z direction.
 The rapidity can however be approximated for ultra-relativistic particles by the \emph{pseudo-rapidity} $\eta$:
 
@@ -113,7 +113,7 @@ CMS is a complex apparatus composed of many \emph{subdetectors}--it is illustrat
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{gfx/ch1/cms_160312_02.png}
-    \caption[CMS]{The CMS experiment and its main components.}
+    \caption[CMS]{An at-glance explanation of the CMS experiment and its main components for referencing future discussions. From \cite{decmod}.}
     \label{fig:cms}
 \end{figure}
 
@@ -129,7 +129,7 @@ yoke of the magnet.
 
 \subsection{Design}
 
-What follows is a brief description of the major subdetectors. As the technical details of each subdetector are extremely subtle, have already been studied and discussed in numerous articles and are not the focus of our study, we will not discuss them in the present work. The interested reader can found a detailed reference here \cite{Collaboration_2008}. Several upgrades have already been performed during the operational history of the detector, and more are to come in preparation for the \emph{High Luminosity} phase of the LHC.
+What follows is a brief description of the major subdetectors. As the technical details of each subdetector are extremely subtle, they have already been studied and discussed in numerous articles and are not the focus of our study, we will not discuss them in the present work. The interested reader can found a detailed reference here \cite{Collaboration_2008}. Several upgrades have already been performed during the operational history of the detector, and more are to come in preparation for the \emph{High Luminosity} phase of the LHC.
 
 \paragraph{Tracker}
 
@@ -164,7 +164,7 @@ The full tracker material has a thickness of $\approx$ 0.5-1 $X_0$ and less than
         \frac{\sigma_E}{E} = \frac{a}{E} + \frac{b}{\sqrt{E}} + c
         \end{equation*}
         
-    where a $\approx$ 0.12 is the noise term due the electronics and pileup, independently of the energy, b $\approx$ 2.8$\%$ is
+    where a $\approx$ 0.12 GeV is the noise term due the electronics and pileup, independently of the energy, b $\approx$ 2.8$\%$ is
     the stochastic term which accounts mainly for the fluctuations in the photon conversions,
     and c $\approx$ 0.3$\%$ is a constant term related to the energy scale calibration.
     
@@ -197,7 +197,7 @@ Three different gaseous detector technologies are used: \emph{drift tube} (DT) c
 good time resolution. The RPCs instead are mainly used for their good time resolution.
 
 
-\paragraph{Trigger and Track reconstruction}
+\paragraph{Trigger}
 
 The 40 MHz rate of proton-proton collisions and the pileup make it impossible to process
 and store all the information provided by the detector. Most of the events are not interesting
@@ -210,7 +210,17 @@ In CMS the data reduction happens in two steps. The \emph{Level-1} (or L1) Trigg
 running software modules similar to the ones used for the offline reconstruction. 
 
 \paragraph{Offiline reconstruction}
-Once the event has been selected by the trigger, other crucial, offline processing aspects are the \emph{track reconstruction}, the \emph{primary vertex reconstruction} and the \emph{particle flow} algorithm for particle identification. These are all needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
+Once the event has been selected by the trigger, other crucial, offline processing aspects are the \emph{track reconstruction}, the \emph{primary vertex reconstruction} and the \emph{particle flow} algorithm for particle identification. These, along with other minor steps, are all needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
+
+\begin{outline}
+    \1 The track reconstructions algorithms identify tracks from the single hits in the tracker region. It is an \emph{iterative} algorithm, which is run multiple times starting from easier, non-displaced tracks of higher $p_T$. It has three major steps: \emph{seeding} or initialization, then \emph{pattern matching} to identify possible candidates of a track and \emph{track fitting} to identify the most convincing candidate tracks.
+    
+    The tracking efficiency saturates at $\approx$ 90 $\%$ due to hadrons that undergo nuclear interactions in the tracker material, while it is known to be close to 100 $\%$for muons. At low $p_T$ the efficiency is lower due to the nuclear interactions;
+    
+    \1 The particle flow algorithm is capable of transforming the readouts into a list of final state particles produced in the event and their properties. It takes as inputs tracks (also from muon chambers) and caloritmeters clusters, and defines a PF \emph{block} as the building unit of a physical object, defined as a series of links between single hits. Muons, electrons and isolated photons, Jets and their constituents as well as $p_T^{miss}$ are all reconstructed in this step; 
+    
+    \1 Due to pile-up, we have multiple vertices for each event. The vertex reconstruction steps is responsible for employing the newly found tracks to identify the primary vertex to be used in the analysis. Its action can be quantitatively explained as selecting the vertex with the higher $\sum p_T$ of all the collision products identified by the previous step.
+\end{outline}
 
 \paragraph{Luminosity and Pile-up}
 
@@ -221,7 +231,7 @@ As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileu
 \begin{figure}
     \centering
      \includegraphics[width=\columnwidth]{gfx/ch1/pileup_allYears_run2.pdf}
-    \caption[Pile-up]{The distribution of the average number of interactions per crossing (pile-up) for pp collisions in 2011 (red), 2012 (blue), 2015 (purple), 2016 (orange), 2017 (light blue), and 2018 (navy blue). From \cite{cmspubliclumi}.}
+    \caption[Pile-up]{The pile-up is greatly increasing over the years--as shown by the distribution of the average number of interactions per crossing for pp collisions in 2011 (red), 2012 (blue), 2015 (purple), 2016 (orange), 2017 (light blue), and 2018 (navy blue). From \cite{cmspubliclumi}.}
     \label{fig:pileup}
 \end{figure}
 
@@ -236,7 +246,7 @@ Being a general-purpose experiment, CMS is capable of performing a wide range of
     
     \1 \emph{Supersymmetry (SUSY), Exotica} and \emph{Beyond-Two-Generations} are a collection of groups working on generic processes beyond the SM predictions. SUSY consists in the search for physics signatures involving large missing transverse momentum, together with other features such as jets, muons, electrons, taus, photons, and b-jets. If we discover such signatures with yields significantly in excess of standard model backgrounds, our goal will be to characterize the event samples as fully as possible, as possible evidence of a supersymmetric theory. Exotica includes all the other processes not related to SUSY, while the B2G group covers models of new physics featuring the decay of new resonances to heavy standard model objects such as top, W, Z, or Higgs bosons. In particular, they study exotic \emph{diboson} resonances, partners of the top quark with vector-like properties (VLQ) as well as heavy resonances, such as W' and Z' resonances decaying to final states with top quarks.;
     
-    \1 Fianlly, the \emph{B physics}groups addresses all the heavy flavor (beauty and charm) studies. These activities involve precision measurements of heavy-quark hadron production, decay and properties, and the search for associated new and rare processes;
+    \1 Finally, the \emph{B physics} group addresses all the heavy flavor (beauty and charm) studies. These activities involve precision measurements of heavy-quark hadron production, decay and properties, and the search for associated new and rare processes;
     
 \end{outline}
 
@@ -256,7 +266,7 @@ After having established the mass of the newly-observed boson, along with its ma
     {\includegraphics[width=.465\linewidth]{gfx/ch1/Figure_002-a.png}} \quad
     \subfloat[]
     { \includegraphics[width=.45\linewidth]{gfx/ch1/Figure_002-b.png}} \\
-    \caption[Signal strength modifiers]{Summary plot showing the measured signal strength per
+    \caption[Signal strength modifiers]{A fundamental example of the CMS research results: the summary plots showing the measured signal strength per
     production mode at $\sqrt{s}$ = 13 Tev (a) and the measured signal
     strength per decay channel at $\sqrt{s}$ = 13 Tev (b). Taken from \cite{higgsrevcms}}\label{fig:sigsm}
 \end{figure}
@@ -281,7 +291,7 @@ search for rare decays. Highly precise measurements are a powerful test for the 
     {\includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-17-031_Figure_002-a.pdf}} \quad
     \subfloat[]
     { \includegraphics[width=.45\linewidth]{gfx/ch1/Figure_001-b.pdf}} \\
-    \caption[ggF and VBF]{Leading Feynman diagrams for Higgs boson production via ggF (a) and VBF (b).}\label{fig:feypro}
+    \caption[ggF and VBF]{Leading Feynman diagrams for Higgs boson production via ggF (a) and VBF (b), the one central to our discussion.}\label{fig:feypro}
 \end{figure}
 Having discussed the importance of the Higgs studies, we now present a specific production channel, as well as the two muon decay, explaining why they will serve as a solid benchmark for our deep learining approach to simulation.
 
@@ -304,14 +314,14 @@ rapidity gap between the two jets, where the Higgs decay products are typically 
 This production mode is also an ideal candidate for our Flash Sim simulation approach, for a series of reasons:
 
 \begin{itemize}
-    \item The building blocks of the analysis are mainly the jets and the muons, meaning that we need to simulate a smaller number of physical objects when compared with other channels;
-    \item The physical analysis is actually Monte Carlo-based, meaning that it is possible to validate our samples by comparing them to ones from the conventional simulation pipeline;
+    \item The building blocks of the analysis are mainly the jets and the muons, meaning that to perform a comparison we will need to simulate a smaller number of physical objects when compared to other channels;
+    \item The physical analysis is actually Monte Carlo-based, meaning that it is possible to validate our samples by comparing them to ones from the conventional simulation pipeline which have already been produced;
     \item A greater amount of MC-data would benefit the analysis by allowing a more accurate background modelling;
     \item Additionally, a flash simulation approach could also address the need for computing several different theoretical variations;
     \item More generally, due to the expected increase in luminosity during Run 3, the need for MC samples will also increase.
 \end{itemize}
 
-Additionally, the Pisa INFN Group worked extensively on the VBF Channel for the publication of \cite{CMS-PAS-HIG-19-006}, allowing us to take advantage of the expertise and insights of the group.
+The Pisa INFN Group worked extensively on the VBF Channel for the publication of \cite{CMS-PAS-HIG-19-006}, allowing us to take advantage of the expertise and insights of the group.
 Because of this, in the latter part of this work we will compare the original samples employed in \cite{CMS-PAS-HIG-19-006} with the ones obtained through our approach.
 At the time of writing, the CMS collaboration has managed to provide evidence of the H$\rightarrow\mu^+\mu^-$ up to 3$\sigma$ (see \cite{Sirunyan_2021}) Some relevant plots are shown in Figure \ref{fig:vbfmm}.
 
@@ -321,8 +331,8 @@ At the time of writing, the CMS collaboration has managed to provide evidence of
     {\includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-19-006_Figure_012-a.pdf}} \quad
     \subfloat[]
     { \includegraphics[width=.45\linewidth]{gfx/ch1/CMS-HIG-19-006_Figure_010-a.pdf}} \\
-    \caption[H$\rightarrow\mu^+\mu^-$]{(a) The $m_{\mu\mu}$ distribution for the weighted combination of VBF-SB and VBF-SR events. The lower panel shows the residuals after subtracting the background prediction from the S+B fit. (b) Observed local p-values as a function of $m_H$, extracted from the combined fit as well as from each individual production category. It is clear that the VBF channel is the one providing the greatest evidence around the Higgs mass region. From \cite{Sirunyan_2021}.}\label{fig:vbfmm}
+    \caption[H$\rightarrow\mu^+\mu^-$]{You can observe that, thanks to its clear signature, the VBF channel is the one providing the greatest evidence around the Higgs mass region: (a) The $m_{\mu\mu}$ distribution for the weighted combination of VBF-SB and VBF-SR events (the lower panel shows the residuals). (b) Observed local p-values as a function of $m_H$. From \cite{Sirunyan_2021}.}\label{fig:vbfmm}
     
 \end{figure}
 
-Other possible processes which we could have chosen for comparison, and which would surely benefit from a flash production of samples, are the H$\rightarrow$bb decay as well as the ttH production mode. However, as we are presenting a \emph{proof-of-concept}, we decided to stick to the VBF channel as it present the unique advantage of needing simulations for just the jets and the muons, as opposed to the other candidates. 
+Other possible processes which we could have chosen for comparison, and which would surely benefit from a flash production of samples due to similar reasons as before, are the H$\rightarrow$bb decay as well as the ttH production mode. However, as we are presenting a \emph{proof-of-concept}, we decided to stick to the VBF channel as it present the unique advantage of needing simulations for just the jets and the muons, as opposed to the other candidates. 
