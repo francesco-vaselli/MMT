@@ -203,7 +203,7 @@ be used for advanced detector studies, for which more accurate tools are needed,
 
 As Table \ref{tab:simfram} shows, the various fast simulation approaches allow us to obtain significant speedups. However, while CMS FastSim accuracy is constantly being improved, its speed is still somewhat lacking; while \texttt{DELPHES} achieves a marked speedup but sacrifices the realistic detector simulation.
 
-\section{The NanoAOD format}
+\section{The standerd CMS Analysis format: NanoAOD}
 
 As a direct consequence of how the event modelling is structured, the resulting output contains a great deal of information about the event. Aside from final state objects, we are able of keeping track of various steps as the particles pass through the detector, as well as individual components of jets, with great precision. Starting from raw data produced from the online system or the MC simulation, successive degrees of processing (the event reconstruction) refine this data, apply calibrations and create higher-level physics objects. CMS uses a number of data formats with varying degrees of detail, size, and refinement to write this data in its various stages. In turn, the data formats get grouped within an Event file into multiple Event formats, according to the data origin or content.  All of this comes at the cost of \emph{size}.
 
