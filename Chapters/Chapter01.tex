@@ -209,7 +209,7 @@ In CMS the data reduction happens in two steps. The \emph{Level-1} (or L1) Trigg
 \emph{High Level Trigger} (HLT) further decreases the event rate from about 100 kHz to about 1 kHz for data storage. The HLT is implemented by a computer farm composed of more than 30000 CPUs
 running software modules similar to the ones used for the offline reconstruction. 
 
-\paragraph{Offiline reconstruction}
+\paragraph{Offiline reconstruction}\label{sec:offreco}
 Once the event has been selected by the trigger, other crucial, offline processing aspects are the \emph{track reconstruction}, the \emph{primary vertex reconstruction} and the \emph{particle flow} algorithm for particle identification. These, along with other minor steps, are all needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
 
 \begin{outline}
@@ -311,7 +311,7 @@ is typically lower than the center-of-mass energy of the two quarks, the channel
 jets. Their presence can therefore serve as a signature of the VBF production channel. Additionally, as VBF is a pure electroweak process, low hadronic activity is expected in the
 rapidity gap between the two jets, where the Higgs decay products are typically found. The Feynman diagrams for the two dominant production processes are showed in Figure \ref{fig:feypro}. Experimentally, the signal over background ratio for the VBF channel is higher than that for other production modes, thanks to its key characteristics: few, energetic jets, highly energetic muons, a large rapidity gap.
 
-This production mode is also an ideal candidate for our Flash Sim simulation approach, for a series of reasons:
+This production mode is also an ideal candidate for our FlashSim simulation approach, for a series of reasons:
 
 \begin{itemize}
     \item The building blocks of the analysis are mainly the jets and the muons, meaning that to perform a comparison we will need to simulate a smaller number of physical objects when compared to other channels;
