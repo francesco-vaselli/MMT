@@ -46,7 +46,7 @@ The architecture is illustrated in Figure \ref{fig:rosper}.
     \label{fig:rosper}
 \end{figure}
 
-It has an arbitrary number I of inputs \emph{x$_i$}, to which we associate an equal number of real numbers called \emph{weights w$_i$}. Additionally, we usually add a \emph{bias} term,  which can be seen as adding a \emph{w$_0$} associated with an input constantly set to 1. The neuron outputs a single binary value. The perceptron is a \emph{feedforward} device, meaning that the connections are only from the inputs to the output.
+It has an arbitrary number I of inputs \emph{x$_i$}, to which we associate an equal number of real numbers called \emph{weights w$_i$}. Additionally, we usually add a \emph{bias} term,  which can be seen as adding a \emph{w$_0$} associated with an input constantly set to 1. The neuron outputs a single binary value. The perceptron is a \emph{feedforward} device, meaning that the connections are only from the inputs to the output, going left to right without the possibility of looping back.
 
 The output $y$ is dictated by a simple algorithmic rule:
 
@@ -113,7 +113,7 @@ But if the single neuron was modelled as the Perceptron, the outputs would be on
 
 \paragraph{Neurons and activation functions}
 
-First of all, we allow for continuous inputs. Then, we would like to employ a neuron with the following property: \emph{a small change in the \emph{weights} or \emph{biases} causes a small change in the \emph{outputs}}. This seems reasonable to allow the overall network to learn by gradually adjusting its parameters, and may also be translated in more physical terms by the following expression:
+First of all, we allow for continuous inputs. Then, we employ a neuron with the following property: \emph{a small change in the \emph{weights} or \emph{biases} causes a small change in the \emph{outputs}}. This seems reasonable to allow the overall network to learn by gradually adjusting its parameters, and may also be translated in more physical terms by the following expression:
 
 \begin{equation}\label{eqn:yderiv}
   \Delta y = \sum_j \frac{\partial y}{\partial w_j}\Delta w_j + \frac{\partial y}{\partial w_0}\Delta w_0
@@ -252,7 +252,7 @@ A great number of models and architectures have also been proposed as an alterna
     \label{fig:resnet}
 \end{figure}
 
-The idea is to define different blocks composed of one or more layers, and then to feed to te following block the input of the previous one as well as its output. Instead of hoping each stack of layers directly fits a desired underlying mapping, we explicitly let these layers fit a residual mapping. The original mapping is recast into $\mathcal{F}(x) + x$. We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping. To the extreme, if an identity mapping were optimal, it would be easier to push the residual to zero than to fit an identity mapping by a stack of nonlinear layers. 
+The idea is to define different blocks composed of one or more layers, and then to feed to the following block the input of the previous one as well as its output. Instead of hoping each stack of layers directly fits a desired underlying mapping, we explicitly let these layers fit a residual mapping. The original mapping is recast into $\mathcal{F}(x) + x$. We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping. To the extreme, if an identity mapping were optimal, it would be easier to push the residual to zero than to fit an identity mapping by a stack of nonlinear layers. 
 
 This simple modification addresses a common problem in deep architectures. When the model saturates the problem, it starts to overfit, especially in later layers; by defining a residual block we may simply allow the network to learn an identity mapping and avoid the issue.
 
@@ -260,13 +260,13 @@ The training and the convergence of deep learning models is also plagued by othe
 
 \section{Generative Models} 
 
-A well developed subset of deep learning models, \emph{Generative models} are a class of architectures which aim to produce novel and original samples from the ones presented during training, usually starting from randomly distributed noise. The most well know use case is the field of \emph{image generation}, and two specific architectures are the most widely adopted.
+A well developed subset of deep learning models, \emph{Generative models} are a class of architectures which aim to produce novel and original samples similar to the ones presented during training, usually starting from randomly distributed noise. The most well know use case is the field of \emph{image generation}, and two specific architectures are the most widely adopted.
 
 \subsection{State of the art}
 
 \paragraph{Generative Adversarial Networks}
 
-Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GANs for short) are a framework for training powerful generative models. Two neural networks contest with each other in a game (in the form of a zero-sum game, where one agent's gain is another agent's loss): the generative network G learns to map from a latent (usually gaussian) space to a data distribution of interest, while the discriminator network D distinguishes candidates produced by the generator from the true data distribution. G's training objective is to increase the error rate of D by producing samples so close to the target that D misclassifies them consistently as coming from the real samples. The framework is illustrated in Figure \ref{fig:gan}.
+Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GANs for short) are a framework for training powerful generative models. Two neural networks contest with each other in a game (in the form of a zero-sum game, where one agent's gain is another agent's loss): the generative network G learns to map from a latent (usually gaussian) noise space to a data distribution of interest, while the discriminator network D distinguishes candidates produced by the generator from the true data distribution. G's training objective is to increase the error rate of D by producing samples so close to the target that D misclassifies them consistently as coming from the real samples. The framework is illustrated in Figure \ref{fig:gan}.
 
 
 \begin{figure}
@@ -302,7 +302,7 @@ Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GAN
 
 \paragraph{Variational Autoencoders}
 
-The main idea behind the \emph{Variational Autoencoder} (VAE) architecture, theorized by Kingma et al \cite{vae}, is to employ a network made up of two parts: the \emph{encoder} and the \emph{decoder}. The encoder learns to map input data to a set of parameters $\pmb{\mu}$ and $\pmb{\sigma}$, which together make up a \emph{latent} Gaussian representation $\pmb{z}$. The decoder is trained to scale up the parameters from the new latent space back to the original training space.
+The main idea behind the \emph{Variational Autoencoder} (VAE) architecture, theorized by Kingma et al \cite{vae}, is to employ a network made up of two parts: the \emph{encoder} and the \emph{decoder}. The encoder learns to map input data to a set of parameters $\pmb{\mu}$ and $\pmb{\sigma}$, which together make up a \emph{latent} Gaussian representation $\mathbf{z}$. The decoder is trained to scale up the parameters from the new latent space back to the original training space.
 
 The network is trained to correctly encode and decode the data, and once trained the decoder may receive as input random Gaussian noise and produce new original samples. The idea is illustrated in Figure \ref{fig:vae}.
 
@@ -366,7 +366,7 @@ This two architectures have achieved remarkable results. However, there are stil
 \begin{outline}
     \1 GANs are affected by numerous training instabilities, as their peculiar training system must be carefully engineered to avoid that one of the two agents surpasses the other too much too fast, thus invalidating the training;
     \1 GANs are also plagued by  \emph{mode collapse}, where the generator over-optimizes for a particular discriminator, and the discriminator never manages to learn its way out of the trap. As a result the generators rotate through a small set of output types, degrading the statistical significance of generated samples;
-    \1 VAEs with Gaussian posteriors / priors are noisy. VAEs are poor models of data whenever insufficiently flexible posterior / prior / decoder distributions are used;
+    \1 VAEs with Gaussian latent distributions are generally noisy. VAEs are poor models of data whenever insufficiently flexible latent distributions are used--that is, distributions which do not reflect the underlying data distribution. Usually the Gaussian distribution is an approximation at best, making the results sub-optimal;
     \1 More generally, almost all of the model in the literature are usually geared towards the task of image generation and recognition. This type of architectures often perform poorly when simply re-adapted to the HEP use case, which typically consists of lower dimensional, sparse data structures. 
 \end{outline}
 
