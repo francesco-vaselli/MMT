@@ -37,7 +37,7 @@ Having at our disposal a large set of FullSim MC NanoAOD samples for t$\overline
 
 \subsection{Jets}
 
-As discussed in Section \ref{sec:nanoaod}, a NanoAOD contains both the Jet objects, i.e. final-state reconstructed jets, and the GenJet objects, the jets resulting from a generator and which will pass through all the steps of the FullSim simulation chain, which are either matched to Jet objects, or may end-up unmatched because of limit in the matching algorithms and the previous simulation steps. For the moment, we disregard the problem of \emph{fake jets}, that is Jet objects which are not reconstructed from a GenJet object but are instead due to noise or errors in clustering algorithms.
+As discussed in Section \ref{sec:nanoaod}, a NanoAOD contains both the Jet objects, i.e. final-state reconstructed jets, and the GenJet objects, the jets resulting from a generator and which will pass through all the steps of the FullSim simulation chain, which are either matched to Jet objects, or may end-up unmatched because of limitations in the matching algorithms and the previous simulation steps. For the moment, we disregard the problem of \emph{fake jets}, that is Jet objects which are not reconstructed from a GenJet object but are instead due to noise or errors in clustering algorithms.
 
 The idea is being able to directly generate correctly distributed Jet objects starting from noise, for stochasticity,  but also from the values of a corresponding GenJet, as a physical-informed input for the network (a process known as \emph{conditioning}): knowing just the diagram-level physics of some process, we are going to skip the Simulation, Digitization and Reconstruction steps.
 
@@ -45,6 +45,7 @@ The idea is being able to directly generate correctly distributed Jet objects st
 With the use of \texttt{C/C++} code (name of script) for the \texttt{ROOT} data analysis framework \cite{Brun:491486}, we processed the NanoAOD files and extracted all the Jet objects matched to a GenJet object, across all the events in the file. Because of the large number of variables, we selected a meaningful subset, containing all the necessary information for our test analysis.
 
 First of all, we selected the following 14 GenJet variables for conditioning the generation: 
+\graffito{do we want plots of vars?}
 
 \begin{outline}
 \1 \emph{The physical properties} of the GenJet, that is \texttt{Eta}, \texttt{Phi}, \texttt{Mass}, \texttt{Pt}, the \texttt{PartonFlavour}, giving the parton content of a GenJet as a specific number and the \texttt{HadronFlavour}, describing the hadron content in a similar way;
@@ -55,12 +56,52 @@ First of all, we selected the following 14 GenJet variables for conditioning the
 
 \end{outline}
 
-Then, we also selected the following 17 target variables for the matched reconstructed Jet objects:
+Then, we selected the following 17 target variables for the matched reconstructed Jet objects:
 
 \begin{outline}
-\1 \emph{The physical properties} of the Jet \emph{with regard to} the ones of the matched GenJet: \texttt{EtaMinusGen}, the $\eta$ difference , \texttt{PhiMinusGen}, the $\phi$ difference, \texttt{MassRatio}, the ratio of the jet and GenJet masses, \texttt{PtRatio}, the ratio of $p_T$s. This was done because the Simulation and Reconstruction steps are expected to introduce corrections to the GenJet distributions, easier to learn when considering these quantities;
+\1 \emph{The physical properties} of the Jet \emph{with regard to} the ones of the matched GenJet: \texttt{EtaMinusGen}, the $\eta$ difference , \texttt{PhiMinusGen}, the $\phi$ difference, \texttt{MassRatio}, the ratio of the jet and GenJet masses, \texttt{PtRatio}, the ratio of $p_T$s. This was done because the Simulation and Reconstruction steps are expected to introduce corrections w.r.t. the GenJet distributions, easier to learn when considering these quantities. As an additional variable, the Jet \texttt{Area}, a measure of its susceptibility to radiation, like pileup or underlying event, was added as well;
+
+\1 The most relevant \emph{b-tagging and c-tagging algorithms scores}: \texttt{btagCMVA}, \texttt{btagCSVV2}, \texttt{btagDeepB}, \texttt{btagDeepC}, \texttt{btagDeepFlavB} and \texttt{btagDeepFlavC}, which indicate with a score ranging from 0 to 1 whether the Jet contains the respective quark or not, a very significant information for performing event selection during an analysis;
+
+\1 The \texttt{bRegCorr}, the $p_T$ correction for b-jet energy regression;
+
+\1 The \texttt{qgl} score for the Quark vs Gluon likelihood discriminator;
+
+\1 The \texttt{jetID} and \texttt{puID} ID flags indicating relevant characteristics of the jet and the Pile-Up.
 \end{outline}
 \subsection{Muons}
+
+For muons we performed the same procedure, taking only those muons matching to GenMuon objects (a GenParticle object with pdgId value of $\pm$13). 
+
+We selected 30 GenMuon variables for conditioning:
+
+\begin{outline}
+\1 \emph{The physical properties} of the GenMuon, that is \texttt{Eta}, \texttt{Phi}, \texttt{Charge} and \texttt{Pt};
+
+\1 \emph{The 14 GenParticle status flags}, a series of \texttt{statusFlags} stored bitwise, with each bit having a different physical interpretation such as \emph{isTauDecayProduct}, \emph{fromHardProcess}, etc. or some information regarding the position of the object in the detector (e.g. \emph{isLastCopy}, indicating that this is the last copy of the GenPart in the detector to be used for the analysis);
+
+\1 \emph{Engineered, physical-informed variables} which we designed to express interesting physical properties of the GenMuon. Computing the $\Delta$R separation between the GenMuon and the GenJets present in the event, we selected the first \emph{closest GenJet}, and we computed the following quantities:
+\2 \texttt{Dr}, giving the separation from the GenJet, \texttt{DEta}, the $\eta$ difference from the GenJet, \texttt{Pt}, the $p_T$ of the GenJet,
+\texttt{DPhi}, the $\phi$ difference from the GenJet, which is to be computed accounting for the \emph{periodicity} of the $\phi$ variable and finally the \texttt{Mass} of the closest GenJet;
+
+\1 A series of 5 \emph{ Event level variables regarding Pile-Up}: \texttt{Pileup\_gpudensity}, the Generator-level PU vertices/mm ,\texttt{Pileup\_nPU}, the number of pileup interactions that have been added to the event in the current bunch crossing, \texttt{Pileup\_nTrueInt}, the true mean number of the poisson distribution for this event from which the number of interactions each bunch crossing has been sampled, \texttt{Pileup\_pudensity}, PU vertices/mm and \texttt{Pileup\_sumEOOT}, the number of early out of time pileup;
+\end{outline}
+
+Then we selected 22 target variables for the Muon objects:
+
+\begin{outline}
+\1 \emph{The physical properties} of the muon \emph{with regard to} the ones of the matched GenMuon: \texttt{EtaMinusGen}, the $\eta$ difference , \texttt{PhiMinusGen}, the $\phi$ difference, \texttt{PtRatio}, the ratio of $p_T$s. This was done because the Simulation and Reconstruction steps are expected to introduce corrections w.r.t. the GenMuon distributions, easier to learn when considering these quantities. As an additional variable, the \texttt{ptErr}, the $p_T$ error for the muon track, was selected as well;
+
+\1 Six \emph{impact parameters} with regard to the primary vertex: \texttt{dxy}, \texttt{dxyErr}, \texttt{dz}, \texttt{dzErr}, the 3D impact parameter \texttt{ip3d} and its significance \texttt{sip3d}, all expressed in cm;
+
+\1 Some \emph{Boolean flags}: \texttt{isGlobal}, \texttt{isPFcand}, identifying the muon as a Particle Flow candidate, \texttt{isTracker};
+
+\1 A series of \emph{isolation variables} returned by the Particle Flow algorithm: \texttt{pfRelIso03\_all}, \texttt{pfRelIso03\_chg} and \texttt{pfRelIso04\_all};
+
+\1 The \emph{variables related to the closest jet}: \texttt{jetPtRelv2}, indicating the relative momentum of the lepton with respect to the closest jet after subtracting the lepton and \texttt{jetRelIso}, the relative isolation in matched jet;
+
+\1 A series of \emph{ID scores}: \texttt{mediumID}, \texttt{softMVA} score and its cut-based ID \texttt{softMVAId}, \texttt{softId};
+\end{outline}
 
 \subsection{Extraction and preprocessing}
 With the use of \texttt{C/C++} code (name of script) for the \texttt{ROOT} data analysis framework \cite{Brun:491486}, we processed the NanoAOD files and extracted all the Jet objects matched to a GenJet object, across all the events in the file.
