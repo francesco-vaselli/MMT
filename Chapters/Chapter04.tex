@@ -89,7 +89,7 @@ For computing this loss we need to calculate $f^{-1}$, its Jacobian determinant 
 \section{Constructing flows}
 For an actual implementation, the main challenge is in designing parametrizable multivariate bijections that have closed form expressions for both $f$ and $f^{-1}$, a tractable Jacobian whose calculation scales with $O(D)$ rather than $O(D^3)$, and can express a flexible class of functions.
 
-\subsection{Coupling Layers}
+\subsection{Coupling Layers}\label{sec:couplay}
 
 One simple way to reduce the computational complexity of the Jacobian is to introduce \emph{coupling layers}. The basic idea is illustrated in Figure \ref{fig:coupla}.
 
