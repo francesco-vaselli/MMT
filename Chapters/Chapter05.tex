@@ -4,7 +4,7 @@
 
 Having discussed the importance and the challenges of event simulation at LHC, and having described the Deep Learning Normalizing Flows approach, we dedicate this chapter to the practical implementation of an end-to-end sample generator.
 
-The code discussed in the following sections and used in this work may be found online \href{tbd}{here}\footnote{tbd}.
+The code discussed in the following sections and used in this work may be found online \href{tbd}{here}\footnote{repository link, tbd}.
 
 \section{Target variables}
 
@@ -146,36 +146,64 @@ The models are implemented following Dr. Green's example: the \texttt{Python} pa
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{gfx/ch5/nfmodel.pdf}
-    \caption[Actual NF model]{The NF models are quite large and complex. A number of transforms equal to that of the target variables is performed. The normally distributed inputs \textbf{z} are permuted for each step and then splitted in half, sending half as parameters and half as argument of the \emph{spline transform}. The conditioning variables \textbf{y} are sent as input to a complex 10 layer network (different for each transform) which defines the parameters for the spline. Everithing is repeated until the last step where we permute back to the original order and output the targets \textbf{x}. Where two numbers are separetad by a slash, the first refers to the muons model, the second to the jets one.}
+    \caption[Actual NF model]{The NF models are quite large and complex. A number of transforms equal to that of the target variables is performed. The normally distributed inputs \textbf{z} are permuted for each step and then splitted in half, sending half as parameters and half as argument of the \emph{spline transform}. The conditioning variables \textbf{y} are sent as input to a complex 10 layer residual network (different for each transform) which defines the parameters for the spline. Everithing is repeated until the last step where we permute back to the original order and output the targets \textbf{x}. Where two numbers are separetad by a slash, the first refers to the muons model, the second to the jets one.}
     \label{fig:nfmodel}
 \end{figure}
 
 Figure \ref{fig:nfmodel} shows the final models employed in this work. 
-As discussed in Section \ref{sec:couplay}, in order to reduce the computational complexity of the Jacobian, we implemented the total transformation as a chain of single, subsequent splines transformations, each acting on just half of the input, while the latter half is kept unchanged and serves as additional parameters for the splines. This has the additional advantage of ensuring good \emph{correlations} between the various variables, as the transformation for one of them will end up depending on every other variable as long as we implement a number of transformation equal to the number of variables and we permute the order linearly before each spline.
+As discussed in Section \ref{sec:couplay}, in order to reduce the computational complexity of the Jacobian in the NF loss function, we implemented the total transformation as a chain of single, subsequent splines transformations, each acting on just half of the input, while the latter half is kept unchanged and serves as additional parameters for the splines. This has the additional advantage of ensuring good \emph{correlations} between the various variables, as the transformation for one of them will end up depending on every other variable as long as we implement a number of transformation equal to the number of variables and we permute the order linearly before each spline.
 
-For each spline, the normally distributed inputs \textbf{z} are permuted and then splitted in half, sending half as parameters and half as argument of the \emph{spline transform}. The conditioning Gen-level variables \textbf{y} are sent as input to a complex 10 layer fully-connected network (a different one for each transform) which defines the parameters for the spline. Its most relevant hyperparameters are the \emph{hidden\_dim}, the number of nodes per hidden layer, set to 256 for the muons model and to 298 for the jets one, the \emph{n\_bin}, the number of bins for the spline, set to 128 for both models and the \emph{n\_blocks} set to 10 for both and defining the number of hidden layers.
-Each network was defined with \texttt{ReLU} activation function and setting \texttt{batch\_norm=True}.
+For each spline, the normally distributed inputs \textbf{z} are permuted and then splitted in half, sending half as parameters and half as argument of the \emph{spline transform}. The conditioning Gen-level variables \textbf{y} are sent as input to a complex 10 layer fully-connected \emph{residual} network (a different one for each transform) which defines the parameters for the spline. Its most relevant hyperparameters are the \emph{hidden\_dim}, the number of nodes per hidden layer, set to 256 for the muons model and to 298 for the jets one, the \emph{n\_bin}, the number of bins for the spline, set to 128 for both models and the \emph{n\_blocks} set to 10 for both and defining the number of hidden layers.
+Each network was defined with \texttt{ReLU} activation function and setting \texttt{batch\_norm=True}. The training procedure actually traverse the network in the opposite way, strarting from the training data and using the inverse transform to obtain normally distributed instances which can easily be evaluated in the NF loss function.
 \graffito{need to discuss batchnorm AND cosine\_annealing in ch3}
 
-We would like to emphasize the fact that because \emph{each transform} defines a separate network for learning the optimal spline parameters, the final models are quite large, especially for physics-based application standards. The muons model exceeds 54e6 trainable parameters (54,988,164 parameters, corresponding to the various weights of the neurons in each layer), while the jets model totals in at 47,986,595 parameters. These large models were trained on around 5e6 muons or jets objects extracted as explained above, and the \emph{losses} were monitored at each epoch on a separate \emph{validation set} of about 4e5 samples to ensure that the models were not being over-optimized for the training set.
+We would like to emphasize the fact that because \emph{each transform} defines a separate network for learning the optimal spline parameters, the final models are quite large, especially for physics-based application standards. The muons model exceeds 54e6 trainable parameters (54,988,164 parameters, corresponding to the various weights of the neurons in each layer and the batch norm parameters), while the jets model totals in at 47,986,595 parameters. These large models were trained on around 5e6 muons or jets objects extracted as explained above, and the \emph{losses} were monitored at each epoch on a separate \emph{validation set} of about 4e5 samples to ensure that the models were not being over-optimized for the training set. Additionally, we saved the model state every 10 epochs and performed additional validation on a separate set of 1e5 data to further avoid overfitting.
 
-As our \emph{optimizer} algorithm we choose the de-facto standard in the field, the \texttt{Adam} algorithm \cite{https://doi.org/10.48550/arxiv.1412.6980}, a complex and powerful algorithm for models optimization still based on the same basic principles of Section \ref{sec:backprop}, with an initial \emph{learning rate} of xxx, reduced during training by the \emph{cosine annealing} procedure.
+As our \emph{optimizer} algorithm we choose the de-facto standard in the field, the \texttt{Adam} algorithm \cite{https://doi.org/10.48550/arxiv.1412.6980}, a complex and powerful algorithm for models optimization still based on the same basic principles of \emph{gradient descent} explained in Section \ref{sec:backprop}, with an initial \emph{learning rate} of 1e-4 for muons and 1e-5 for jets, reduced during training by the \emph{cosine annealing} procedure. The maximum epochs were set to 1000 for the muons model, giving its larger number of target variables, and to 500 for the jets one--this also means that the learning rate reduction due to cosine annealing will be different over training as it depends on the total epochs number.
+
+Trainings were stopped respectively at epoch 580 for muons and at epoch 420 for jets, as we had reached a good convergence, despite both models showing signs for more improvements. Figure \ref{fig:losses} shows the models losses over the training epochs. The validation loss is plotted by averaging over the last 5 epochs, to display the overall trend instead of single, noisy variations. The values on the y-axis are the actual loss values, and they are obviously different as they depend on both the number and the ranges of the target variables.
 
 
 \begin{figure}
     \myfloatalign
     \subfloat[]
-    {\includegraphics[width=.45\linewidth]{gfx/ch5/lossesmuons.png}} \quad
+    {\includegraphics[width=\linewidth]{gfx/ch5/lossesmuons.pdf}} \\
     \subfloat[]
-    { \includegraphics[width=.45\linewidth]{gfx/ch5/lossesjets.png}} \\
-    \caption[Models losses]{stuff.}\label{fig:losses}
+    { \includegraphics[width=\linewidth]{gfx/ch5/lossesjets.pdf}} 
+    \caption[Models losses]{The training for both models (a muons and b jets) has reached a good convergence, but there is still room for improvements. The losses are plotted starting from epoch 5 to better display the decrease in the final epochs.}\label{fig:losses}
     
 \end{figure}
 
+We trained the models on the local INFN Pisa computing resources, specifically on a \texttt{NVIDIA V100} GPU with 32GB of VRAM and 5,120 CUDA Cores. The time employed for the training of both models was $\approx$ 5 days, however we observed that due to inefficient \emph{data loading} on the GPU, the maximum usage of the device fluctuated between 40$\%$ and 80$\%$ most of the time, indicating that more data loading resources or a different training scheme (such as \emph{distributed training}) could improve training times decisively.
+
 \section{Results}
+
+\graffito{do we want to plot the full results in an appendix?? or refer to a colab??}
+We move on to discuss the results obtained. 
+To perform a sound and reasonable comparison, we extract the Gen-values for conditioning from 1e5 samples coming from an unseen test set for jets and from the validation set (which was not used for training but just for evaluating the loss over time) for muons. We then generate new FlashSim samples starting from the same Gen-values, to get a one-to-one correspondence between the two sample sets.
+
+There are two main types of comparison which can now be performed on the obtained samples: we can compare the \emph{distribution} or the \emph{correlations} for the two.
+While the latter can be inspected visually thanks to \emph{contour plots}, we would like to define a precise measure for the similarity of the empirical distributions between two samples. We thus define the \emph{Wasserstein distance} as:
+
+\[W_1(u, v) = \inf_{\pi \in \Gamma(u, v)}\int_{\mathbb{R}\times\mathbb{R}}\abs{x-y}d\pi(x,y) = \int_{-\infty}^{+\infty} \abs{U - V}\]
+
+where $\Gamma(u, v)$ is the set of (probability) distributions on $\mathbb{R}\times\mathbb{R}$ whose marginals are $u$ and $v$ on the first and second factors respectively, and $U$, $V$ are the respective CDFs. Intuitively, if each distribution is viewed as a unit amount of earth (soil), the metric is the minimum \emph{cost} of turning one pile into the other, which is assumed to be the amount of earth that needs to be moved times the mean distance it has to be moved, and thus this metric is also know informally as the \emph{earth mover distance}.
 
 \subsection{1d distributions and correlations}
 
+\paragraph{Muons}
+
+
+
+\paragraph{Jets}
+
 \subsection{Conditioning}
+
+\subsection{Speed}
+
+A crucial result obtained is also the \emph{generation speed}: for both jets and muons we managed to generate samples in batches of 1e4 in $\approx$ 0.3 seconds each, corresponding to a generation speed of raw samples of about 33,300 \emph{samples per second} (33 kHz) \emph{meaning a six orders of magnitude speedup when compared to FullSim}! Even considering possible reduction due to preprocessing and data loading, this result testify to the potential of the current methodology to completely redefine our approach to event simulation, at least at the NanoAOD level.
+
+What is more, the 1e4 batch size for generation was limited only by the VRAM of the GPU being used, meaning that more powerful GPUs, ideally working in parallel, could achieve even faster generation times.
+
 
 \section{A prototype end-to-end analysis sample generator}

@@ -241,8 +241,9 @@ At first, both the training and testing partition show a decrease. However, as t
 % also mention problems?
 % mention residual networks?
 We now know how to define efficient artificial neurons and how to combine them into networks, which can then be efficiently trained through gradient descent. 
-The term \emph{deep learning} simply refers to neural networks made up of many different hidden layers, thus possessing a greater depth than most simple models. Over the years, researchers have shown how deep learning models made up of millions of parameters can actually achieve remarkable results, taking full advantage of their large number of neurons.
+The term \emph{deep learning} simply refers to neural networks made up of many different hidden layers, thus possessing a greater depth than most simple models. Over the years, researchers have shown how deep learning models made up of millions of parameters can actually achieve remarkable results, taking full advantage of their large number of neurons. In the following we mention some other important results which will be used through this work.
 
+\paragraph{Residual Networks}
 A great number of models and architectures have also been proposed as an alternative to the feedforward, layer-to-layer approach. A simple variation, widely adopted and also employed in the present work, is that of \emph{residual networks}, introduced by \cite{DBLP:journals/corr/HeZRS15}. The basic idea is illustrated in Figure \ref{fig:resnet}.
 
 \begin{figure}
@@ -255,6 +256,17 @@ A great number of models and architectures have also been proposed as an alterna
 The idea is to define different blocks composed of one or more layers, and then to feed to the following block the input of the previous one as well as its output. Instead of hoping each stack of layers directly fits a desired underlying mapping, we explicitly let these layers fit a residual mapping. The original mapping is recast into $\mathcal{F}(x) + x$. We hypothesize that it is easier to optimize the residual mapping than to optimize the original, unreferenced mapping. To the extreme, if an identity mapping were optimal, it would be easier to push the residual to zero than to fit an identity mapping by a stack of nonlinear layers. 
 
 This simple modification addresses a common problem in deep architectures. When the model saturates the problem, it starts to overfit, especially in later layers; by defining a residual block we may simply allow the network to learn an identity mapping and avoid the issue.
+
+\paragraph{Batch Normalization}
+\emph{Batch normalisation} normalises a layer input by subtracting the batch mean and dividing it by the batch standard deviation, while defining a \emph{scale} and a \emph{shift} parameters for each neuron to avoid losing representation power due to this rescaling of the inputs. The method was first introduced in \cite{https://doi.org/10.48550/arxiv.1502.03167}, and it has been tested in a large variety of models, proving that it is an effective way of contrasting common training instabilities and for speeding up convergence.
+
+\paragraph{Cosine Annealing}
+Cosine Annealing is a type of learning rate schedule that has the effect of starting with a large learning rate that is relatively rapidly decreased to a minimum value before being increased rapidly again. The resetting of the learning rate acts like a simulated restart of the learning process and the re-use of good weights as the starting point of the restart is referred to as a \emph{warm restart} in contrast to a \emph{cold restart} where a new set of small random numbers may be used as a starting point. The proper formula its:
+
+\[\eta_{t} = \eta_{min} + \frac{1}{2}\left(\eta_{max}-\eta_{min}\right)\left(1+\cos\left(\frac{T_{cur}}{T_{max}}\pi\right)\right)\]
+
+were $\eta$ is the learning rate and $T$ the training epoch.
+It was introduced by \cite{https://doi.org/10.48550/arxiv.1608.03983}.
 
 The training and the convergence of deep learning models is also plagued by others problems, making the training of complex models somewhat of an empirical process. We limit ourselves to mentioning the most relevant issues for our use-case in the following section.
 
