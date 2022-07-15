@@ -155,7 +155,6 @@ As discussed in Section \ref{sec:couplay}, in order to reduce the computational 
 
 For each spline, the normally distributed inputs \textbf{z} are permuted and then splitted in half, sending half as parameters and half as argument of the \emph{spline transform}. The conditioning Gen-level variables \textbf{y} are sent as input to a complex 10 layer fully-connected \emph{residual} network (a different one for each transform) which defines the parameters for the spline. Its most relevant hyperparameters are the \emph{hidden\_dim}, the number of nodes per hidden layer, set to 256 for the muons model and to 298 for the jets one, the \emph{n\_bin}, the number of bins for the spline, set to 128 for both models and the \emph{n\_blocks} set to 10 for both and defining the number of hidden layers.
 Each network was defined with \texttt{ReLU} activation function and setting \texttt{batch\_norm=True}. The training procedure actually traverse the network in the opposite way, strarting from the training data and using the inverse transform to obtain normally distributed instances which can easily be evaluated in the NF loss function.
-\graffito{need to discuss batchnorm AND cosine\_annealing in ch3}
 
 We would like to emphasize the fact that because \emph{each transform} defines a separate network for learning the optimal spline parameters, the final models are quite large, especially for physics-based application standards. The muons model exceeds 54e6 trainable parameters (54,988,164 parameters, corresponding to the various weights of the neurons in each layer and the batch norm parameters), while the jets model totals in at 47,986,595 parameters. These large models were trained on around 5e6 muons or jets objects extracted as explained above, and the \emph{losses} were monitored at each epoch on a separate \emph{validation set} of about 4e5 samples to ensure that the models were not being over-optimized for the training set. Additionally, we saved the model state every 10 epochs and performed additional validation on a separate set of 1e5 data to further avoid overfitting.
 
@@ -174,7 +173,7 @@ Trainings were stopped respectively at epoch 580 for muons and at epoch 420 for 
     
 \end{figure}
 
-We trained the models on the local INFN Pisa computing resources, specifically on a \texttt{NVIDIA V100} GPU with 32GB of VRAM and 5,120 CUDA Cores. The time employed for the training of both models was $\approx$ 5 days, however we observed that due to inefficient \emph{data loading} on the GPU, the maximum usage of the device fluctuated between 40$\%$ and 80$\%$ most of the time, indicating that more data loading resources or a different training scheme (such as \emph{distributed training}) could improve training times decisively.
+We trained the models on the local INFN Pisa computing resources, specifically on a \texttt{NVIDIA V100} GPU with 32GB of VRAM and 5,120 CUDA Cores. The time spent for the training of both models was $\approx$ 5 days, however we observed that due to inefficient \emph{data loading} on the GPU, the maximum usage of the device fluctuated between 40$\%$ and 80$\%$ most of the time, indicating that more data loading resources or a different training scheme (such as \emph{distributed training}) could improve training times decisively.
 
 \section{Results}
 
@@ -201,7 +200,7 @@ where $\Gamma(u, v)$ is the set of (probability) distributions on $\mathbb{R}\ti
 
 \subsection{Speed}
 
-A crucial result obtained is also the \emph{generation speed}: for both jets and muons we managed to generate samples in batches of 1e4 in $\approx$ 0.3 seconds each, corresponding to a generation speed of raw samples of about 33,300 \emph{samples per second} (33 kHz) \emph{meaning a six orders of magnitude speedup when compared to FullSim}! Even considering possible reduction due to preprocessing and data loading, this result testify to the potential of the current methodology to completely redefine our approach to event simulation, at least at the NanoAOD level.
+A crucial result obtained is the \emph{generation speed}: for both jets and muons we managed to generate samples in batches of 1e4 in $\approx$ 0.3 seconds each, corresponding to a generation speed of raw samples of about 33,300 \emph{samples per second} (33 kHz) \emph{meaning a six orders of magnitude speedup when compared to FullSim}! Even considering possible reduction due to preprocessing and data loading, this result testify to the potential of the current methodology to completely redefine our approach to event simulation, at least at the NanoAOD level.
 
 What is more, the 1e4 batch size for generation was limited only by the VRAM of the GPU being used, meaning that more powerful GPUs, ideally working in parallel, could achieve even faster generation times.
 
