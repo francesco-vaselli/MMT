@@ -196,7 +196,66 @@ where $\Gamma(u, v)$ is the set of (probability) distributions on $\mathbb{R}\ti
 
 \paragraph{Jets}
 
+The correlations between jets variables, inspected visually, show good agreement with those from FullSim. Figure \ref{fig:corrjet1} shows the highly non-trivial correlations between the tagging distributions, with \emph{quantiles} plotted at 0.5, 0.9, 0.99. The same choice for quantiles has been adopted for all the following figures.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch5/corrjet1.pdf}
+    \caption[Tagging correlations]{Even non-trivial correlation such as the ones between tagging distributions are captured correctly by our models.}
+    \label{fig:corrjet1}
+\end{figure}
+
+We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned to capture the correlations between the qgl score, which is correctly correlated to the number of constituents as a larger number of constituents is expected for the u, d, s quarks when compared to gluons. Additionally, correlations between the physical p$_T$ and mass distributions, obtained from the original p$_T$Ratio and massRatio outputs of the network, are learned as well.
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet2.pdf}}
+    \subfloat[]
+    { \includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet3.pdf}} 
+    \caption[qgl and p$_T$ correlations]{ (a) As expected, the qgl is positively correlated to the number of constituents--the higher the number, the larger the score. This behaviour has been captured by Flash Sim as well. The FullSim nConstituens distribution is jagged because of its discrete values, while the FlashSim has \emph{bridged} them and is thus smoothed.(b) The correlations between the physical distributions of p$_T$ and mass show agreement as well.}\label{fig:corrjet2+3}
+    
+\end{figure}
+
+
 \subsection{Conditioning}
+
+Another extremely important feature of our approach is the desired ability to obtain specific results starting from certain Gen-level inputs, a characteristic we called conditioning. 
+
+We can readily see that this is possible by focusing on specific results obtained for the jets model. Figure \ref{fig:condit} shows that the final, NanoAOD level reconstructed p$_T$ is correctly correlated to the GenJet p$_T$ for both FullSim and FlashSim: as we would expect the Gen-p$_T$ is crucial in determining the final-state p$_T$. What is more, in the same figure we also show the \emph{profile histogram} and RMS ($\sigma_{p_T}$/p$_T$) for the GenJet p$_T$ versus the p$_T$Ratio. As expected, not only does the p$_T$Ratio decrease as the GenJet p$_T$ increases (highly energetic jets have a reconstructed p$_T$ closer to the Gen-value), but the RMS correctly decreases as well, as constant terms in the p$_T$ resolution due to PileUp are divided by bigger terms as GenJet p$_T$ increases.
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet4.pdf}}
+    \subfloat[]
+    { \includegraphics[width=0.45\linewidth]{gfx/ch5/profhist.pdf}} 
+    \caption[Conditioning]{ (a) As we would expect the Gen-p$_T$ is crucial in determining the final-state p$_T$. Higher Gen-values correspond to higher reco-values. (b) Not only does the p$_T$Ratio decrease as the GenJet p$_T$ increases (highly energetic jets have a reconstructed p$_T$ closer to the Gen-value), but the RMS correctly decreases as well because of constant error terms being divided by larger Gen-values.}\label{fig:condit}
+    
+\end{figure}
+
+Additionally, because the \texttt{partonFlavour} conditioning variable allow us to specify the quark content of a jet, we can study how related quantities depend on this input. As a key example, we study the behaviour of the \texttt{btagDeepB} b-tagging distribution as we vary the parton input for the jet generation. Figure \ref{fig:roc1} shows how the distribution changes according to the ground truth value specified as input: as expected, jets being conditioned with a b content present higher values of b-tagging, with a sharp peak at one, while those coming from u, d, s are clearly peaked aroun smaller values. Now we could think of defining a threshold and assign a reconstructed b content to all those jets higher than that value. We would naturally mistag some events, leading us to define a \emph{flase-positive} ratio and a \emph{true-positive} one. A standard figure of merit for these cases is the \emph{Receiving operating characteristic} curve, which plots the TPR against the FPR for all possible threshold choices. Figure \ref{fig:roc1} shows it for our model in log scale, showing minimal deviations from the target FullSim curve.
+
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=0.45\linewidth]{gfx/ch5/btagj.pdf}}
+    \subfloat[]
+    { \includegraphics[width=0.45\linewidth]{gfx/ch5/roc.pdf}} 
+    \caption[b-tagging and ROC]{ (a) The b-tagging distribution shape correctly depends upon the specified quark content at the Gen-level. (b) The ROC curve for the FlashSim approaches that for FullSim, showing that even on derived quantities our approach is capable of delivering satisfying results.}\label{fig:roc1}
+    
+\end{figure}
+
+Because our results are not as close to FullSim as before, we would like to compare them with other competing approaches to asses the goodness of our own methodology. In order to do so, for a previous, simpler iteration of the jets model which was presented in the CMS Machine learning Forum of April 2022, we compared the ROC curves between FullSim, FastSim and FlashSim on a 1e6 samples set (not previously seen during training). Results are shown in Figure \ref{fig:allrocs} shows the comparison. We can see that while the ROC between our approach and FullSim is actually indistiguishable for TPR higher than 0.8, the FastSim ROC completely \emph{overshoots} the target, due to oversimplifications in the simulation approach. With longer training times and additional loss terms addressing this type of conditioning, we are confident that the performance of FlashSim could be improved even more.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch5/allrocs.pdf}
+    \caption[ROC Comparison]{The FlashSim ROC can actually obtain close results to FullSim, while FastSim fails to replicate the target ROC.}
+    \label{fig:allrocs}
+\end{figure}
+
 
 \subsection{Speed}
 
