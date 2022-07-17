@@ -190,11 +190,24 @@ where $\Gamma(u, v)$ is the set of (probability) distributions on $\mathbb{R}\ti
 
 \subsection{1d distributions and correlations}
 
-\paragraph{Muons}
-
-
 
 \paragraph{Jets}
+
+We show in Figure \ref{fig:jetsdists} four 1-d distributions from the total of 17 target variables obtained for jets. We emphasize once more that the model actually learned to generate the 17 values simultaneously, preserving the correct correlations as well as producing convincing distribution.
+
+Regarding the distributions, we observe that the model has correctly learned all the multi-modal, sharply peaked tagging distributions with Wasserstein scores of the order of 1e-3, testifying good convergence. The log scale of \texttt{btagDeepB} actually shows an instance of \emph{bridging}, where a small set of values were generated between two separate peaks. Single-mode distributions such as \texttt{ptRatio} have been larned as well, as were the Ids thanks to dequantization. The \texttt{jetId} plot in log-scale actually shows that a small set of samples has been generated in the empty regions between values 0, 2 and 6 (the only admissible ones) but this is because the continuous output of the network has been rounded to the nearest integer. A more refined version of post-processing is expected to correct this behaviour.
+
+Finally, we also observe a worse performance on two distributions: \texttt{bRegCorr}, a rather simple, skewed one-mode distribution which is expected to improve with further training (current Wasserstein distance is $\approx$ 0.02), and \texttt{nConstituents}, plotted at the bottom of \ref{fig:jetsdists}. The latter result is probably in stronger disagreement because the target actually consist of integer values--as we discussed before, the NF approach expects continuous distributions, and so the model performs bridging in an attempt to obtain a reasonable continuous distribution. However, it has been observed in previous training for similar architerctures that the model is actually capable of overcoming this limitation by brute force alone: if left in training for long enough it will eventually learn to reproduce the discrete peaks of the target.
+
+\begin{figure}
+    \myfloatalign
+    \includegraphics[width=\linewidth]{gfx/ch5/eval3.pdf} \\
+    \includegraphics[width=\linewidth]{gfx/ch5/eval12.pdf} \\
+    \includegraphics[width=\linewidth]{gfx/ch5/eval16.pdf} \\
+    \includegraphics[width=\linewidth]{gfx/ch5/eval10.pdf}
+    \caption[1-d jets distributions]{Four examples of 1-d distributions for jets. The model captures well multi-modal, sharply peaked distributions as well as single-mode, heavy tailed ones, and can also approximate Ids well thanks to dequantization. As expected it struggles with integers values such as \texttt{nConstituents}.}\label{fig:jetsdists}
+    
+\end{figure}
 
 The correlations between jets variables, inspected visually, show good agreement with those from FullSim. Figure \ref{fig:corrjet1} shows the highly non-trivial correlations between the tagging distributions, with \emph{quantiles} plotted at 0.5, 0.9, 0.99. The same choice for quantiles has been adopted for all the following figures.
 
@@ -205,7 +218,8 @@ The correlations between jets variables, inspected visually, show good agreement
     \label{fig:corrjet1}
 \end{figure}
 
-We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned to capture the correlations between the qgl score, which is correctly correlated to the number of constituents as a larger number of constituents is expected for the u, d, s quarks when compared to gluons. Additionally, correlations between the physical p$_T$ and mass distributions, obtained from the original p$_T$Ratio and massRatio outputs of the network, are learned as well.
+\graffito{get qgl nconstituens corr straight}
+We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned to capture the correlations between the qgl score, which is correctly correlated to the number of constituents as a lower number of constituents is expected for the u, d, s quarks when compared to gluons. Additionally, correlations between the physical p$_T$ and mass distributions, obtained from the original p$_T$Ratio and massRatio outputs of the network, are learned as well.
 
 \begin{figure}
     \myfloatalign
@@ -213,8 +227,32 @@ We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned t
     {\includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet2.pdf}}
     \subfloat[]
     { \includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet3.pdf}} 
-    \caption[qgl and p$_T$ correlations]{ (a) As expected, the qgl is positively correlated to the number of constituents--the higher the number, the larger the score. This behaviour has been captured by Flash Sim as well. The FullSim nConstituens distribution is jagged because of its discrete values, while the FlashSim has \emph{bridged} them and is thus smoothed.(b) The correlations between the physical distributions of p$_T$ and mass show agreement as well.}\label{fig:corrjet2+3}
+    \caption[qgl and p$_T$ correlations]{ (a) As expected, the qgl is positively correlated to the number of constituents--the lower the number, the larger the score. This behaviour has been captured by Flash Sim as well. The FullSim nConstituens distribution is jagged because of its discrete values, while the FlashSim has \emph{bridged} them and is thus smoothed.(b) The correlations between the physical distributions of p$_T$ and mass show agreement as well.}\label{fig:corrjet2+3}
     
+\end{figure}
+
+\paragraph{Muons}
+
+For the muons, we obtained similar results--good, convincing general convergence and correlations apart from a subset of the target variable. It should be noted that a larger number of target variables for this case were actually Boolean Ids, and as discussed before were approached through dequantization. Figure \ref{fig:muonsdists} shows 4 distributions out of 22 target variables. Aside from good convergence on the firs two, we can observe that for a series of them, such as \texttt{dxyErr} and \texttt{dzErr} the training is complicated by the fact that the NanoAOD format stores the variables in a low-precision format: this is reflected by the jagged structure in the plot for FullSim and it causes the model to perform bridging to reach convergence.
+
+\begin{figure}
+    \myfloatalign
+    \includegraphics[width=\linewidth]{gfx/ch5/meval2.pdf} \\
+    \includegraphics[width=\linewidth]{gfx/ch5/meval4.pdf} \\
+    \includegraphics[width=\linewidth]{gfx/ch5/meval6.pdf} \\
+    \includegraphics[width=\linewidth]{gfx/ch5/meval21.pdf}
+    \caption[1-d muons distributions]{Four examples of 1-d distributions for muons. The model captures well multi-modal, sharply peaked distributions as well as single-mode, heavy tailed ones, and can also approximate Ids well thanks to dequantization. As expected it struggles with integers values such as \texttt{nConstituents}.}\label{fig:muonsdists}
+    
+\end{figure}
+
+\graffito{which is the exact relationship between ip3d and the sqrt?}
+Finally, as a last example of correlations, we show in Figure \ref{fig:corrmuons} that the model has actually learned to capture complex correlations such as the ones between the \emph{impact parameter} \texttt{ip3d} and the quantity $\sqrt{\texttt{dxy}^2 + \texttt{dz}^2}$, which is closely related to the definition of the impact parameter itself.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.6]{gfx/ch5/mcorrs.pdf}
+    \caption[Muons correlations]{The complex correlations between the \emph{impact parameters} \texttt{ip3d} and the related quantity $\sqrt{\texttt{dxy}^2 + \texttt{dz}^2}$ have been captured as well.}
+    \label{fig:corrmuons}
 \end{figure}
 
 
@@ -265,3 +303,21 @@ What is more, the 1e4 batch size for generation was limited only by the VRAM of 
 
 
 \section{A prototype end-to-end analysis sample generator}
+
+We conclude by presenting the general idea for an end-to-end analysis sample generator in the NanoAOD format. The key concept can be easily grasped through Figure \ref{fig:endtoend}: a FullSim NanoAOD file gets processed and its Gen-level values extracted for eventual preprocessing. Then, the values are passed to the two networks, which generate raw samples which are finally postprocessed to reobtaine physical distributions and combined into a single, NanoAOD-like file format. The whole process can be executed by a single call to a \texttt{Python} script, which leverages the \texttt{ROOT C} interpreter for running the extraction and the \texttt{uproot} package for structuring and saving the data directly in the \texttt{.root} format, in a corresponding \texttt{TTree} data structure.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch5/endtoend.pdf}
+    \caption[end-toend sample generator]{The basic steps behind the prototype for an end-to-end sample generator.}
+    \label{fig:endtoend}
+\end{figure}
+
+This prototype has actually been tested on the full \emph{TTJets} dataset for the H$\rightarrow\mu^+\mu^-$ study of \cite{CMS-PAS-HIG-19-006}. What is more, we actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak} and \emph{Signal (H)} datasets were processed as well and stored for the comparison of the next chapter.
+
+In the end, we proved that our networks can be integrated into the existing software base and can be used for obtaining files in the exact same standard of that used in current analysis at CMS. We were able to asses two major characteristics of our approach:
+
+\begin{outline}
+    \1 The NF networks are actually capable of tackling other processes, inherently different from the training one: both distributions and correlations maintain good accord with FullSim samples. This is a crucial property if we are to move away from the prototyping stage to a more realistic NanoAOD simulator;
+    \1 Considering the whole preprocessing/postprocessing/disk writing overhead, the whole process took about 440 second or 7 minutes on the typical NanoAOD file of the TTBar dataset (about 1e6 events per file), once again testyfing to the speed of the current methodology.
+\end{outline}
