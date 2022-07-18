@@ -1,12 +1,42 @@
 %************************************************
 \chapter{A real analysis use case comparison}\label{ch:benan} % $\mathbb{ZNR}$
 %************************************************
+Having described in detail our innovative approach to event simulation, and having applied it to real datasets, we decided to reproduce the results of a recent analysis to demonstrate the feasibility of our model in a real-case scenario.
 
 \section{The Higgs decay into two muons}
+After generating data starting from the Gen-level information contained in the datasets discussed in Section \ref{sec:progen}, we turned to the analysis presented in \cite{CMS-PAS-HIG-19-006}, specifically that of VBF Channel of H$\rightarrow\mu^+\mu^-$, for the reasons discussed previously.
+Specifically, our reference was the work of the Pisa CMS group, collected \href{https://github.com/arizzi/PisaHmm}{here}\footnote{https://github.com/arizzi/PisaHmm}.
 
 \subsection{Key variables}
 
+First of all, we define the \emph{selected muons} as the muons with\\ \texttt{Muon\_pfRelIso04\_all} $<0.25$ (isolated), \texttt{Muon\_mediumId==True}, \texttt{Muon\_pt} $>20$ GeV (energetic) and \texttt{abs(Muon\_eta)} $<2.4$ (directed forward); all features we would expect from a pair of muons decaying from a Higgs. An event is also obviously required to have at least two opposite charged muons.
+
+In a similar way, we can identify \emph{selected jets} as those jets with \texttt{Jet\_pt} $> 50$ GeV or \texttt{Jet\_pt} $> 25$ GeV and \texttt{Jet\_puId} $>0$ (energetic, non PileUp jets), \texttt{Jet\_jetId} $>0$,  \texttt{abs(Jet\_eta)} $<4.7$ (forward) and spatially separated from both of the muons, with \texttt{Jet\_MuonDr} $>0.4$. 
+
+A VBF candidate event is required to have at least two jets respecting the previous properties, one with $p_T>35$ Gev, the other with $p_T>25$ Gev, $m_{jj}>400$ Gev and $\Delta\eta<2.4$. Selected events are further grouped into two independent categories. Events in which the two muons form an invariant mass between 115 and
+135 GeV belong to the signal region (VBF-SR), which is enriched in signal-like events. Events with 110 < $m_{\mu\mu}$ < 115 GeV or 135 < $m_{\mu\mu}$ < 150 GeV belong to the mass sideband region (VBF-SB), which in the full analysis has been used as a control region to estimate the backgroung.
+
+For each selected event we define the new, derived quantities. Some crucial ones are:
+
+\begin{outline}
+\1 An \emph{Higgs} object given by the sum of the two four-vectors of the selected muons;
+\1 Observables sensitive to $p_T$ and angular correlations between muons and jets: The $p_T$\emph{-balance ratio}, defined as:
+\[R(p_T) = \frac{p_T^{jj}+p_T^{\mu\mu}}{p_T(j_1) + p_T(j_2) + p_T(\mu\mu)}\]
+
+and the \emph{Zeppenfeld variable} $z^*$, defined from the \emph{rapidity y} as:
+
+\[z^* = \frac{y_{\mu\mu} - (y_{j_1} + y_{j_2})/2}{\abs{y_{j_1} + y_{j_2}}}\]
+
+\1  The azimuthal angle ($\phi_{CS}$) and the cosine of the polar angle ($\cos\theta_{CS}$) computed in the dimuon \emph{Collins–Soper} rest frame \cite{PhysRevD.16.2219}.
+\end{outline}
+
 \subsection{A DNN for event classification}
+The authors of \cite{CMS-PAS-HIG-19-006} used a deep neural network (DNN) multivariate discriminant is trained to distinguish the expected signal from background events using kinematic input variables that characterize the signal and the main background processes in the VBF-SR. The signal is then extracted from a \emph{binned maximum-likelihood fit} to the output of the DNN discriminator simultaneously in the VBF-SR and the VBF-SB regions. 
+
+We recovered the \emph{exact same network} as the one used in the final publication, with the final weights and parameters resulting from the trainings already performed by the authors of the original paper. We tested the network on our FlashSim data to compare the ouput with the one on the FullSim datasets used in the analysis and taken as Gen-level truth for generating our samples.
+
+
+
 
 \section{FullSim vs FlashSim}
 

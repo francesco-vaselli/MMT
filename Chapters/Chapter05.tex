@@ -67,7 +67,7 @@ Then, we selected the following 17 target variables for the matched reconstructe
 \1 The \texttt{bRegCorr}, the $p_T$ correction for b-jet energy regression;
 
 \1 The \texttt{qgl} score for the Quark vs Gluon likelihood discriminator;
-
+\graffito{what do the ids stand for?}
 \1 The \texttt{jetID} and \texttt{puID} ID flags indicating relevant characteristics of the jet and the Pile-Up.
 \end{outline}
 \subsection{Muons}
@@ -180,6 +180,7 @@ We trained the models on the local INFN Pisa computing resources, specifically o
 \graffito{do we want to plot the full results in an appendix?? or refer to a colab??}
 We move on to discuss the results obtained. 
 To perform a sound and reasonable comparison, we extract the Gen-values for conditioning from 1e5 samples coming from an unseen test set for jets and from the validation set (which was not used for training but just for evaluating the loss over time) for muons. We then generate new FlashSim samples starting from the same Gen-values, to get a one-to-one correspondence between the two sample sets.
+It has been observed that when generating a larger number of events, in the order of millions to billions, low probability mass regions can produce negative, nonphysical values. This phenomenon is very rare and can be easily corrected by implementing a check in the postprocessing, regenerating the event through the extraction of new noise values to sample from a different region of the learned pdf.
 
 There are two main types of comparison which can now be performed on the obtained samples: we can compare the \emph{distribution} or the \emph{correlations} for the two.
 While the latter can be inspected visually thanks to \emph{contour plots}, we would like to define a precise measure for the similarity of the empirical distributions between two samples. We thus define the \emph{Wasserstein distance} as:
@@ -241,7 +242,7 @@ For the muons, we obtained similar results--good, convincing general convergence
     \includegraphics[width=\linewidth]{gfx/ch5/meval4.pdf} \\
     \includegraphics[width=\linewidth]{gfx/ch5/meval6.pdf} \\
     \includegraphics[width=\linewidth]{gfx/ch5/meval21.pdf}
-    \caption[1-d muons distributions]{Four examples of 1-d distributions for muons. The model captures well multi-modal, sharply peaked distributions as well as single-mode, heavy tailed ones, and can also approximate Ids well thanks to dequantization. As expected it struggles with integers values such as \texttt{nConstituents}.}\label{fig:muonsdists}
+    \caption[1-d muons distributions]{Four examples of 1-d distributions for muons. For most distributions the results present a small Wasserstein distance, however the model performs bridging in the presence of low-precision variables which present discrete peaks in the original FullSim..}\label{fig:muonsdists}
     
 \end{figure}
 
@@ -302,7 +303,7 @@ A crucial result obtained is the \emph{generation speed}: for both jets and muon
 What is more, the 1e4 batch size for generation was limited only by the VRAM of the GPU being used, meaning that more powerful GPUs, ideally working in parallel, could achieve even faster generation times.
 
 
-\section{A prototype end-to-end analysis sample generator}
+\section{A prototype end-to-end analysis sample generator}\label{sec:progen}
 
 We conclude by presenting the general idea for an end-to-end analysis sample generator in the NanoAOD format. The key concept can be easily grasped through Figure \ref{fig:endtoend}: a FullSim NanoAOD file gets processed and its Gen-level values extracted for eventual preprocessing. Then, the values are passed to the two networks, which generate raw samples which are finally postprocessed to reobtaine physical distributions and combined into a single, NanoAOD-like file format. The whole process can be executed by a single call to a \texttt{Python} script, which leverages the \texttt{ROOT C} interpreter for running the extraction and the \texttt{uproot} package for structuring and saving the data directly in the \texttt{.root} format, in a corresponding \texttt{TTree} data structure.
 
@@ -313,11 +314,12 @@ We conclude by presenting the general idea for an end-to-end analysis sample gen
     \label{fig:endtoend}
 \end{figure}
 
-This prototype has actually been tested on the full \emph{TTJets} dataset for the H$\rightarrow\mu^+\mu^-$ study of \cite{CMS-PAS-HIG-19-006}. What is more, we actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak} and \emph{Signal (H)} datasets were processed as well and stored for the comparison of the next chapter.
+This prototype has been tested on the full \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{CMS-PAS-HIG-19-006}. What is more, we actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak} and two \emph{Signal (H)} datasets were processed as well and stored for the comparison of the next chapter. The two signal datasets differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} method \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one.
+In total we processed more than 200 files, meaning several millions of events, in less than one day.
 
 In the end, we proved that our networks can be integrated into the existing software base and can be used for obtaining files in the exact same standard of that used in current analysis at CMS. We were able to asses two major characteristics of our approach:
 
 \begin{outline}
-    \1 The NF networks are actually capable of tackling other processes, inherently different from the training one: both distributions and correlations maintain good accord with FullSim samples. This is a crucial property if we are to move away from the prototyping stage to a more realistic NanoAOD simulator;
-    \1 Considering the whole preprocessing/postprocessing/disk writing overhead, the whole process took about 440 second or 7 minutes on the typical NanoAOD file of the TTBar dataset (about 1e6 events per file), once again testyfing to the speed of the current methodology.
+    \1 The NF networks are actually capable of tackling other processes, inherently different from the training one: both distributions and correlations maintain good accord with FullSim samples, despite considerable changes from the training set. This is a crucial property if we are to move away from the prototyping stage to a more realistic, full-scale and general-purpose NanoAOD simulator;
+    \1 Considering the whole preprocessing/postprocessing/disk writing overhead, the whole process took about 440 second or 7 minutes on the typical NanoAOD file of the TTJets dataset (about 1e6 events per file), once again testyfing to the speed of the current methodology.
 \end{outline}
