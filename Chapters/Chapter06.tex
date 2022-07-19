@@ -7,7 +7,7 @@ Having described in detail our innovative approach to event simulation, and havi
 After generating data starting from the Gen-level information contained in the datasets discussed in Section \ref{sec:progen}, we turned to the analysis presented in \cite{CMS-PAS-HIG-19-006}, specifically that of VBF Channel of H$\rightarrow\mu^+\mu^-$, for the reasons discussed previously.
 Specifically, our reference was the work of the Pisa CMS group, collected \href{https://github.com/arizzi/PisaHmm}{here}\footnote{https://github.com/arizzi/PisaHmm}.
 
-\subsection{Key variables}
+\subsection{Event selection}
 
 First of all, we define the \emph{selected muons} as the muons with\\ \texttt{Muon\_pfRelIso04\_all} $<0.25$ (isolated), \texttt{Muon\_mediumId==True}, \texttt{Muon\_pt} $>20$ GeV (energetic) and \texttt{abs(Muon\_eta)} $<2.4$ (directed forward); all features we would expect from a pair of muons decaying from a Higgs. An event is also obviously required to have at least two opposite charged muons.
 
@@ -31,12 +31,29 @@ and the \emph{Zeppenfeld variable} $z^*$, defined from the \emph{rapidity y} as:
 \end{outline}
 
 \subsection{A DNN for event classification}
-The authors of \cite{CMS-PAS-HIG-19-006} used a deep neural network (DNN) multivariate discriminant is trained to distinguish the expected signal from background events using kinematic input variables that characterize the signal and the main background processes in the VBF-SR. The signal is then extracted from a \emph{binned maximum-likelihood fit} to the output of the DNN discriminator simultaneously in the VBF-SR and the VBF-SB regions. 
+The authors of \cite{CMS-PAS-HIG-19-006} used a deep neural network (DNN) multivariate discriminant, trained to distinguish the expected signal from background events using kinematic input variables that characterize the signal and the main background processes in the VBF-SR. The signal is then extracted from a \emph{binned maximum-likelihood fit} to the inverse hyperbolic tangent of the output of the DNN discriminator simultaneously in the VBF-SR and the VBF-SB regions. 
 
 We recovered the \emph{exact same network} as the one used in the final publication, with the final weights and parameters resulting from the trainings already performed by the authors of the original paper. We tested the network on our FlashSim data to compare the ouput with the one on the FullSim datasets used in the analysis and taken as Gen-level truth for generating our samples.
 
+The network takes as input 25 variables. The first 23 are listed below:
 
+\begin{outline}
+\1 Six variables associated with production and decay of the dimuon pair: its mass $m_{\mu\mu}$, the absolute and relative mass resolutions $\Delta m_{\mu\mu}$, $\Delta m_{\mu\mu}/m_{\mu\mu}$, its momentum $p_T^{\mu\mu}$ and its logarithm, the pseudorapidity $\eta_{\mu\mu}$;
 
+\1 The azimuthal angle ($\phi_{CS}$) and the cosine of the polar angle ($\cos\theta_{CS}$), the $p_T$\emph{-balance ratio} $R(p_T)$ and the logarithm of the \emph{Zeppenfeld variable} $z^*$;
+
+\1 The vector components of the leading jets, $p_T(j_1)$, $\eta(j_1)$, $\phi(j_1)$, $p_T(j_2)$, $\eta(j_2)$, $\phi(j_2)$, and their QGL scores, $QGL(j_1)$, $QGL(J_2)$, since jets in signal events are expected to originate from quarks, whereas in the DY process they can also be initiated by gluons;
+
+\1 Key variables referring to the dijet system: its mass $m_{jj}$ and $\log(m_{jj})$, the pseudorapidity distance between the two jets $\Delta \eta_{jj}$;
+
+\1  The minimum distance in pseudorapidity of the Higgs candidate with the two leading jets $\min(\eta(\mu\mu, j_1),\eta(\mu\mu, j_2))$
+
+\1 The data taking year (set to 2018 for both FullSim and FlashSim samples);
+\end{outline}
+
+Additionally, the VBF signal events are expected to have suppressed hadronic activity in the rapidity gap between the two leading jets. This feature is exploited by considering \emph{soft jets} in the event that are defined by clustering, via the \emph{anti-}$k_T$ jet-clustering algorithm with a distance parameter of 0.4, charged particles from the primary interaction vertex excluding the two identified muons and those associated with the two VBF jets. The soft jets are required to have $p_T>5$ GeV. The number of soft jets in an event, $N^{\text{soft}}_5$, as well as the scalar sum of their transverse momenta, $H^{\text{soft}}_{(2)T}$, are used as additional input variables. 
+Because soft activity depends upon the presence of additional charged particles, which we have not been simulated in the present work, we resorted to fix the values of these two variables to $N^{\text{soft}}_5=0$ and $H^{\text{soft}}_{(2)T}=1.0$ GeV. As we are interested in performing a comparison of the DNN output for FullSim and FlashSim, using fixed values in both evaluations does not affect or invalidate the procedure--the output distributions will simply be constrained to some specific shapes.
 
 \section{FullSim vs FlashSim}
 
+Need to discuss the results with the mighty supervisor to set the approach and decide which figures to include
