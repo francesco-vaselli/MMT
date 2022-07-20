@@ -1,7 +1,7 @@
 %************************************************
 \chapter{Data Analysis at the LHC}\label{ch:introduction}
 %************************************************
-The LHC produces -at design parameters- over 600 millions collisions ($\approx 10^9$ collisions) proton-proton per second in ATLAS or CMS detectors. The amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte). This means that we are reaching 40 TB/s of data--far too much for any detector data acquisition system to handle.
+The LHC produces over 40 millions collisions proton-proton per second in ATLAS or CMS detectors. The \emph{raw} data is made up of single-byte signals from roughly 100 millions acquisition channels, meaning \emph{4 PB/s of raw data}. The actual amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte). This means that we are reaching 40 TB/s of data--far too much for any conventional data acquisition system to handle.
 
 The trigger systems alleviate the problem by reducing the amount of data by a factor or 10$^{4}$; despite this, the constant need of cutting-edge resources and solutions, both in hardware and software, have been driving extremely fruitful research in the history of the LHC.
 
@@ -129,7 +129,18 @@ Even if sometimes it can be useful to use \emph{data-driven} methods to estimate
 
 \subsection{Computing Costs}
 
-Due to the length and the complexity of the process, its tremendous computation costs should not come as a surprise. Figure \ref{fig:cpuusage} shows the public approved HL-LHC CMS projections for the CPU usage at CMS.
+Due to the length and the complexity of the process, its tremendous computation costs should not come as a surprise. In 2019, the final resources employed \emph{exclusively at CMS} were as follows:
+
+\begin{outline}
+    \1 7 PB of RAW data (due to backup copies) and 3.5 PB of reconstructed data, 14 PB or RAW Monte Carlo and 7 PB of reconstructed simulation, for a total of 40 PB in a year;
+    \1 The CPU resources employed in the end amounted to 70,000 cores, divided as follows:
+    \2 7000 cores for \emph{data reconstruction};
+    \2 40,000 cores for Monte Carlo SIM and RECO steps;
+    \2 20,000 for all the analysies (considering all the MC and data taking steps).
+\end{outline}
+
+As the luminosity increases and the energy of the LHC reaches new and unprecedented energies, all these figures are expected to increase.
+Figure \ref{fig:cpuusage} shows the public approved HL-LHC CMS projections for the CPU usage at CMS.
 
 \begin{figure}
     \myfloatalign

@@ -21,11 +21,18 @@ A full scale FlashSim must be able of reproducing the content of a NanoAOD file 
 
 This has the clear advantage of reducing the size of the models and the resources needed for their trainings, beside, each single model may be conditioned on relevant quantities coming either from the Gen-level, from other model outputs or being specifically engineered to communicate key information regarding the event.
 
-One crucial element for the production of convincing NanoAODs is the presence of \emph{fakes}. The stochastic nature of these objects make their production non-trivial, however there exist other techniques from the ML field, such as \emph{LSTM} \cite{lstm}, for the handling and the production of variable-length sequences. The generation would obviously depend on key quantities such as the PileUp and the GenParticles.
+One crucial element for the production of convincing NanoAODs is the presence of \emph{fakes}. The stochastic nature of these objects make their production non-trivial, however there exist other techniques from the ML field, such as \emph{LSTM} \cite{lstm}, for handling and generation of variable-length sequences. The generation would obviously depend on key quantities such as the PileUp and the GenParticles.
 
 Another key quantity, the \emph{Missing Transverse Energy} (MET), could also depend on the final-state reconstructed objects, as this would allow us to obtain a more consistent description of the whole event.
 
-A possible global picture, with multiple dependencies and conditionings, is illustrated in Figure ???
+A possible global picture, with multiple dependencies and conditionings, is illustrated in Figure \ref{fig:globpic}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch7/fullnanoaod.pdf}
+    \caption[A global picture]{A possible global picture illustrating the various dependencies between conditioning, single object networks and RECO outputs.}
+    \label{fig:globpic}
+\end{figure}
 
 \subsection{Optimization}
 An important series of steps in the prototype end-to-end generator need to be optimized. 
@@ -40,7 +47,7 @@ Additionally, the postoprocessing step needs to be revised with the addition of 
 \section{Future research}
 The need for fast and reliable computing methods in the physical sciences, notably in the high-energy field, has fueled much of the technological progress of modern times. Despite this, the average physicist has generally little time to spend on innovating and improving its computing toolkit, and has to content himself with boilerplate solutions. This is especially true in highly specialized fields, such as HEP, which purse a wide variety of research directions.
 
-Specifically, in recent years, \emph{Machine Learning} techniques have been massively adopted by scientific collaborations around the world. However, such tools remain geared towards the necessities of industry; much work remains to be done to enable the use of this technologies in hard sciences.
+Specifically, in recent years, ML techniques have been massively adopted by scientific collaborations around the world. However, such tools remain geared towards the necessities of industry; much work remains to be done to enable the use of this technologies in hard sciences.
 
 As physicists with a keen interest in this type of applications, while still retaining useful domain knowledge, we are convinced that significant results could be achieved by pursuing the following research directions. 
 
@@ -50,7 +57,7 @@ The versatility of Normalizing Flows make them an optimal choice for tackling a 
 
 We already mentioned a series of possible approaches in Section \ref{sec:nfapp}. The most interesting is possibly the approach to \emph{anomaly detection}, where Flows have already been used to define empirical distributions from data (see \cite{Kasieczka_2021}). Other interesting approaches being currently tested and deployed at CERN make use of ML approaches as unbiased function approximants for unknown, empirical pdfs (e.g. \cite{D_Agnolo_2019}), however, perhaps being generally less known, NF have yet to be tested as a solution to the problem.
 
-\subsection{Graph Normalizing Flows}
+\subsection{Graph Networks and Normalizing Flows}
 
 Possibly considered the holy grail of ML for HEP applications at the LHC, the problem of \emph{track reconstruction} is mostly a pattern recognition task whose complexity grows much more than linearly with the increase of number of collisions, hence the number of tracks, and is thus expected to be one of the main problems for HL-LHC. When investigating such a large feature space, a common approach is to reduce the complexity of the network while still retaining useful information about local features through the use of \emph{Convolutional Neural Networks} (CNNs), which nowadays are the standard approach for image datasets (as pioneered in \cite{simonyan2015deep}).
 Unfortunately, any representation of tracking detector as images
