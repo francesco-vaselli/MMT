@@ -3,27 +3,25 @@
 %************************************************
 
 Having discussed the importance and the challenges of event simulation at LHC, and having described the Deep Learning Normalizing Flows approach, we dedicate this chapter to the practical implementation of an end-to-end sample generator.
+The idea is to use NF models to \emph{learn} the mapping from our inputs (noise and generator-level information) to our outputs, consisting in the final-reduction NanoAOD data format for the fully reconstructed data. Having learned the appropriate mapping, the generation of new samples is then trivial, as it consists of sampling a multidimensional Gaussian and adding the relevant generator information. This effectively means being able to skip both the FullSim simulation step, based on \texttt{Geant4}, as well as the reconstruction and readout steps. The following chapter thus describes the variables chosen as inputs and as outputs of our networks, presenting and discussing the results obtained.
 
-The code discussed in the following sections and used in this work may be found online \href{tbd}{here}\footnote{repository link, tbd}.
+The technicalities regarding the actual code implementation are briefly discussed in the Appendix \ref{ch:appx}, and the code use is hosted and documented in detail online \href{tbd}{at the following repository}\footnote{repository link, tbd}.
 
 \section{Target variables}
 
 As we discussed in Section \ref{sec:targets}, we choose to target the VBF Channel of H$\rightarrow\mu^+\mu^-$. Thanks to the clear signature, we only needed to simulate jets and muons out of all the possible objects in a NanoAOD. The present section serves as a discussion of the chosen variables to be simulated with our approach.
 
-However, because our Machine Learning Models need a large amount of training data, having already been simulated through FullSim in large numbers, the VBF signal MC data samples were not sufficient for our task. We thus turned to the t$\overline{\text{t}}$ process.
+For training our model, however, we turned to the t$\overline{\text{t}}$ process. This is an ideal sample, as it contains many different physical processes. What is more, we actually expect our approach to be \emph{independent} from the actual Gen-process, as we are actually learning to model the \emph{detector response} to an arbitrary input: the t$\overline{\text{t}}$ then offers the advantage of already having billions of simulated events ready to be used for a general-purpose training.
 
 \subsection{The t$\overline{\text{t}}$ process}
-The top quark is an important component of the standard model, especially because of
-its large mass, and its properties are critical for the overall understanding of the theory. Measurements of the top quark-antiquark pair (t$\overline{\text{t}}$) production cross section test the predictions of
-quantum chromodynamics (QCD), constrain QCD parameters, and are sensitive to physics beyond the SM. With a cross-section of $\approx 900$ pb at 13 TeV , the t$\overline{\text{t}}$ process is also \emph{the dominant SM background to many searches for new
+With a cross-section of $\approx 900$ pb at 13 TeV , the t$\overline{\text{t}}$ process is also \emph{the dominant SM background to many searches for new
 physical phenomena}, and its precise measurement is essential for claiming new discoveries.
-The copious top quark data samples produced at the CERN LHC enable measurements of the t$\overline{\text{t}}$
-production rate in extended parts of the phase space, and differentially as a function of the kinematic properties of the t$\overline{\text{t}}$ system. Inclusive and differential cross section measurements from
+Inclusive and differential cross section measurements from
 proton-proton (pp) collisions at centre-of-mass energies of 13 TeV have been reported by
 the CMS collaboration in \cite{Sirunyan_2017}.
 
-\graffito{were our samples dijets or mixed?}
-Top quarks decay almost exclusively into a W boson and a b quark. The W may then decay in either a q$\overline{\text{q}}$ or a lepton and its corresponding neutrino, ensuring that the events will be well populated with both jets and muons, our simulation targets. \graffito{do we want a figure for ttbar?}
+
+Top quarks decay almost exclusively into a W boson and a b quark. The W may then decay in either a q$\overline{\text{q}}$ or a lepton and its corresponding neutrino, ensuring that the events will be well populated with both jets and muons, our simulation targets. 
 
 %\begin{figure}
     %\centering
@@ -33,42 +31,41 @@ Top quarks decay almost exclusively into a W boson and a b quark. The W may then
     %\label{fig:ttfig}
 %\end{figure}
 
-Having at our disposal a large set of FullSim MC NanoAOD samples for t$\overline{\text{t}}$ dijet/at least one jet(??) events, we used these to \emph{train} our models on the two target objects.
+Having at our disposal a large set of FullSim MC NanoAOD samples for t$\overline{\text{t}}$ events, we used these to \emph{train} our models on the two target objects.
 
 \subsection{Jets}
 
-As discussed in Section \ref{sec:nanoaod}, a NanoAOD contains both the Jet objects, i.e. final-state reconstructed jets, and the GenJet objects, the jets resulting from a generator and which will pass through all the steps of the FullSim simulation chain, which are either matched to Jet objects, or may end-up unmatched because of limitations in the matching algorithms and the previous simulation steps. For the moment, we disregard the problem of \emph{fake jets}, that is Jet objects which are not reconstructed from a GenJet object but are instead due to noise or errors in clustering algorithms.
+As discussed in Section \ref{sec:nanoaod}, a NanoAOD, i.e. the CMS standard analysis format, contains both the Jet objects, i.e. final-state reconstructed jets, and the GenJet objects, the jets resulting from the clustering of initial, Gen-level particles before going through the reconstruction step. The latter are either matched to Jet objects, or may end-up unmatched because of limitations in the matching algorithms and the previous simulation steps. For the moment, we disregard the problem of \emph{fake jets}, that is Jet objects which are not matched to a GenJet object but are instead due to noise or Pile-Up.
 
-The idea is being able to directly generate correctly distributed Jet objects starting from noise, for stochasticity,  but also from the values of a corresponding GenJet, as a physical-informed input for the network (a process known as \emph{conditioning}): knowing just the diagram-level physics of some process, we are going to skip the Simulation, Digitization and Reconstruction steps.
+The idea is being able to directly generate correctly distributed Jet objects starting from noise, for stochasticity,  but also from the values of a corresponding GenJet, as a physical-informed input for the network (a process known as \emph{conditioning}): knowing just the generator-level information of some process, we are going to skip the Simulation, Digitization and Reconstruction steps.
 
 
-With the use of \texttt{C/C++} code (name of script) for the \texttt{ROOT} data analysis framework \cite{Brun:491486}, we processed the NanoAOD files and extracted all the Jet objects matched to a GenJet object, across all the events in the file. Because of the large number of variables, we selected a meaningful subset, containing all the necessary information for our test analysis.
+With the use of \texttt{C/C++} code for the \texttt{ROOT} data analysis framework \cite{Brun:491486}, we processed the NanoAOD files and extracted all the Jet objects matched to a GenJet object, across all the events in the file. Because of the large number of variables, we selected a meaningful subset, containing all the necessary information for our test analysis.
 
 First of all, we selected the following 14 GenJet variables for conditioning the generation: 
-\graffito{do we want plots of vars?}
 
 \begin{outline}
-\1 \emph{The physical properties} of the GenJet, that is \texttt{Eta}, \texttt{Phi}, \texttt{Mass}, \texttt{Pt}, the \texttt{PartonFlavour}, giving the parton content of a GenJet as a specific number and the \texttt{HadronFlavour}, describing the hadron content in a similar way;
-\1 \emph{Engineered, physical-informed variables} which we designed to express interesting physical properties of the GenJet. Computing the $\Delta$R separation between the GenJet and the GenMuons present in the event, we selected the first and second \emph{closest muons}, and we computed the following quantities for each one:
-\2 \texttt{Dr}, giving the separation from the GenJet, \texttt{DEta}, the $\eta$ difference from the GenJet, \texttt{DPt}, the $p_T$ difference from the GenJet, \texttt{DPhi}, the $\phi$ difference from the GenJet, which is to be computed accounting for the \emph{periodicity} of the $\phi$ variable;
+\1 \emph{The physical properties} of the GenJet, that is $\eta$, $\phi$, $m_j$, $p_T$, and the \emph{Parton} and \emph{Hadron Flavour}, giving the \emph{flavour} content of a jet as containg a specific quark or some gluons;
+
+\1 \emph{Variables correlated with the rest of the event}, as the actual properties of a jet are expected to be influenced by other objects such as muons. Computing the $\Delta$R separation between the GenJet and the GenMuons present in the event, we selected the first and second \emph{closest muons}, and we computed the following quantities for each one:
+\2 \texttt{Dr}, giving the separation from the GenJet, \texttt{DEta}, the $\eta$ difference from the GenJet, \texttt{DPt}, the $p_T$ difference from the GenJet, \texttt{DPhi}, the $\phi$ difference from the GenJet;
 
 \1 If no GenMuons were present within a cone of $\Delta$R = 0.5 from the GenJet, the corresponding values were set to a user-defined maximum.
 
 \end{outline}
 
-Then, we selected the following 17 target variables for the matched reconstructed Jet objects:
+Then, we selected the following 17 target reconstructed variables for the matched reconstructed Jet objects:
 
 \begin{outline}
-\1 \emph{The physical properties} of the Jet \emph{with regard to} the ones of the matched GenJet: \texttt{EtaMinusGen}, the $\eta$ difference , \texttt{PhiMinusGen}, the $\phi$ difference, \texttt{MassRatio}, the ratio of the jet and GenJet masses, \texttt{PtRatio}, the ratio of $p_T$s. This was done because the Simulation and Reconstruction steps are expected to introduce corrections w.r.t. the GenJet distributions, easier to learn when considering these quantities. As an additional variable, the Jet \texttt{Area}, a measure of its susceptibility to radiation, like pileup or underlying event, was added as well;
+\1 \emph{The physical properties} of the Jet \emph{with regard to} the ones of the matched GenJet: $\Delta\eta$, the $\eta_{reco} - \eta_{gen}$ difference , $\Delta\phi$, the $\phi$ difference, $R_m$, the ratio of the jet and GenJet masses, $R_{p_T}$, the ratio of $p_T$s. This was done because the Simulation and Reconstruction steps are expected to introduce corrections w.r.t. the GenJet distributions, easier to learn when considering these quantities. As an additional variable, the Jet \texttt{Area}, a measure of its susceptibility to radiation, like pileup or underlying event, was added as well;
 
-\graffito{what does btag -1 stand for?}
-\1 The most relevant \emph{b-tagging and c-tagging algorithms scores}: \texttt{btagCMVA}, \texttt{btagCSVV2}, \texttt{btagDeepB}, \texttt{btagDeepC}, \texttt{btagDeepFlavB} and \\\texttt{btagDeepFlavC}, which indicate with a score ranging from 0 to 1 whether the Jet contains the respective quark or not, a very significant information for performing event selection during an analysis. Some values may be offsetted to -1 to indicate ???;
+\1 Some of the btag discriminant variables \emph{b-tagging and c-tagging algorithms scores}: \texttt{btagCMVA}, \texttt{btagCSVV2}, \texttt{btagDeepB}, \texttt{btagDeepC}, \texttt{btagDeepFlavB} and \\\texttt{btagDeepFlavC}, which indicate with a score ranging from 0 to 1 whether the Jet contains the respective quark or not, a very significant information for performing event selection during an analysis. Some values may be offsetted to -1 to indicate that the corresponding tagging algorithm has faild to assign a score to the event;
 
-\1 The \texttt{bRegCorr}, the $p_T$ correction for b-jet energy regression;
+\1 The \texttt{bRegCorr}, the $p_T$ correction for b-jet energy regression, as the presence of neurinos due to semi-leptonic decays in the jets coming from b quarks can result in underestimated jet energy measurements;
 
-\1 The \texttt{qgl} score for the Quark vs Gluon likelihood discriminator;
-\graffito{what do the ids stand for?}
-\1 The \texttt{jetID} and \texttt{puID} ID flags indicating relevant characteristics of the jet and the Pile-Up.
+\1 The \texttt{qgl} score for the Quark vs Gluon likelihood discriminator, which is employed as most of the interesting physics channels studied at the LHC involve hadronic jets initiated by quarks, while dominant backgrounds often arise from QCD events, where jets are generally produced from gluons;
+
+\1 The \texttt{jetID} and \texttt{puID} ID flags indicating relevant characteristics of the jet as well as the event noise and Pile-Up.
 \end{outline}
 \subsection{Muons}
 
@@ -77,13 +74,12 @@ For muons we performed the same procedure, taking only those muons matching to G
 We selected 30 GenMuon variables for conditioning:
 
 \begin{outline}
-\1 \emph{The physical properties} of the GenMuon, that is \texttt{Eta}, \texttt{Phi}, \texttt{Charge} and \texttt{Pt};
+\1 \emph{The physical properties} of the GenMuon, that is $\eta$, $\emph{phi}$, \texttt{Charge} and $p_T$;
 
-\1 \emph{The 14 GenParticle status flags}, a series of \texttt{statusFlags} stored bitwise, with each bit having a different physical interpretation such as \emph{isTauDecayProduct}, \emph{fromHardProcess}, etc. or some information regarding the position of the object in the detector (e.g. \emph{isLastCopy}, indicating that this is the last copy of the GenPart in the detector to be used for the analysis);
+\1 \emph{The 14 GenParticle status flags}, a series of \texttt{statusFlags} stored bitwise, with each bit having a different physical interpretation such as \emph{isTauDecayProduct}, \emph{fromHardProcess}, etc. or some information regarding the position of the object in the detector;
 
-\1 \emph{Engineered, physical-informed variables} which we designed to express interesting physical properties of the GenMuon. Computing the $\Delta$R separation between the GenMuon and the GenJets present in the event, we selected the first \emph{closest GenJet}, and we computed the following quantities:
-\2 \texttt{Dr}, giving the separation from the GenJet, \texttt{DEta}, the $\eta$ difference from the GenJet, \texttt{Pt}, the $p_T$ of the GenJet,
-\texttt{DPhi}, the $\phi$ difference from the GenJet, which is to be computed accounting for the \emph{periodicity} of the $\phi$ variable and finally the \texttt{Mass} of the closest GenJet;
+\1 \emph{Variables correlated with the rest of the event}, as the actual properties of a muon are expected to be influenced by other objects such as jets. Computing the $\Delta$R separation between the GenMuon and the GenJets present in the event, we selected the first \emph{closest GenJet}, and we computed the following quantities:
+\2 $\Delta$R, giving the separation from the GenJet, $\Delta\eta$, the $\eta_{muon} - \eta_{jet}$ difference, $R_{p_T}$, the ratio of $p_T$s, $\Delta\phi$, the $\phi$ difference, and finally the $m_j$ of the closest GenJet;
 
 \1 A series of 6 \emph{ Event level variables regarding Pile-Up}:\\ \texttt{Pileup\_gpudensity}, the Generator-level PU vertices/mm,\\ \texttt{Pileup\_nPU}, the number of pileup interactions that have been added to the event in the current bunch crossing, \texttt{Pileup\_nTrueInt}, the true mean number of the poisson distribution for this event from which the number of interactions each bunch crossing has been sampled, \texttt{Pileup\_pudensity}, PU vertices/mm, \texttt{Pileup\_sumEOOT}, the number of early out of time pileup and \texttt{Pileup\_sumLOOT}, the number of late out of time pileup;
 \end{outline}
@@ -93,7 +89,7 @@ Then we selected 22 target variables for the Muon objects:
 \begin{outline}
 \1 \emph{The physical properties} of the muon \emph{with regard to} the ones of the matched GenMuon: \texttt{EtaMinusGen}, the $\eta$ difference , \texttt{PhiMinusGen}, the $\phi$ difference, \texttt{PtRatio}, the ratio of $p_T$s. This was done because the Simulation and Reconstruction steps are expected to introduce corrections w.r.t. the GenMuon distributions, easier to learn when considering these quantities. As an additional variable, the \texttt{ptErr}, the $p_T$ error for the muon track, was selected as well;
 
-\1 Six \emph{impact parameters} with regard to the primary vertex: \texttt{dxy}, \texttt{dxyErr}, \texttt{dz}, \texttt{dzErr}, the 3D impact parameter \texttt{ip3d} and its significance \texttt{sip3d}, all expressed in cm;
+\1 Six \emph{impact parameters} with respect to the primary vertex: \texttt{dxy}, \texttt{dxyErr}, \texttt{dz}, \texttt{dzErr}, the 3D impact parameter \texttt{ip3d} and its significance \texttt{sip3d}, all expressed in cm;
 
 \1 Some \emph{Boolean flags}: \texttt{isGlobal}, \texttt{isPFcand}, identifying the muon as a Particle Flow candidate, \texttt{isTracker};
 
