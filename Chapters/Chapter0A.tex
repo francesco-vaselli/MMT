@@ -6,13 +6,11 @@
 \chapter{Appendix Test}\label{ch:appx}
 First of all, we point out to the interested reader that the final version of the code used in this Thesis is hosted and documented in detail online \href{tbd}{at the following repository}\footnote{repository link, tbd}.
 
-%Errem omnium ea per, pro congue populo ornatus cu, ex qui dicant
-%nemore melius. No pri diam iriure euismod. Graecis eleifend
-%appellantur quo id. Id corpora inimicus nam, facer nonummy ne pro,
-%kasd repudiandae ei mei. Mea menandri mediocrem dissentiet cu, ex
-%nominati imperdiet nec, sea odio duis vocent ei. Tempor everti
-%appareat cu ius, ridens audiam an qui, aliquid admodum conceptam ne
-%qui. Vis ea melius nostrum, mel alienum euripidis eu.
+\section{Extraction and preprocessing}
+With the use of \texttt{C/C++} code (name of script) for the \texttt{ROOT} data analysis framework \cite{Brun:491486}, we processed the NanoAOD files and extracted all the Jet objects matched to a GenJet object and the Muon objects matched to a GenMuon across all the events in the file. This operation can be performed rather quickly thanks to the \emph{compiled} language being used and the powerful \texttt{ROOT::RDataFrame()} class, offering a modern, high-level interface for the manipulation of data stored in a NanoAOD \texttt{TTree}, as well as \emph{multi-threading} and other low-level optimisations.
+The output of the \emph{extraction} step is another \texttt{.root} file containing just the selected objects.
+
+ We thus open the \texttt{.root} file directly in a \texttt{Python} script through the \texttt{uproot} package \cite{jim_pivarski_2022_6791281}, discard the Events structure to obtain a simple table with one object per line, perform the preprocessing as discussed above and save the output in \texttt{.hdf5} format for the training.
 
 \section{Appendix Section Test}
 Test: \autoref{tab:moreexample} (This reference should have a
