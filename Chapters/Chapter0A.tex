@@ -12,6 +12,11 @@ The output of the \emph{extraction} step is another \texttt{.root} file containi
 
  We thus open the \texttt{.root} file directly in a \texttt{Python} script through the \texttt{uproot} package \cite{jim_pivarski_2022_6791281}, discard the Events structure to obtain a simple table with one object per line, perform the preprocessing as discussed above and save the output in \texttt{.hdf5} format for the training.
 
+\section{Errors and limitations}
+It has been observed that when generating a larger number of events, in the order of millions to billions, low probability mass regions can produce negative, nonphysical values. This phenomenon is very rare and can be easily corrected by implementing a check in the postprocessing, regenerating the event through the extraction of new noise values to sample from a different region of the learned pdf.
+
+\section{End-to-end}
+The whole process can be executed by a single call to a \texttt{Python} script, which leverages the \texttt{ROOT C} interpreter for running the extraction and the \texttt{uproot} package for structuring and saving the data directly in the \texttt{.root} format, in a corresponding \texttt{TTree} data structure.
 \section{Appendix Section Test}
 Test: \autoref{tab:moreexample} (This reference should have a
 lowercase, small caps \spacedlowsmallcaps{A} if the option
