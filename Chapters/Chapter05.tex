@@ -263,7 +263,7 @@ We can readily see that this is possible by focusing on specific results obtaine
     {\includegraphics[width=0.6\linewidth]{gfx/ch5/corrjet4.pdf}}\\
     \subfloat[]
     { \includegraphics[width=0.6\linewidth]{gfx/ch5/profhist.pdf}} 
-    \caption[Conditioning]{ (a) As we would expect the Gen-p$_T$ is crucial in determining the final-state p$_T$. Higher Gen-values correspond to higher reco-values. (b) Not only does the p$_T$Ratio decrease as the GenJet p$_T$ increases (highly energetic jets have a reconstructed p$_T$ closer to the Gen-value), but the RMS correctly decreases as well because of constant error terms being divided by larger Gen-values. The FastSim results on the same samples, shown in green, are less close to the target than our approach.}\label{fig:condit}
+    \caption[Conditioning]{ (a) As we would expect the Gen-p$_T$ is crucial in determining the final-state p$_T$. Higher Gen-values correspond to higher reco-values. (b) For a previous iteration of the jet architecture, we see that the p$_T$Ratio decrease as the GenJet p$_T$ increases (highly energetic jets have a reconstructed p$_T$ closer to the Gen-value), but the RMS correctly decreases as well because of constant error terms being divided by larger Gen-values. The FastSim results on the same samples, shown in green, are less close to the target than our approach.}\label{fig:condit}
     
 \end{figure}
 
@@ -308,7 +308,7 @@ We conclude by presenting the general idea for an end-to-end analysis sample gen
     \label{fig:endtoend}
 \end{figure}
 
-This prototype has been tested on the full \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{CMS-PAS-HIG-19-006}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak} and two \emph{Signal (H)} datasets were processed as well and stored for the comparison of the next chapter. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
+This prototype has been tested on the full \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak} and two \emph{Signal (H)} datasets were processed as well and stored for the comparison of the next chapter. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
 
 \begin{figure}
     \myfloatalign
