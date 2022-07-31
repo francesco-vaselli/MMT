@@ -225,8 +225,8 @@ Event information from each step in the simulation and reconstruction chain is l
 
 \begin{figure}
     \centering
-     \includegraphics[width=\columnwidth]{gfx/ch2/whats_in_aod_reco.png}
-    \caption[Data Tiers]{RAW data is the Detector data after online formatting, the L1 trigger result, the result of the HLT selections (HLT trigger bits), potentially some of the higher level quantities calculated during HLT processing. RECO data contains objects from all stages of reconstruction. AOD are derived from the RECO information to provide data for physics analyses in a convenient, compact format. Most physics analyses can run on AOD data. Courtesy of the CMS public wiki.}
+     \includegraphics[width=\columnwidth]{gfx/ch2/data_tiers.pdf}
+    \caption[Data Tiers]{RAW data is the Detector data after online formatting, the L1 trigger result, the result of the HLT selections (HLT trigger bits), potentially some of the higher level quantities calculated during HLT processing. RECO data contains objects from all stages of reconstruction. AOD are derived from the RECO information to provide data for physics analyses in a convenient, compact format. MiniAOD and NanoAOD do the same, returning a progressively smaller format. Most physics analyses can run on either MiniAOD or NanoAOD data.}
     \label{fig:datatier}
 \end{figure}
 
