@@ -13,20 +13,19 @@ at 1.4$\%$ respect to gravity. In the following we describe the most important f
 
 \paragraph{Design and relevant characteristics}
 
-The LHC tunnel has not exactly a circular shape but is formed by 8 rectilinear sections and 8 circular portions. Each arc has an internal radius of 3.7 km and contains
+The LHC tunnel has not exactly a circular shape but is formed by 8 straight sections and 8 circular portions. Each arc has an internal radius of 3.7 km and contains
 magnetic dipoles that are used to curve the beams reaching a maximum magnetic
 field of 8.33 T. The rectilinear sections in the tunnel are approximately 528 m long and host the collision points as well as a series of utilities: magnetic quadrupoles in order to compensate the transverse dispersion of the
 protons in the bunches, caused by their mutual repulsion and by synchrotron radi-
 ation; radiofrequency cavities, beam injectors and dump facilities.
 
 
-Four major experimental insertions are located in the rectilinear section. ATLAS (A Toroidal
+Four major experimental insertions are located in the straight section. ATLAS (A Toroidal
 LHC Apparatus) and CMS (Compact Muon Solenoid) are both multi-purpose experiments, designed to
 investigate a wide range of scenarios. Their focus includes Higgs boson properties
-study and new physics properties searches at TeV scale. They have similar structures and similar subdetectors in order to have comparable results and to have the
-possibility to cross check each other’s studies. ALICE (A Large Ion Collider Experiment) studies a phase of matter called quark-gluon plasma that is formed in
-high energy nuclear collisions. Those studies are performed collecting heavy-ion
-collisions. LHCb is an experiment designed to perform precision measurement of processes related to b-quark and CP-symmetry violation. Figure \ref{fig:cernacc} shows the entirety of the CERN accelerator complex
+study and new physics searches at TeV scale. They have similar structures and similar subdetectors in order to have comparable results and to have the
+possibility to cross check each other’s studies, however, they also have unique design choices setting them apart from each other. ALICE (A Large Ion Collider Experiment) studies a phase of matter called quark-gluon plasma that is formed in
+high energy nuclear collisions. Those studies are performed in dedicated runs of the LHC accellerating and colliding \emph{heavy ions} instead of protons. LHCb is an experiment designed to perform precision measurement of processes related to b-quark and CP-symmetry violation. Figure \ref{fig:cernacc} shows the entirety of the CERN accelerator complex
 
 \begin{figure}
     \centering
@@ -39,27 +38,44 @@ Protons are accelerated and injected in the LHC by a chain of four accelerators.
 The first one is a linear accelerator that injects particles in a chain of three circular
 accelerators. Finally, they are injected in the LHC with opposite directions in
 two separate beam pipes with an energy of 450 GeV. The particles are accelerated
-inside LHC by \emph{radio-frequency cavities} from 450 GeV to a desing-energy of 7 TeV, therefore
-the center of mass energy of particles collision is nominally 14 TeV. They circulate
-grouped in \emph{bunches}; each beam pipe contains about 2800 bunches in LHC and each
+inside LHC by \emph{radio-frequency cavities} from 450 GeV to a desing-energy of 7 TeV (reached 6,8 TeV maximum), therefore
+the center of mass energy of particles collision is nominally 14 TeV (reached 13,6 TeV maximum). They circulate
+grouped in \emph{bunches}; each beam contains about 2800 bunches in LHC and each
 proton bunch has $\approx 10^{11}$ protons. The bunches are spaced 25 ns in time in the nominal
 design therefore collisions happen every 25 ns, for a final event rate of about 40 MHz.
 
 \paragraph{Luminosity and pile-up}
 
 The collision rate of an accelerator is measured by its \emph{luminosity}. It's a measurement of the number of collisions that can be produced in a detector per cm$^{2}$ and per second. The bigger is the value of L, the bigger is the number of collisions, making L a key parameter in the design of an accelerator.
-Semi-qualitatively, if we define N$^2 \approx (1.15\cdot10^{11})^2$ as the square of the number of protons per bunch, $t$ = 25 ns as the time between bunches and $S_{eff} = 4\pi\sigma$ as the \emph{effective section of collision}, depending on the transversal size of the bunch at Interaction Point ($\sigma \approx 16 \; \mu$m), we obtain L as:
 
-\[ \text{L} = \frac{N^2}{tS_{eff}} \approx 10^{34} \; \text{cm}^2 \;\text{s}^{-1}
+Semi-qualitatively, we can define L from a series of key quantities. The \emph{transverse emittance} $\epsilon$ is a beam quality concept reflecting the process of bunch preparation (the injector chain), extending all the way back to the source for hadrons. A low emittance particle beam is a beam where the particles are confined to a small distance and have nearly the same momentum. In a colliding beam accelerator, keeping the emittance small means that the likelihood of particle interactions will be greater resulting in higher luminosity.
+Emittance can be defined as the smallest opening you can squeeze the beam through, and can also be considered as a measurement of the parallelism of a beam. It has units of length (usually measured in length times radiants) and can be measured in all three spatial dimensions. The dimension parallel to the motion of the particle is called the longitudinal emittance. The other two dimensions are referred to as the transverse emittances.
+
+The \emph{amplitude function} $\beta$  is determined by the accelerator magnet configuration (basically, the quadrupole magnet arrangement) and powering. When expressed in terms of $\sigma \approx 16 \; \mu$m, (cross-sectional size of the bunch)  and  the transverse emittance, the amplitude function $\beta$ becomes:
+
+\[\beta = \frac{\pi\sigma^2}{\epsilon}\]
+
+So, $\beta$ is roughly the width of the beam squared divided by the emittance. If $\beta$ is low the beam is narrower, \emph{squeezed}. If $\beta$ is high, the beam is wide and straight.
+$\beta$ has units of length. Of particular significance is the value of the amplitude function at the interaction point, $\beta^*$.Clearly one wants  to be as small as possible; how small depends on the capability of the hardware to make a near-focus at the interaction point.
+Nominal values for these quantities are $\beta^* = 0.55$ m and $\epsilon = 3,75 \; \mu$m rad.
+
+If we define $N^2 \approx (1.15\cdot10^{11})^2$ as the square of the number of protons per bunch, $t$ = 25 ns as the time between bunches, meaning a \emph{bunches crossing} frequency $f \approx 40 10^6$ Hz we obtain L as:
+
+\[ \text{L} \approx \frac{f N^2}{4\pi\sigma^2} = \frac{f N^2}{4\epsilon\beta^*} \approx 10^{34} \; \text{cm}^2 \;\text{s}^{-1}
 \]
 
+Thus, to achieve high luminosity, all one has to do is make high population bunches ($N$) of low emittance to collide at high frequency at locations where the beam optics provides as low values of the amplitude functions as possible.
 A related quantity is the \emph{integrated} luminosity, which is simply defined as the integral of the luminosity over time.
+The final expected number of events $N$ for a process with cross section $\sigma$ is then:
+
+\[N = \text{L}\sigma\]
+
 
 Searching rare events requires a large number of collisions; for this reason, the
 beams are \emph{compressed} in the transverse plane just before entering in the experiments, in order to increase the luminosity of each bunch crossing. Rare events searches need high luminosity, but at high luminosity the rate
-of minimum bias collisions exceeds the
+of inclusive, inelastic collisions exceeds the
 bunch crossing rate and there is more
-than one minimum bias interaction per
+than one interaction per
 bunch crossing. This effect is known
 as \emph{pile-up}. Pile-up interactions produce noise and tracks that make object
 reconstruction more difficult, therefore
@@ -104,9 +120,9 @@ which is computed using just the polar angle $\theta$ and is invariant under cha
 
 \section{The CMS Experiment}
 
-The Compact Muon Solenoid (CMS) is a barrel shaped detector, centered at the
+The Compact Muon Solenoid (CMS) is a cylindrical shaped detector, centered at the
 nominal point where the beams collide. It consists of a central part, called \emph{barrel},
-and two external parts called \emph{endcaps}, placed at the ends of the cylindrical barrel.
+and two external parts called \emph{endcaps}, placed at the ends of the barrel.
 
 CMS is a complex apparatus composed of many \emph{subdetectors}--it is illustrated in Figure \ref{fig:cms}.
 
@@ -129,12 +145,12 @@ yoke of the magnet.
 
 \subsection{Design}
 
-What follows is a brief description of the major subdetectors. As the technical details of each subdetector are extremely subtle, they have already been studied and discussed in numerous articles and are not the focus of our study, we will not discuss them in the present work. The interested reader can found a detailed reference here \cite{Collaboration_2008}. Several upgrades have already been performed during the operational history of the detector, and more are to come in preparation for the \emph{High Luminosity} phase of the LHC.
+What follows is a brief description of the major subdetectors. As the technical details of each subdetector are extremely subtle, they have already been studied and discussed in numerous articles and are not the focus of our study, we will not discuss them in the present work. The interested reader can found a detailed reference at \cite{Collaboration_2008}. Several upgrades have already been performed during the operational history of the detector, and more are to come in preparation for the \emph{High Luminosity} phase of the LHC.
 
 \paragraph{Tracker}
 
 The tracker constitutes the inner part of CMS and is designed to provide a precise
-and efficient measurement of the charged particle \emph{tracks}, i.e. their curvature in the magnetic field, and of the primary and secondary
+and efficient measurement of the charged particle \emph{tracks} and of the primary and secondary
 interaction vertices. It is immersed in an almost homogeneous magnetic field of 3.8 T provided by the CMS solenoid.
 
 A \emph{silicon pixel detector} is installed in the inner region, closest to the interaction point, while \emph{silicon
@@ -164,12 +180,12 @@ The full tracker material has a thickness of $\approx$ 0.5-1 $X_0$ and less than
         \frac{\sigma_E}{E} = \frac{a}{E} + \frac{b}{\sqrt{E}} + c
         \end{equation*}
         
-    where a $\approx$ 0.12 GeV is the noise term due the electronics and pileup, independently of the energy, b $\approx$ 2.8$\%$ is
+    where a $\approx$ 0.12 GeV is the noise term due the electronics and pileup, independently of the energy, b $\approx$ 2.8$\% \; \sqrt{\text{GeV}}$ is
     the stochastic term which accounts mainly for the fluctuations in the photon conversions,
     and c $\approx$ 0.3$\%$ is a constant term related to the energy scale calibration.
     
     \1 The HCAL is used to measure the energy of hadrons, and it
-    is the only detector available to measure the energy of stable neutral hadrons. Its design ensures
+    is the only detector available to measure the energy of long-lived neutral hadrons. Its design ensures
     good hermeticity to allow the measurement of the missing transverse energy and angular
     coverage in the forward region for forward jets.
     Four regions are instrumented with HCAL detectors: the barrel hadron calorimeter (HB)
@@ -210,21 +226,22 @@ In CMS the data reduction happens in two steps. The \emph{Level-1} (or L1) Trigg
 running software modules similar to the ones used for the offline reconstruction. 
 
 \paragraph{Offiline reconstruction}\label{sec:offreco}
-Once the event has been selected by the trigger, other crucial, offline processing aspects are the \emph{track reconstruction}, the \emph{primary vertex reconstruction} and the \emph{particle flow} algorithm for particle identification. These, along with other minor steps, are all needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
+This step is needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
+Once the event has been selected by the trigger, a series of hundreds of algorithms is applied, each acting on different readouts.
+Particular complex and important algorithms include:
 
 \begin{outline}
-    \1 The track reconstructions algorithms identify tracks from the single hits in the tracker region. It is an \emph{iterative} algorithm, which is run multiple times starting from easier, non-displaced tracks of higher $p_T$. It has three major steps: \emph{seeding} or initialization, then \emph{pattern matching} to identify possible candidates of a track and \emph{track fitting} to identify the most convincing candidate tracks.
+    \1 The \emph{track reconstruction} algorithms identify tracks from the single hits in the tracker region. It is an \emph{iterative} algorithm, which is run multiple times starting from easier, non-displaced tracks of higher $p_T$. It has three major steps for each iteration: \emph{seeding} or initialization, then \emph{pattern matching} to identify possible candidates of a track and \emph{track fitting} to identify the most convincing candidate tracks.
     
-    The tracking efficiency saturates at $\approx$ 90 $\%$ due to hadrons that undergo nuclear interactions in the tracker material, while it is known to be close to 100 $\%$for muons. At low $p_T$ the efficiency is lower due to the nuclear interactions;
+    The tracking efficiency saturates at $\approx$ 90$\%$ for charged particles due to hadrons or nuclear interactions in the tracker material, while it is known to be close to 100$\%$ for muons;
     
-    \1 The particle flow algorithm is capable of transforming the readouts into a list of final state particles produced in the event and their properties. It takes as inputs tracks (also from muon chambers) and caloritmeters clusters, and defines a PF \emph{block} as the building unit of a physical object, defined as a series of links between single hits. Muons, electrons and isolated photons, jets and their constituents as well as $p_T^{miss}$ are all reconstructed in this step. For identifying jets, we also employ specific \emph{clustering algorithms}. The \emph{isolation} of the various lepton and photon objects is also calculated at this step, computing the momentum carried by hadrons and photons in a cone centered around our target; 
-    
-    \1 Due to pile-up, we have multiple vertices for each event. The vertex reconstruction steps is responsible for employing the newly found tracks to identify the primary vertex to be used in the analysis. Its action can be quantitatively explained as selecting the vertex with the higher $\sum p_T$ of all the collision products identified by the previous step.
+    \1 Once each subdetector has reconstructed its information, we pass everything to the \emph{particle flow} algorithm which is responsible for transforming the readouts into a list of final state particles produced in the event and their properties. It takes as inputs tracks (also from muon chambers) and caloritmeters clusters, and defines a PF \emph{block} as the building unit of a physical object, defined as a series of links between single hits. Muons, electrons and isolated photons, jets and their constituents as well as $p_T^{miss}$ are all reconstructed in this step. For identifying jets, we also employ specific \emph{clustering algorithms}. The \emph{isolation} of the various lepton and photon objects is also calculated at this step, checking for the presence of hadrons and photons in a cone centered around our target and computing their momentum; 
+
 \end{outline}
 
 \paragraph{Luminosity and Pile-up}
 
- The CMS designed luminosity of 10$^{34}$ cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
+ The CMS designed luminosity of 10$^{34}$ cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking, and a new data taking has just started with a goal of 2 10$^{34}$ cm$^{-2}$ s$^{-1}$. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
 
 As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileup} shows its increase over the various years.
 
@@ -244,9 +261,11 @@ Being a general-purpose experiment, CMS is capable of performing a wide range of
     
     \1 The \emph{Top Quark physics} programme consists in the precision measurements of the properties of the top quark, the heaviest particle in the standard model. The top-quark mass is one of the most important properties as it is a key parameter for calculations in the standard model. The top group also aims to establish measurements of rare production modes of the top quark in association with other particles, and search for new couplings of the top quark. It also aims to improve our understanding of top quark production and decay processes in order to improve background predictions as well as providing indirect proof for physics searches beyond the standard model;
     
-    \1 \emph{Supersymmetry (SUSY), Exotica} and \emph{Beyond-Two-Generations} are a collection of groups working on generic processes beyond the SM predictions. SUSY consists in the search for physics signatures involving large missing transverse momentum, together with other features such as jets, muons, electrons, taus, photons, and b-jets. If we discover such signatures with yields significantly in excess of standard model backgrounds, our goal will be to characterize the event samples as fully as possible, as possible evidence of a supersymmetric theory. Exotica includes all the other processes not related to SUSY, while the B2G group covers models of new physics featuring the decay of new resonances to heavy standard model objects such as top, W, Z, or Higgs bosons. In particular, they study exotic \emph{diboson} resonances, partners of the top quark with vector-like properties (VLQ) as well as heavy resonances, such as W' and Z' resonances decaying to final states with top quarks.;
+    \1 There are dedicated groups working on generic processes beyond the SM predictions. \emph{Supersymmetry (SUSY)} consists in the search for physics signatures involving large missing transverse momentum, together with other features such as jets, muons, electrons, taus, photons, and b-jets. If we discover such signatures with yields significantly in excess of standard model backgrounds, our goal will be to characterize the event samples as fully as possible, as possible evidence of a supersymmetric theory. \emph{Exotica} includes all the other processes not related to SUSY, while the \emph{Beyond-two-generations} (B2G) group covers models of new physics featuring the decay of new resonances to heavy standard model objects such as top, W, Z, or Higgs bosons. In particular, they search for new physics in high-$p_T$ jets;
     
-    \1 Finally, the \emph{B physics} group addresses all the heavy flavor (beauty and charm) studies. These activities involve precision measurements of heavy-quark hadron production, decay and properties, and the search for associated new and rare processes;
+    \1 The \emph{B physics} group addresses all the heavy flavor (beauty and charm) studies. These activities involve precision measurements of heavy-quark hadron production, decay and properties, and the search for associated new and rare processes;
+    
+    \1 Finally, an \emph{heavy-ions} group manages the analysis of data collected during heavy-ions runs.
     
 \end{outline}
 
@@ -309,16 +328,15 @@ The vector boson fusion (VBF) has a cross section of about a tenth of the gluon-
 vector boson exchange and the emission of a Higgs boson. Since the momentum exchange
 is typically lower than the center-of-mass energy of the two quarks, the channel is characterized by two separated high-rapidity quarks in the final state, detectable as high rapidity
 jets. Their presence can therefore serve as a signature of the VBF production channel. Additionally, as VBF is a pure electroweak process, low hadronic activity is expected in the
-rapidity gap between the two jets, where the Higgs decay products are typically found. The Feynman diagrams for the two dominant production processes are showed in Figure \ref{fig:feypro}. Experimentally, the signal over background ratio for the VBF channel is higher than that for other production modes, thanks to its key characteristics: few, energetic jets, highly energetic muons, a large rapidity gap.
+rapidity gap between the two jets, where the Higgs decay products are typically found. The Feynman diagrams for the two dominant production processes are showed in Figure \ref{fig:feypro}. Experimentally, the signal over background ratio for the VBF channel is higher than that for other production modes, thanks to its key characteristics: few, energetic jets, with large invariant mass and a large rapidity gap.
 
-This production mode is also an ideal candidate for our FlashSim simulation approach, for a series of reasons:
+This production mode, coupled to the  H$\rightarrow\mu^+\mu^-$ decay, is also an ideal candidate for our FlashSim simulation approach, for a series of reasons:
 
 \begin{itemize}
-    \item The building blocks of the analysis are mainly the jets and the muons, meaning that to perform a comparison we will need to simulate a smaller number of physical objects when compared to other channels;
-    \item The physical analysis is actually Monte Carlo-based, meaning that it is possible to validate our samples by comparing them to ones from the conventional simulation pipeline which have already been produced;
-    \item A greater amount of MC-data would benefit the analysis by allowing a more accurate background modelling;
-    \item Additionally, a flash simulation approach could also address the need for computing several different theoretical variations;
-    \item More generally, due to the expected increase in luminosity during Run 3, the need for MC samples will also increase.
+    \item The building blocks of the analysis are mainly the jets and the muons, meaning that to perform a comparison with the standard simulation approach we will need to simulate a smaller number of physical objects when compared to other channels;
+    \item The signal and background templates for the final analysis fits are based on simulations, meaning that it is possible to validate our samples by comparing them to ones from the conventional simulation pipeline which have already been produced;
+    \item A greater amount of MC-data would benefit the analysis by allowing a more accurate background modelling, and as we are entering Run 3, with its expected increase in luminosity, the need for MC samples will surely increase.
+
 \end{itemize}
 
 The Pisa CMS Group worked extensively on the VBF Channel for the publication of \cite{Sirunyan_2021}, allowing us to take advantage of the expertise and insights of the group.
@@ -335,4 +353,4 @@ At the time of writing, the CMS collaboration has managed to provide evidence of
     
 \end{figure}
 
-Other possible processes which we could have chosen for comparison, and which would surely benefit from a flash production of samples due to similar reasons as before, are the H$\rightarrow$bb decay as well as the ttH production mode. However, as we are presenting a \emph{proof-of-concept}, we decided to stick to the VBF channel as it present the unique advantage of needing simulations for just the jets and the muons, as opposed to the other candidates. 
+Other possible processes which we could have chosen for comparison, and which would surely benefit from a flash production of samples, are the H$\rightarrow$bb decay as well as the ttH production mode. However, as we are presenting a \emph{proof-of-concept}, we decided to stick to the VBF channel as it present the unique advantage of needing simulations for just the jets and the muons, as opposed to the other possible processes. 

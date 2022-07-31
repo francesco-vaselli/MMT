@@ -71,7 +71,7 @@ Because soft activity depends upon the presence of additional charged particles,
 
 \section{FullSim vs FlashSim}
 
-We observe good results on distributions directly related to the simulated targets of FlashSim, even on samples such as EWK which were not seen byt the NF networks during training. Figure \ref{fig:selmuonpt} shows the $p_T$ for muons passing the initial selection, which present negligible deviation when compared to the FullSim sample. The bottom panel shows the ratio between the FlashSim and the FullSim sample, were the chosen convention here and in the following has been to always divide by the FullSim.
+We observe good results on distributions directly related to the simulated targets of FlashSim, even on samples such as EWK which were not seen byt the NF networks during training. Figure \ref{fig:selmuonpt} shows the $p_T$ for muons, which present negligible deviation when compared to the FullSim sample. The bottom panel shows the ratio between the FlashSim and the FullSim sample, were the chosen convention here and in the following has been to always divide by the FullSim.
 
 \begin{figure}
     \centering
@@ -94,10 +94,10 @@ The distributions related to angular distributions also show a good performance.
 \begin{figure}
     \myfloatalign
     \subfloat[]
-    {\includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_vs_HMM_powheg_Rpt___PreSel_log_normalized.pdf}}\\
+    {\includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_vs_HMM_powheg_Rpt___SignalRegion_log_normalizedc2.pdf}}\\
     \subfloat[]
     { \includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_vs_HMM_powheg_ll_zstar_log___PreSel_log_normalized.pdf}} 
-    \caption[Angular distributions]{ (a) The R($p_T$) distribution also shows that FlashSim is struggling with the tails of the DY process, previously unseen during training. (b) The log($z^*$) is clearly distributed differently for the two processes.}\label{fig:angulardist}
+    \caption[Angular distributions]{ (a) The R($p_T$) distribution in the Signal region also shows that FlashSim is struggling with the tails of the DY process, previously unseen during training. (b) The log($z^*$) (for the pre-selected objects in both regions) is clearly distributed differently for the two processes.}\label{fig:angulardist}
     
 \end{figure}
 
@@ -115,7 +115,7 @@ We show in Figure \ref{fig:DNNout} the outputs of the VBF DNN discriminator netw
     { \includegraphics[width=0.45\linewidth]{gfx/ch6/HMM_powheg_DNN18Atan___SignalRegion_log.pdf}} \\
     \subfloat[]
     { \includegraphics[width=0.45\linewidth]{gfx/ch6/HMM_amcatnlo_DNN18Atan___SignalRegion_log.pdf}}
-    \caption[Angular distributions]{Background processes, such as (a), (b), and (c) are always decreasing, while signal processes ((d) and (e)) are increasing in the 0,3 range. }\label{fig:DNNout}
+    \caption[Angular distributions]{Background processes, such as (a), (b), and (c) are always decreasing, while signal processes ((d) and (e)) are increasing in the 0,3 range. All outputs are from data passing the pre-selection and being in the Signal region. }\label{fig:DNNout}
 \end{figure}
 
 Finally, a very interesting property of our approach that we wish to verify is the ability of handling the calculation of \emph{theoretical variations} between two samples of the same process. This is the case, for example for the two samples of the signal datasets, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} method \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim variation $V^1_{Full}$, we computed its FlashSim $V^1_{Flash}$ sample as well as that of another possible variation $V^2_{Flash}$. We would expect that the actual $V^2_{Full}$ may be reobtained faster by the factorization:
@@ -123,7 +123,7 @@ Finally, a very interesting property of our approach that we wish to verify is t
 \[V^2_{Full} = V^1_{Full} \frac{V^2_{Flash}}{V^1_{Flash}}
 \]
 
-as the ratio factors out the FlashSim differences and leaves out only the 2/1 sample differences which are then multiplied by the $V^1_{Full}$ sample. Figure \ref{fig:sysvar} shows that our expectations are met by the FlashSim approach, as the aMC@NLO FullSim variation sample agrees with the ratio calculated from the POWHEG variation sample and the aMC@NLO FlashSim sample. This opens up the way to fast calculationof theoretical variations starting only from a single, pre-existing FullSim sample, implying a considerable speed-up when compared to re-starting always from Gen-level, as it is currently the case.
+as the ratio factors out the FlashSim differences and leaves out only the 2/1 sample differences which are then multiplied by the $V^1_{Full}$ sample. Figure \ref{fig:sysvar} shows that our expectations are met by the FlashSim approach, as the aMC@NLO FullSim variation sample agrees with the ratio calculated from the POWHEG variation sample and the aMC@NLO FlashSim sample. This opens up the way to fast calculations of theoretical variations starting only from a single, pre-existing FullSim sample, implying a considerable speed-up when compared to re-starting always from Gen-level, as it is currently the case.
 
 \begin{figure}
     \centering
@@ -134,9 +134,9 @@ as the ratio factors out the FlashSim differences and leaves out only the 2/1 sa
 
 \section{FlashSim vs Gen}
 
-A final test for the goodness of the proposed simulation approach is the comparison with the Gen-level information. Part of the chosen selection analysis objects may in fact be computed starting from Gen-level information alone, and thus we can ask ourselves if the FlashSim results are significantly different from those obtained with its inputs, the Gen values.
+A final test for the goodness of the proposed simulation approach is the comparison with the Gen-level information. Part of the chosen selection analysis objects may in fact be computed starting from Gen-level information alone, and thus we can ask ourselves if the FlashSim results are significantly different from those obtained with its inputs, the Gen values. In the following, we compare results for the Signal sample considering the three samples of FullSim, FlashSim and Gen.
 
-For the $\log(z^*)$ angular distribution, already very precise at Gen level, Figure \ref{fig:zstargen} shows no significan deviations between the three samples of FullSim, FlashSim and Gen.
+For the $\log(z^*)$ angular distribution, already very precise at Gen level, Figure \ref{fig:zstargen} shows no significan deviations between the three samples.
 
 \begin{figure}
     \centering
