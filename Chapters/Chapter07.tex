@@ -3,14 +3,14 @@
 %************************************************
 In the present work, we introduced and implemented an alternative paradigm for the flash generation of events at the CMS experiment, based on state-of-the-art results from the ML field.
 
-We were able to successfully simulate physical target distributions with great accuracy, preserving the correct correlations between them and demonstrating that our method is capable of varying the output results according to the physical information provided as input. This conditioning has been compared to that of the other competing approach for fast simulation, CMS FastSim, and has been shown to provide more accurate and precise results when compared with the original FullSim target. Additionally, the proposed solution has demonstrated decisive advantages in terms of speed, with orders of magnitude of speed-up thanks to modern, GPU-accelerated computing.
+We were able to successfully simulate physical target distributions with great accuracy, preserving the correct correlations between them and demonstrating that our method is capable of varying the output results according to the physical information provided as input. This conditioning has been compared to that of the other competing approach for fast simulation, CMS FastSim, and has been shown to provide more accurate and precise results when compared with the original FullSim target for b-tag discrimination and jet $p_T$ resolution. Additionally, the proposed solution has demonstrated decisive advantages in terms of speed, with orders of magnitude of speed-up.
 
-We also built a first prototype for an end-to-end sample generator in the standard CMS NanoAOD format, and actually deployed it at scale on millions of events, coming from the training physical process as well as new, previously unseen ones. 
+We also built a first prototype for an end-to-end sample generator in the standard CMS NanoAOD format, and actually deployed it at scale on millions of events, coming from the training process as well as new, previously unseen ones. 
 
-Finally, we demonstrated that the results obtained can actually be used in a real world scenario such as a complex, multivariate, MC based analysis as the VBF Channel of H$\rightarrow\mu^+\mu^-$. We computed the key derived quantities for the analysis for both the FullSim and the FlashSim samples, and we observed comparable results on the evalutation of the DNN classifier actually used in the corresponding CMS publication.
-Our approach was also able of providing interesting results regarding the calculation of higher order QCD effects, being capable of reproducing the differences between competing approaches such as \texttt{POWHEG} and \texttt{MadGraph5\_aMC@NLO}.
+Finally, we demonstrated that the results obtained can be used in a real world scenario such as a complex, multivariate, MC based analysis as the VBF Channel of H$\rightarrow\mu^+\mu^-$. We computed the key derived quantities for the analysis for both the FullSim and the FlashSim samples, and we observed comparable results on the evalutation of the DNN classifier used in the corresponding CMS publication.
+Our approach was also able to provide interesting results regarding the generation of samples with different calculations of higher order QCD effects, being capable of reproducing the differences between competing approaches such as \texttt{POWHEG} and \texttt{MadGraph5\_aMC@NLO}.
 
-\section{Towards FlashSim}
+\section{Towards a complete FlashSim}
 This work has also emphasized some limitations and peculiarities of the selected approach, pointing to the next steps to be take if the CMS Collaboration were to adopt the proposed method.
 
 The two major ones are discussed below.
@@ -21,7 +21,7 @@ A full scale FlashSim must be able of reproducing the content of a NanoAOD file 
 
 This has the clear advantage of reducing the size of the models and the resources needed for their trainings, beside, each single model may be conditioned on relevant quantities coming either from the Gen-level, from other model outputs or being specifically engineered to communicate key information regarding the event.
 
-One crucial element for the production of convincing NanoAODs is the presence of \emph{fakes}. The stochastic nature of these objects make their production non-trivial, however there exist other techniques from the ML field, such as \emph{LSTM} \cite{lstm}, for handling and generation of variable-length sequences. The generation would obviously depend on key quantities such as the PileUp and the GenParticles.
+One crucial element for the production of convincing NanoAODs is the presence of \emph{fakes}. The stochastic nature of these objects make their production non-trivial, however there exist other techniques from the ML field, such as \emph{LSTM} \cite{lstm}, for handling and generation of variable-length sequences. The generation would depend on key quantities such as the PileUp and the GenParticles.
 
 Another key quantity, the \emph{Missing Transverse Energy} (MET), could also depend on the final-state reconstructed objects, as this would allow us to obtain a more consistent description of the whole event.
 
@@ -36,13 +36,15 @@ A possible global picture, with multiple dependencies and conditionings, is illu
 
 \subsection{Optimization}
 An important series of steps in the prototype end-to-end generator need to be optimized. 
-First of all, the Gen-level quantities currently extracted from existing FullSim NanoAODs and written to file for processing could actually be produced from a dedicated FlashNano-Generator, capable of passing the desired inputs directly to our models without the need of previously existing files.
+First of all, the Gen-level quantities currently extracted from existing FullSim NanoAODs and written to file for processing could be produced from a dedicated FlashNano-Generator, capable of passing the desired inputs directly to our models without the need of previously existing files.
 
-The ML models forming the backbone of our approach need to be properly optimized and thoroughly examined to find the best combination of hyperparameters, size and performance. Additionally, the training and the generation procedure may be modified to be run in parallel over multiple machines or clusters, providing significant speed adavantages. Another very serious issue to be addressed by the collaboration is the fact that our research is based on a series of \texttt{Python} packages maintained by a series of open-source contributors with no interest in the specific HEP use case and no assurance of continued and prolonged support, as well as backward compatibility.
+The ML models forming the backbone of our approach need to be properly optimized and thoroughly examined to find the best combination of hyperparameters, size and performance. Additionally, the training and the generation procedure may be modified to be run in parallel over multiple machines or clusters, providing significant speed advantages. Another very serious issue to be addressed by the collaboration is the fact that our research is based on a series of \texttt{Python} packages maintained by a series of open-source contributors with no interest in the specific HEP use case and no assurance of continued and prolonged support, as well as backward compatibility.
 
 The issue may be addressed in several ways. A possibility would be to experiment with splines-based models such as ours with the current packages, but once found the optimal transformation, the splines and their parameters could be mapped into a more convenient \texttt{C/C++} framework to be used and actively maintained by one of the computing groups of CERN, and possibly integrated as part of the \texttt{ROOT} language.
 
 Additionally, the postoprocessing step needs to be revised with the addition of a check for numerical instabilities causing nonphysical values for the target distributions. These may be then easily corrected by regenerating the faulty event with another set of random noise as input.
+
+Finally, we could tailor a more specific loss function for our class of models, capable of taking in to account the goodness of the conditioning and evaluate how the physical-informed gen-inputs are driving the generation of the samples.
 
 \section{Future research}
 The need for fast and reliable computing methods in the physical sciences, notably in the high-energy field, has fueled much of the technological progress of modern times. Despite this, the average physicist has generally little time to spend on innovating and improving its computing toolkit, and has to content himself with boilerplate solutions. This is especially true in highly specialized fields, such as HEP, which purse a wide variety of research directions.

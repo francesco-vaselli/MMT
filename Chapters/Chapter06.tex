@@ -1,41 +1,53 @@
 %************************************************
 \chapter{A real analysis use case comparison}\label{ch:benan} % $\mathbb{ZNR}$
 %************************************************
-Having described in detail our innovative approach to event simulation, and having applied it to real datasets, we decided to repeat the preliminary selection of a recent analysis to demonstrate the feasibility of our model in a real-case scenario.
+Having described in detail our innovative approach to event simulation, and having applied it to real datasets, we decided to repeat the selection step of a recent analysis to demonstrate the feasibility of our model in a real-case scenario.
 
 \section{The Higgs decay into two muons}
-We generated a FlashSim dataset from the Gen-level information of an existing NanoAOD FullSim dataset, discussed in Section \ref{sec:progen}. We then performed the preliminary selection steps of the analysis presented in \cite{Sirunyan_2021}, specifically that of VBF Channel of H$\rightarrow\mu^+\mu^-$, for the reasons discussed previously.
-Our reference was the work of the Pisa CMS group, collected \href{https://github.com/arizzi/PisaHmm}{here}\footnote{https://github.com/arizzi/PisaHmm}. The objective was to verify that the selected objects distributions were on par with those obtained from FullSim.
+We generated a FlashSim dataset from the Gen-level information of the existing NanoAOD FullSim datasets for the different processes discussed in Section \ref{sec:progen}, that is:
+
+\begin{outline}
+\1 The t$\overline{\text{t}}$ inclusive production, used also in training;
+\1 The DY+2J process;
+\1 The EWK production of $\mu\mu$+2J;
+\1 The Higgs VBF production of H$\rightarrow\mu^+\mu^-$.
+\end{outline}
+
+We then performed the preliminary selection steps of the analysis presented in \cite{Sirunyan_2021}, specifically that of VBF Channel of H$\rightarrow\mu^+\mu^-$, for the reasons discussed previously.
+Our reference was the work of the CMS group, collected \href{https://github.com/arizzi/PisaHmm}{in the following repository}\footnote{https://github.com/arizzi/PisaHmm}. The objective was to verify that the selected objects distributions were close enough with those obtained from FullSim.
 
 \subsection{Event selection}
 
 First of all, we define the \emph{selected muons} as the muons with:
 \begin{outline}
-\1 \texttt{Muon\_pfRelIso04\_all} $<0.25$ (isolated);
-\1  \texttt{Muon\_mediumId==True};
-\1  \texttt{Muon\_pt} $>20$ GeV (energetic);
-\1  \texttt{abs(Muon\_eta)} $<2.4$ (directed forward).
+\1 \texttt{pfRelIso04\_all}$= \sum_{\Delta R(PF_i, \mu)<0.4}p_T^i/p_T^{\mu}<0.25$ (isolated);
+\1  Muons passing the \emph{medium} muon Id algorithm;
+\1  $p_T^{\mu}>20$ GeV;
+\1  $\abs{\eta}_{\mu}<2.4$ (central).
 \end{outline}
 
-These are all features we would expect from a pair of muons decaying from a Higgs. An event is also obviously required to have at least two opposite charged muons.
+These are all features we would expect from a pair of muons decaying from a Higgs. An event is also required to have at least two opposite charged muons.
 
-In a similar way, we can identify \emph{selected jets} as those jets with:
+In a similar way, we define the \emph{selected jets} as those passing the following cuts:
 
 \begin{outline}
-\1 \texttt{Jet\_pt} $> 50$ GeV or \texttt{Jet\_pt} $> 25$ GeV and \texttt{Jet\_puId} $>0$ (energetic, non PileUp jets);
-\1  \texttt{Jet\_jetId} $>0$;
-\1  \texttt{abs(Jet\_eta)} $<4.7$ (forward);
-\1 \texttt{Jet\_MuonDr} $>0.4$ (spatially separated from the muons).
+\1 $p_T^{jet}>25$ GeV 
+\1 Additionally, for $p_T^{jet}<50$ GeV we require it to pass the PileUp Id algorithm;
+\1  Jets passing the \emph{jet} Id algorithm;
+\1  $\abs{\eta}_{\mu}<4.7$;
+\1 We also require that jets do not overlap with muons within a $\Delta R=0.4$ cone.
 \end{outline}
 
-A VBF candidate event is required to have at least two jets respecting the previous properties, one with $p_T>35$ Gev, the other with $p_T>25$ Gev, $m_{jj}>400$ Gev and $\Delta\eta<2.4$. Selected events are further grouped into two independent categories. Events in which the two muons form an invariant mass between 115 and
+A VBF candidate event is required to have at least two jets respecting the previous properties, one with $p_T>35$ Gev, the other with $p_T>25$ Gev, an invariant mass of the leading jet pair $m_{jj}>400$ Gev and a separation between the leading jets of $\Delta\eta>2.5$. Selected events are further grouped into two independent categories. Events in which the two muons form an invariant mass between 115 and
 135 GeV belong to the signal region (VBF-SR), which is enriched in signal-like events. Events with 110 < $m_{\mu\mu}$ < 115 GeV or 135 < $m_{\mu\mu}$ < 150 GeV belong to the mass sideband region (VBF-SB), which in the full analysis has been used as a control region to estimate the backgroung.
 
-For each selected event we define the new, derived quantities. Some crucial ones are:
+For each selected event we define the new, derived quantities that help discriminating the Higgs signal from the SM processes that represent a background for this analysis. Some crucial ones are:
 
 \begin{outline}
-\1 An \emph{Higgs} object given by the sum of the two four-vectors of the selected muons;
-\1 Observables sensitive to $p_T$ and angular correlations between muons and jets: The $p_T$\emph{-balance ratio}, defined as:
+\1 The reconstructed \emph{Higgs-candidate}, with a 4-momentum given by the sum of the two four-vectors of the selected muons;
+\1 Observables sensitive to $p_T$ and angular correlations between muons and jets: 
+
+The $p_T$\emph{-balance ratio}, defined as:
 \[R(p_T) = \frac{p_T^{jj}+p_T^{\mu\mu}}{p_T(j_1) + p_T(j_2) + p_T(\mu\mu)}\]
 
 and the \emph{Zeppenfeld variable} $z^*$, defined from the \emph{rapidity y} as:
@@ -46,9 +58,9 @@ and the \emph{Zeppenfeld variable} $z^*$, defined from the \emph{rapidity y} as:
 \end{outline}
 
 \subsection{A DNN for event classification}
-The authors of \cite{Sirunyan_2021} used a deep neural network (DNN) multivariate discriminant, trained to distinguish the expected signal from background events using kinematic input variables that characterize the signal and the main background processes in the VBF-SR. The signal is then extracted from a \emph{binned maximum-likelihood fit} to the inverse hyperbolic tangent of the output of the DNN discriminator simultaneously in the VBF-SR and the VBF-SB regions. 
+The CMS Collaboration used a deep neural network (DNN) multivariate discriminant, trained to distinguish the expected signal from background events using kinematic input variables that characterize the signal and the main background processes in the VBF-SR. The signal is then extracted from a \emph{binned maximum-likelihood fit} to the output of the DNN discriminator simultaneously in the VBF-SR and the VBF-SB regions. 
 
-We recovered the \emph{exact same network} as the one used in the final publication, with the final weights and parameters resulting from the trainings already performed by the authors of the original paper on the FullSim dataset. We tested the network on our FlashSim data to compare the ouput with the one on the FullSim datasets used in the analysis and taken as Gen-level truth for generating our samples.
+The DNN used in the final analysis has been tested on the FlashSim samples, with the final weights and parameters resulting from the trainings already performed by the authors of the original paper on the FullSim dataset. We tested the network on our FlashSim data to compare the ouput with the one on the FullSim datasets used in the analysis and taken as Gen-level truth for generating our samples.
 
 The network takes as input 25 variables. The first 23 are listed below:
 
@@ -71,7 +83,7 @@ Because soft activity depends upon the presence of additional charged particles,
 
 \section{FullSim vs FlashSim}
 
-We observe good results on distributions directly related to the simulated targets of FlashSim, even on samples such as EWK which were not seen byt the NF networks during training. Figure \ref{fig:selmuonpt} shows the $p_T$ for muons, which present negligible deviation when compared to the FullSim sample. The bottom panel shows the ratio between the FlashSim and the FullSim sample, were the chosen convention here and in the following has been to always divide by the FullSim.
+We observe good results on distributions directly related to the simulated targets of FlashSim, even on samples such as EWK LLJJ which were not seen by the NF networks during training. Figure \ref{fig:selmuonpt} shows the $p_T$ for muons, which present negligible deviation when compared to the FullSim sample. The bottom panel shows the ratio between the FlashSim and the FullSim sample, were the chosen convention here and in the following has been to always divide by the FullSim.
 
 \begin{figure}
     \centering
@@ -80,7 +92,7 @@ We observe good results on distributions directly related to the simulated targe
     \label{fig:selmuonpt}
 \end{figure}
 
-However, for jets, the agreement is not as good as for muons. Figure \ref{fig:j1pt} shows that the $p_T$ for the second selected jet is not as high for FlashSim jets as it is for FullSim ones. We tried to explain this result by remembering that our FullSim is missing \emph{fakes} jets due to noise and PileUp, present in the other sample. In principle, higher-$p_T$ fake jets may be selected in place of the second event jet for some of the FullSim samples, explaining the deviation observed. 
+However, for jets, the agreement is not as good as for muons, even on the t$\overline{\text{t}}$ process. Figure \ref{fig:j1pt} shows that the $p_T$ for the second selected jet is not as high for FlashSim jets as it is for FullSim ones. We tried to explain this result by remembering that our FullSim is missing \emph{fakes} jets due to noise and PileUp, present in the other sample. In principle, higher-$p_T$ fake jets may be selected in place of the second event jet for some of the FullSim samples, explaining the deviation observed. 
 
 \begin{figure}
     \centering
@@ -89,7 +101,7 @@ However, for jets, the agreement is not as good as for muons. Figure \ref{fig:j1
     \label{fig:j1pt}
 \end{figure}
 
-The distributions related to angular distributions also show a good performance. We plot in Figure \ref{fig:angulardist} the histograms for the Signal vs DY processes, to show how these variables can be \emph{discriminant} in distinguishing between signal and background.
+The results related to angular distributions also show a good performance. We plot in Figure \ref{fig:angulardist} the histograms for the Higgs vs DY processes, to show how these variables can be \emph{discriminant} in distinguishing between signal and background.
 
 \begin{figure}
     \myfloatalign
@@ -118,12 +130,12 @@ We show in Figure \ref{fig:DNNout} the outputs of the VBF DNN discriminator netw
     \caption[Angular distributions]{Background processes, such as (a), (b), and (c) are always decreasing, while signal processes ((d) and (e)) are increasing in the 0,3 range. All outputs are from data passing the pre-selection and being in the Signal region. }\label{fig:DNNout}
 \end{figure}
 
-Finally, a very interesting property of our approach that we wish to verify is the ability of handling the calculation of \emph{theoretical variations} between two samples of the same process. This is the case, for example for the two samples of the signal datasets, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} method \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim variation $V^1_{Full}$, we computed its FlashSim $V^1_{Flash}$ sample as well as that of another possible variation $V^2_{Flash}$. We would expect that the actual $V^2_{Full}$ may be reobtained faster by the factorization:
+Finally, another possible advantage that we wish to verify is the ability of handling the generation of samples with different \emph{theoretical variations} for the same process. This is the case, for example for the two samples of the Higgs signal, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} software \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim reference sample $REF_{Full}$, we computed its FlashSim $REF_{Flash}$ sample as well as that of another possible variation $VAR_{Flash}$. We would expect that the actual $VAR_{Full}$ may be re-obtained faster than a running of FullSim by the factorization:
 
-\[V^2_{Full} = V^1_{Full} \frac{V^2_{Flash}}{V^1_{Flash}}
+\[VAR_{Full} = REF_{Full} \frac{VAR_{Flash}}{REF_{Flash}}
 \]
 
-as the ratio factors out the FlashSim differences and leaves out only the 2/1 sample differences which are then multiplied by the $V^1_{Full}$ sample. Figure \ref{fig:sysvar} shows that our expectations are met by the FlashSim approach, as the aMC@NLO FullSim variation sample agrees with the ratio calculated from the POWHEG variation sample and the aMC@NLO FlashSim sample. This opens up the way to fast calculations of theoretical variations starting only from a single, pre-existing FullSim sample, implying a considerable speed-up when compared to re-starting always from Gen-level, as it is currently the case.
+as the ratio factors out the FlashSim differences and leaves out only the software sample differences which are then multiplied by the $REF_{Full}$ sample. Figure \ref{fig:sysvar} shows that our expectations are met by the FlashSim approach, as the aMC@NLO FullSim variation sample agrees with the ratio calculated from the POWHEG variation sample and the aMC@NLO FlashSim sample. This opens up the way to fast calculations of theoretical variations starting only from a single, pre-existing FullSim sample, implying a considerable speed-up when compared to re-starting always from Gen-level, as it is currently the case.
 
 \begin{figure}
     \centering
@@ -136,12 +148,12 @@ as the ratio factors out the FlashSim differences and leaves out only the 2/1 sa
 
 A final test for the goodness of the proposed simulation approach is the comparison with the Gen-level information. Part of the chosen selection analysis objects may in fact be computed starting from Gen-level information alone, and thus we can ask ourselves if the FlashSim results are significantly different from those obtained with its inputs, the Gen values. In the following, we compare results for the Signal sample considering the three samples of FullSim, FlashSim and Gen.
 
-For the $\log(z^*)$ angular distribution, already very precise at Gen level, Figure \ref{fig:zstargen} shows no significan deviations between the three samples.
+For the $\log(z^*)$ angular distribution, as the angular resolution is already good at Gen level, Figure \ref{fig:zstargen} shows no significant deviations between the three samples.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{gfx/ch6/gen_vs_flash_ll_zstar_log___PreSel_log.pdf}
-    \caption[Gen vs FlashSim for $z^*$]{Quantities depending on angular values, already very precise at Gen-level, show no significant deviation.}
+    \caption[Gen vs FlashSim for $z^*$]{Quantities depending on angular values, already with good resolution at Gen-level, show no significant deviation.}
     \label{fig:zstargen}
    \end{figure}
  
@@ -150,11 +162,11 @@ However, as we move to the $R(p_T)$, which depends on the hadronic activity, and
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{gfx/ch6/gen_vs_flash_Rpt___PreSel_log.pdf}
-    \caption[Gen vs FlashSim for $R(p_T)$]{The dependence of $R(p_T)$ upon hadronic activity means that we start to see concrete differences between Gen and FlashSim.}
+    \caption[Gen vs FlashSim for $R(p_T)$]{The dependence of $R(p_T)$ upon hadronic activity means that we start to see concrete differences between Gen and FlashSim--notice the first bin.}
     \label{fig:rptgen}
    \end{figure}
    
-The importance of the interaction with the detector and of the reconstruction, leading to \emph{smearing} in the distribution of the dimuon mass, is emphasized by Figure \ref{fig:higggen}, where we can see that the Gen has only a single, peaked value, while FlashSim has correctly learned the expected smearing.
+Additionally, the importance of the interaction with the detector and of the reconstruction, leading to \emph{smearing} in the distribution of the dimuon mass, is emphasized by Figure \ref{fig:higggen}, where we can see that the Gen has only a single, peaked value, while FlashSim has correctly learned the expected smearing.
 
 \begin{figure}
     \centering
@@ -163,7 +175,7 @@ The importance of the interaction with the detector and of the reconstruction, l
     \label{fig:higggen}
    \end{figure}
    
-  Finally, this differences also translate to the crucial fit distribution of the VBF DNN Output, show in Figure \ref{fig:dnngen}.
+  Finally, this differences also translate to the distribution of the VBF DNN Output, which is the fitted observable in the final analysis, shown in Figure \ref{fig:dnngen}.
   
   \begin{figure}
     \centering
@@ -172,4 +184,4 @@ The importance of the interaction with the detector and of the reconstruction, l
     \label{fig:dnngen}
    \end{figure}
    
-  These results of the present Chapter demonstrate that not only is FlashSim capable of producing different distributions from those of the bare Gen-level, but also that it can be used effectively in a real-world analysis scenario.
+  These results of the present Chapter demonstrate that not only is FlashSim capable of producing different distributions from those of the bare Gen-level, but also that it can come close to the results yield by FullSim.

@@ -21,15 +21,15 @@ proton-proton (pp) collisions at centre-of-mass energies of 13 TeV have been rep
 the CMS collaboration in \cite{Sirunyan_2017}.
 
 
-Top quarks decay almost exclusively into a W boson and a b quark. The W may then decay in either a q$\overline{\text{q}}$ or a lepton and its corresponding neutrino, ensuring that the events will be well populated with both jets and muons, our simulation targets. 
+Top quarks decay almost exclusively into a W boson and a b quark. The W may then decay in either a q$\overline{\text{q}}$ or a lepton and its corresponding neutrino, ensuring that the events will be well populated with both jets and muons, our simulation targets. Figure \ref{fig:ttfig} shows one of the possible diagrams for the process.
 
-%\begin{figure}
-    %\centering
+\begin{figure}
+    \centering
     %\includegraphics[scale=0.2]{gfx/ch5/CCMarApr_LHC10_fig2.jpg}\quad
-    %\includegraphics[scale=0.3]{gfx/ch5/feynman_ttbar_ljets_longt.png}
-    %\caption[t$\overline{\text{t}}$ diagram]{ The t$\overline{\text{t}}$ process is dominating the cross sections at LHC, making it one of the leading SM background processes. Bottom: the production diagram for proce}
-    %\label{fig:ttfig}
-%\end{figure}
+    \includegraphics[width=0.75\linewidth]{gfx/ch5/feynman_ttbar_ljets_longt.png}
+    \caption[t$\overline{\text{t}}$ diagram]{ The t$\overline{\text{t}}$ process is one of the leading SM background processes and its decay products often include both jets and muons.}
+    \label{fig:ttfig}
+\end{figure}
 
 Having at our disposal a large set of FullSim MC NanoAOD samples for t$\overline{\text{t}}$ events, we used these to \emph{train} our models on the two target objects.
 
@@ -156,7 +156,7 @@ We would like to emphasize the fact that because \emph{each transform} defines a
 
 As our \emph{optimizer} algorithm we choose the de-facto standard in the field, the \texttt{Adam} algorithm \cite{https://doi.org/10.48550/arxiv.1412.6980}, a complex and powerful algorithm for models optimization still based on the same basic principles of \emph{gradient descent} explained in Section \ref{sec:backprop}, with an initial \emph{learning rate} of $10^{-4}$ for muons and $10^{-5}$ for jets, reduced during training by the \emph{cosine annealing} procedure. The maximum epochs were set to 1000 for the muons model, giving its larger number of target variables, and to 500 for the jets one--this also means that the learning rate reduction due to cosine annealing will be different over training as it depends on the total epochs number.
 
-Trainings were stopped respectively at epoch 580 for muons and at epoch 420 for jets, as we had reached a good convergence, despite both models showing signs for more improvements. Figure \ref{fig:losses} shows the models losses over the training epochs. The validation loss is plotted by averaging over the last 5 epochs, to display the overall trend instead of single, noisy variations. The values on the y-axis are the actual loss values, and they are obviously different as they depend on both the number and the ranges of the target variables.
+Trainings were stopped respectively at epoch 580 for muons and at epoch 420 for jets, as we had reached a good convergence, despite both models showing signs for more improvements. Figure \ref{fig:losses} shows the models losses over the training epochs. The validation loss is plotted by averaging over the last 5 epochs, to display the overall trend instead of single, noisy variations. The values on the y-axis are the actual loss values, and they are different as they depend on both the number and the ranges of the target variables.
 
 
 \begin{figure}
@@ -223,7 +223,7 @@ We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned t
     {\includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet2.pdf}}
     \subfloat[]
     { \includegraphics[width=0.45\linewidth]{gfx/ch5/corrjet3.pdf}} 
-    \caption[qgl and p$_T$ correlations]{ (a) As expected, the qgl is positively correlated to the number of constituents--the lower the number, the larger the score. This behaviour has been captured by Flash Sim as well. (b) The correlations between the physical distributions of p$_T$ and mass show agreement as well.}\label{fig:corrjet2+3}
+    \caption[qgl and p$_T$ correlations]{ (a) As expected, the qgl is correlated to the number of constituents--the lower the number, the larger the score. This behaviour has been captured by Flash Sim as well. (b) The correlations between the physical distributions of p$_T$ and mass show agreement as well.}\label{fig:corrjet2+3}
     
 \end{figure}
 
@@ -308,14 +308,25 @@ We conclude by presenting the general idea for an end-to-end analysis sample gen
     \label{fig:endtoend}
 \end{figure}
 
-This prototype has been tested on the full \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak} and two \emph{Signal (H)} datasets were processed as well and stored for the comparison of the next chapter. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
+
+\begin{figure}
+    \myfloatalign
+    \subfloat[]
+    {\includegraphics[width=0.45\linewidth]{gfx/ch5/Feynmanewklljj.png}}
+    \subfloat[]
+    { \includegraphics[width=0.45\linewidth]{gfx/ch5/DY4.png}} 
+    \caption[EWK LLJJ and DY diagrams]{ (a) Representative diagrams for Electroweak two-leptons two-jets (EWK LLJJ) production (for lepton=$\mu$), VBF production mode. (b) The  r<epresentative diagram for Drell–Yan production in association with two jets. .}\label{fig:newdiag}
+    
+\end{figure}
+
+This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (HMM) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
 
 \begin{figure}
     \myfloatalign
     \includegraphics[width=\linewidth]{gfx/ch5/ewkeval7.pdf} \\
     \includegraphics[width=\linewidth]{gfx/ch5/hmmeval2.pdf} \\
     \includegraphics[width=\linewidth]{gfx/ch5/dycorrs.pdf} 
-    \caption[1-d distributions and correlations for new processes]{Notable examples of 1-d distributions and correlations obtained on previously unseen processes.}\label{fig:newsdists}
+    \caption[1-d distributions and correlations for new processes]{Notable examples of 1-d distributions and correlations obtained on previously unseen processes. When comparing the last plot with Figure \ref{fig:corrmuons}, we can see that the performance for DY is less good than on training sample, as the t$\overline{\text{t}}$ has longer lifetimes for muons, resulting in larger impact parameters.}\label{fig:newsdists}
     
 \end{figure}
 
