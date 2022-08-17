@@ -48,15 +48,15 @@ design therefore collisions happen every 25 ns, for a final event rate of about 
 
 The collision rate of an accelerator is measured by its \emph{luminosity}. It's a measurement of the number of collisions that can be produced in a detector per cm$^{2}$ and per second. The bigger is the value of L, the bigger is the number of collisions, making L a key parameter in the design of an accelerator.
 
-Semi-qualitatively, we can define L from a series of key quantities. The \emph{transverse emittance} $\epsilon$ is a beam quality concept reflecting the process of bunch preparation (the injector chain), extending all the way back to the source for hadrons. A low emittance particle beam is a beam where the particles are confined to a small distance and have nearly the same momentum. In a colliding beam accelerator, keeping the emittance small means that the likelihood of particle interactions will be greater resulting in higher luminosity.
+Semi-qualitatively, we can define L from a series of key quantities. The \emph{transverse emittance} $\epsilon$ is a beam quality concept reflecting the process of bunch preparation (the injector chain), extending all the way back to the source for hadrons.
 Emittance can be defined as the smallest opening you can squeeze the beam through, and can also be considered as a measurement of the parallelism of a beam. It has units of length (usually measured in length times radiants) and can be measured in all three spatial dimensions. The dimension parallel to the motion of the particle is called the longitudinal emittance. The other two dimensions are referred to as the transverse emittances.
 
-The \emph{amplitude function} $\beta$  is determined by the accelerator magnet configuration (basically, the quadrupole magnet arrangement) and powering. When expressed in terms of $\sigma \approx 16 \; \mu$m, (cross-sectional size of the bunch)  and  the transverse emittance, the amplitude function $\beta$ becomes:
+The \emph{amplitude function} $\beta$  is determined by the accelerator magnet configuration, in terms of $\sigma \approx 16 \; \mu$m, (cross-sectional size of the bunch)  and  the transverse emittance:
 
 \[\beta = \frac{\pi\sigma^2}{\epsilon}\]
 
-So, $\beta$ is roughly the width of the beam squared divided by the emittance. If $\beta$ is low the beam is narrower, \emph{squeezed}. If $\beta$ is high, the beam is wide and straight.
-$\beta$ has units of length. Of particular significance is the value of the amplitude function at the interaction point, $\beta^*$.Clearly one wants  to be as small as possible; how small depends on the capability of the hardware to make a near-focus at the interaction point.
+So, $\beta$ is roughly the width of the beam squared divided by the emittance. If $\beta$ is low the beam is narrower, \emph{squeezed}. 
+Of particular significance is the value of the amplitude function at the interaction point, $\beta^*$, expressed in units of length. Clearly one wants  to be as small as possible; how small depends on the capability of the hardware to make a near-focus at the interaction point.
 Nominal values for these quantities are $\beta^* = 0.55$ m and $\epsilon = 3,75 \; \mu$m rad.
 
 If we define $N^2 \approx (1.15\cdot10^{11})^2$ as the square of the number of protons per bunch, $t$ = 25 ns as the time between bunches, meaning a \emph{bunches crossing} frequency $f \approx 40 10^6$ Hz we obtain L as:
@@ -66,9 +66,9 @@ If we define $N^2 \approx (1.15\cdot10^{11})^2$ as the square of the number of p
 
 Thus, to achieve high luminosity, all one has to do is make high population bunches ($N$) of low emittance to collide at high frequency at locations where the beam optics provides as low values of the amplitude functions as possible.
 A related quantity is the \emph{integrated} luminosity, which is simply defined as the integral of the luminosity over time.
-The final expected number of events $N$ for a process with cross section $\sigma$ is then:
+The final expected rate of events $R$ for a process with cross section $\sigma$ is then:
 
-\[N = \text{L}\sigma\]
+\[R = \text{L}\sigma\]
 
 
 Searching rare events requires a large number of collisions; for this reason, the
@@ -161,8 +161,8 @@ and its diameter 2.5 m, and the angular coverage reaches up to $\abs{\eta}$ = 2.
 
 The calorimeters are located outside the tracker and inside the magnetic solenoid. They are
 designed to measure the energy of electromagnetic and hadronic showers and, unlike the
-tracker, they are required to completely absorb the particles in the shower for optimal energy measurements. They are therefore required to be \emph{heavy}, which translates into a large
-number of radiation lengths $X_0$ for the ECAL and of interaction lengths $\lambda_I$ for the HCAL.
+tracker, they are required to completely absorb the particles in the shower for optimal energy measurements. They are therefore required to have a large
+number of radiation lengths $X_0$ for the ECAL and of interaction lengths $\lambda_I$ for the HCAL, namely, to be \emph{heavy}.
 The full tracker material has a thickness of $\approx$ 0.5-1 $X_0$ and less than one $\lambda_I$ for comparison.
 
 \begin{outline}
@@ -225,7 +225,7 @@ In CMS the data reduction happens in two steps. The \emph{Level-1} (or L1) Trigg
 \emph{High Level Trigger} (HLT) further decreases the event rate from about 100 kHz to about 1 kHz for data storage. The HLT is implemented by a computer farm composed of more than 30000 CPUs
 running software modules similar to the ones used for the offline reconstruction. 
 
-\paragraph{Offiline reconstruction}\label{sec:offreco}
+\paragraph{Offline reconstruction}\label{sec:offreco}
 This step is needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
 Once the event has been selected by the trigger, a series of hundreds of algorithms is applied, each acting on different readouts.
 Particular complex and important algorithms include:
@@ -233,15 +233,17 @@ Particular complex and important algorithms include:
 \begin{outline}
     \1 The \emph{track reconstruction} algorithms identify tracks from the single hits in the tracker region. It is an \emph{iterative} algorithm, which is run multiple times starting from easier, non-displaced tracks of higher $p_T$. It has three major steps for each iteration: \emph{seeding} or initialization, then \emph{pattern matching} to identify possible candidates of a track and \emph{track fitting} to identify the most convincing candidate tracks.
     
-    The tracking efficiency saturates at $\approx$ 90$\%$ for charged particles due to hadrons or nuclear interactions in the tracker material, while it is known to be close to 100$\%$ for muons;
+    The tracking efficiency saturates at $\approx$ 90$\%$ for charged hadrons due to nuclear interactions in the tracker material, while it is known to be close to 100$\%$ for muons;
     
-    \1 Once each subdetector has reconstructed its information, we pass everything to the \emph{particle flow} algorithm which is responsible for transforming the readouts into a list of final state particles produced in the event and their properties. It takes as inputs tracks (also from muon chambers) and caloritmeters clusters, and defines a PF \emph{block} as the building unit of a physical object, defined as a series of links between single hits. Muons, electrons and isolated photons, jets and their constituents as well as $p_T^{miss}$ are all reconstructed in this step. For identifying jets, we also employ specific \emph{clustering algorithms}. The \emph{isolation} of the various lepton and photon objects is also calculated at this step, checking for the presence of hadrons and photons in a cone centered around our target and computing their momentum; 
+    \1 Once each subdetector has reconstructed its information, everything is passed to the \emph{particle flow} algorithm which is responsible for transforming the pre-processed information from each sub-detector into a list of final state particles produced in the event and their properties. It takes as inputs tracks (also from muon chambers) and caloritmeters clusters, and defines a PF \emph{block} as the building unit of a physical object, defined as a series of links between single hits. Muons, electrons and isolated photons, as well as neutral and charged hadrons are all reconstructed at this step and are called \emph{PFcandidates}. Jets are obtained by clustering PFcandidates and the \emph{transverse missing energy} (MET) is obtained as:
+    \[\text{MET} = -\sum_{i in PFcands} p_T^i\]
+    For identifying jets, we also employ specific \emph{clustering algorithms}. The \emph{isolation} of the various lepton and photon objects is also calculated at this step, checking for the presence of hadrons and photons in a cone centered around our target and computing their momentum; 
 
 \end{outline}
 
 \paragraph{Luminosity and Pile-up}
 
- The CMS designed luminosity of 10$^{34}$ cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking, and a new data taking has just started with a goal of 2 10$^{34}$ cm$^{-2}$ s$^{-1}$. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
+ The LHC designed luminosity of 10$^{34}$ cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking, and a new data taking has just started with a goal of 2 10$^{34}$ cm$^{-2}$ s$^{-1}$. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
 
 As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileup} shows its increase over the various years.
 
@@ -261,19 +263,19 @@ Being a general-purpose experiment, CMS is capable of performing a wide range of
     
     \1 The \emph{Top Quark physics} programme consists in the precision measurements of the properties of the top quark, the heaviest particle in the standard model. The top-quark mass is one of the most important properties as it is a key parameter for calculations in the standard model. The top group also aims to establish measurements of rare production modes of the top quark in association with other particles, and search for new couplings of the top quark. It also aims to improve our understanding of top quark production and decay processes in order to improve background predictions as well as providing indirect proof for physics searches beyond the standard model;
     
-    \1 There are dedicated groups working on generic processes beyond the SM predictions. \emph{Supersymmetry (SUSY)} consists in the search for physics signatures involving large missing transverse momentum, together with other features such as jets, muons, electrons, taus, photons, and b-jets. If we discover such signatures with yields significantly in excess of standard model backgrounds, our goal will be to characterize the event samples as fully as possible, as possible evidence of a supersymmetric theory. \emph{Exotica} includes all the other processes not related to SUSY, while the \emph{Beyond-two-generations} (B2G) group covers models of new physics featuring the decay of new resonances to heavy standard model objects such as top, W, Z, or Higgs bosons. In particular, they search for new physics in high-$p_T$ jets;
+    \1 There are dedicated groups working on searches of processes beyond the SM. \emph{Supersymmetry (SUSY)} consists in the search for specific physics signatures, together with other features such as jets, muons, electrons, taus, photons, and b-jets. If we discover such signatures with yields significantly in excess of standard model backgrounds, our goal will be to characterize the event samples as fully as possible, as possible evidence of a supersymmetric theory. \emph{Exotica} includes all the other processes not related to SUSY, while the \emph{Beyond-two-generations} (B2G) group covers models of new physics featuring the decay of new resonances to heavy standard model objects such as top, W, Z, or Higgs bosons. In particular, they search for new physics in high-$p_T$ jets;
     
     \1 The \emph{B physics} group addresses all the heavy flavor (beauty and charm) studies. These activities involve precision measurements of heavy-quark hadron production, decay and properties, and the search for associated new and rare processes;
     
-    \1 Finally, an \emph{heavy-ions} group manages the analysis of data collected during heavy-ions runs.
+    \1 Finally, the \emph{heavy-ions} group manages the analysis of data collected during heavy-ions runs.
     
 \end{outline}
 
 \subsection{The Higgs discovery and searches}
 
-The main driver for the construction of the LHC and the deployment of the CMS experiment is certainly the Higgs boson and the detailed study of its properties. 
+The main driver for the construction of the LHC and the creation of the CMS experiment is certainly the Higgs boson and the detailed study of its properties. 
 
-The Higgs is a \emph{scalar boson}, i.e. with spin $0$, whose presence in the theory is needed in order to explain the masses of the \emph{gauge bosons} (as well as the fundamental fermions) through the \emph{Higgs mechanisms}: a spontaneous symmetry breaking of the scalar fields embedded in the U(1)$\times$SU(2) local gauge symmetry of the electroweak sector. The mass of the Higgs particle is a \emph{free parameter} of the theory. The Higgs boson is also expected to  interact with the entire fermion sector trough \emph{Yukawa}-like vertices, with a coupling proportional to the fermion mass.
+The Higgs is a \emph{scalar boson}, i.e. with spin $0$, whose presence in the theory is needed in order to explain the masses of the \emph{gauge bosons} (as well as the fundamental fermions) through the \emph{Higgs mechanisms}: a spontaneous symmetry breaking of the U(1)$\times$SU(2) local gauge symmetry of the electroweak sector. The mass of the Higgs particle is a \emph{free parameter} of the theory. The Higgs boson is also expected to  interact with the entire fermion sector trough \emph{Yukawa}-like vertices, with a coupling proportional to the fermion mass.
 
 The Higgs boson, which is consistent with the SM Higgs according to the current experimental data, was discovered in 2012 at the LHC (see \cite{Aad_2012} and \cite{Chatrchyan_2012}). The mass of the new particle, approximately 125 GeV, sets the boundaries of today well-know Higgs phenomenology.
 

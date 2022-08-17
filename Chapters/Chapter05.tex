@@ -3,15 +3,15 @@
 %************************************************
 
 Having discussed the importance and the challenges of event simulation at LHC, and having described the Deep Learning Normalizing Flows approach, we dedicate this chapter to the practical implementation of an end-to-end sample generator.
-The idea is to use NF models to \emph{learn} the mapping from our inputs (noise and generator-level information) to our outputs, consisting in the final-reduction NanoAOD data format for the fully reconstructed data. Having learned the appropriate mapping, the generation of new samples is then trivial, as it consists of sampling a multidimensional Gaussian and adding the relevant generator information. This effectively means being able to skip both the FullSim simulation step, based on \texttt{Geant4}, as well as the reconstruction and readout steps. The following chapter thus describes the variables chosen as inputs and as outputs of our networks, presenting and discussing the results obtained.
+The idea is to use NF models to \emph{learn} the mapping from our inputs (noise and generator-level information) to our outputs, consisting in the final-reduction NanoAOD analysis data format for the fully reconstructed data. Having learned the appropriate mapping, the generation of new samples is then trivial, as it consists of sampling a multidimensional Gaussian and adding the relevant generator information as conditioning to the learned function. This effectively means being able to skip both the FullSim simulation step, based on \texttt{Geant4}, as well as the reconstruction and digitization steps. The following chapter thus describes the variables chosen as inputs and as outputs of our networks, presenting and discussing the results obtained.
 
 The technicalities regarding the actual code implementation are briefly discussed in the Appendix \ref{ch:appx}, and the code use is hosted and documented in detail online \href{tbd}{at the following repository}\footnote{repository link, tbd}.
 
 \section{Target variables}
 
-As we discussed in Section \ref{sec:targets}, we choose to target the VBF Channel of H$\rightarrow\mu^+\mu^-$. Thanks to the clear signature, we only needed to simulate jets and muons out of all the possible objects in a NanoAOD. The present section serves as a discussion of the chosen variables to be simulated with our approach.
+As we discussed in Section \ref{sec:targets}, we choose to target the VBF Channel of H$\rightarrow\mu^+\mu^-$. We wanted to target a real process in order to assess the performance in a real-world scenario; however, because we are just presenting a first prototype, we choose to simulate only jets and muons out of all the possible objects in the full NanoAOD. The present section serves as a discussion of the chosen variables to be simulated with our approach.
 
-For training our model, however, we turned to the t$\overline{\text{t}}$ process. This is an ideal sample, as it contains many different physical processes. What is more, we actually expect our approach to be \emph{independent} from the actual Gen-process, as we are actually learning to model the \emph{detector response} to an arbitrary input: the t$\overline{\text{t}}$ then offers the advantage of already having billions of simulated events ready to be used for a general-purpose training.
+For training our model, however, we turned to the t$\overline{\text{t}}$ process. This is an ideal sample, as it contains many different final state particles. What is more, we actually expect our approach to be \emph{independent} from the actual Gen-process, as we are actually learning to model the \emph{detector response} to an arbitrary input: the t$\overline{\text{t}}$ then offers the advantage of already having billions of simulated events ready to be used for a general-purpose training.
 
 \subsection{The t$\overline{\text{t}}$ process}
 With a cross-section of $\approx 900$ pb at 13 TeV , the t$\overline{\text{t}}$ process is also \emph{the dominant SM background to many searches for new
@@ -35,7 +35,7 @@ Having at our disposal a large set of FullSim MC NanoAOD samples for t$\overline
 
 \subsection{Jets}
 
-As discussed in Section \ref{sec:nanoaod}, a NanoAOD, i.e. the CMS standard analysis format, contains both the Jet objects, i.e. final-state reconstructed jets, and the GenJet objects, the jets resulting from the clustering of initial, Gen-level particles before going through the reconstruction step. The latter are either matched to Jet objects, or may end-up unmatched because of limitations in the matching algorithms and the previous simulation steps. For the moment, we disregard the problem of \emph{fake jets}, that is Jet objects which are not matched to a GenJet object but are instead due to noise or Pile-Up.
+As discussed in Section \ref{sec:nanoaod}, a NanoAOD, i.e. the CMS standard analysis format, contains both the Jet objects, i.e. final-state reconstructed jets, and the GenJet objects, the jets resulting from the clustering of initial, Gen-level particles before going through the simulation and reconstruction step. The latter are either matched to Jet objects, or may end-up unmatched because of detector inefficiency, which we are not taking into account in the present work. In the following, we also disregard the problem of \emph{fake jets}, that is Jet objects which are not matched to a GenJet object but are instead due to noise or Pile-Up.
 
 The idea is being able to directly generate correctly distributed Jet objects starting from noise, for stochasticity,  but also from the values of a corresponding GenJet, as a physical-informed input for the network (a process known as \emph{conditioning}): knowing just the generator-level information of some process, we are going to skip the Simulation, Digitization and Reconstruction steps.
 
@@ -48,7 +48,7 @@ First of all, we selected the following 14 GenJet variables for conditioning the
 \1 \emph{The physical properties} of the GenJet, that is $\eta$, $\phi$, $m_j$, $p_T$, and the \emph{Parton} and \emph{Hadron Flavour}, giving the \emph{flavour} content of a jet as containg a specific quark or some gluons;
 
 \1 \emph{Variables correlated with the rest of the event}, as the actual properties of a jet are expected to be influenced by other objects such as muons. Computing the $\Delta$R separation between the GenJet and the GenMuons present in the event, we selected the first and second \emph{closest muons}, and we computed the following quantities for each one:
-\2 \texttt{Dr}, giving the separation from the GenJet, \texttt{DEta}, the $\eta$ difference from the GenJet, \texttt{DPt}, the $p_T$ difference from the GenJet, \texttt{DPhi}, the $\phi$ difference from the GenJet;
+\2 $\Delta$R, giving the separation from the GenJet, $\Delta \eta$, the $\eta$ difference from the GenJet, \texttt{DPt}, the $p_T$ difference from the GenJet, \texttt{DPhi}, the $\phi$ difference from the GenJet;
 
 \1 If no GenMuons were present within a cone of $\Delta$R = 0.5 from the GenJet, the corresponding values were set to a user-defined maximum.
 
@@ -76,7 +76,7 @@ We selected 30 GenMuon variables for conditioning:
 \begin{outline}
 \1 \emph{The physical properties} of the GenMuon, that is $\eta$, $\emph{phi}$, \texttt{Charge} and $p_T$;
 
-\1 \emph{The 14 GenParticle status flags}, a series of \texttt{statusFlags} stored bitwise, with each bit having a different physical interpretation such as \emph{isTauDecayProduct}, \emph{fromHardProcess}, etc. or some information regarding the position of the object in the detector;
+\1 \emph{The 14 GenParticle status flags}, a series of \texttt{statusFlags} stored bitwise, with each bit having a different physical interpretation such as \emph{isTauDecayProduct}, \emph{fromHardProcess}, etc. ;
 
 \1 \emph{Variables correlated with the rest of the event}, as the actual properties of a muon are expected to be influenced by other objects such as jets. Computing the $\Delta$R separation between the GenMuon and the GenJets present in the event, we selected the first \emph{closest GenJet}, and we computed the following quantities:
 \2 $\Delta$R, giving the separation from the GenJet, $\Delta\eta$, the $\eta_{muon} - \eta_{jet}$ difference, $R_{p_T}$, the ratio of $p_T$s, $\Delta\phi$, the $\phi$ difference, and finally the $m_j$ of the closest GenJet;
@@ -97,7 +97,7 @@ Then we selected 22 target variables for the Muon objects:
 
 \1 The \emph{variables related to the closest jet}: \texttt{jetPtRelv2}, indicating the relative momentum of the lepton with respect to the closest jet after subtracting the lepton and \texttt{jetRelIso}, the relative isolation in matched jet;
 
-\1 A series of \emph{ID scores}: \texttt{mediumID}, \texttt{softMVA} score and its cut-based ID \texttt{softMVAId}, \texttt{softId};
+\1 A series of \emph{ID scores}: \texttt{mediumID}, \texttt{softMVA} score and their cut-based Boolean IDs \texttt{softMVAId}, \texttt{softId};
 \end{outline}
 
 \subsection{Extraction and preprocessing}
@@ -110,7 +110,7 @@ The resulting file is still organized according to the Events structure. Besides
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{gfx/ch5/preproce.pdf}
-    \caption[Preprocessing]{Sharply peaked distribution are being converted to more broad ones during the preprocessing step. In this example the \texttt{ip3d} variable gets transformed as log(\texttt{ip3d}+0.001).}
+    \caption[Preprocessing]{Sharply peaked distribution are being converted to more broad ones during the preprocessing step. In this example the \texttt{ip3d}, the 3D impact parameter of the $\mu$ w.r.t. the primary vertex, variable gets transformed as log(\texttt{ip3d}+0.001).}
     \label{fig:preproce}
 \end{figure}
 
@@ -119,7 +119,7 @@ The resulting file is still organized according to the Events structure. Besides
 
 \1 As NF assume a continuous and differentiable pdf, they are not well suited to deal with \emph{discrete} distributions. Thus, we should apply a process known as \emph{dequantization}, that is applying some sort of smearing to the discrete values to make them similar to those sampled from a continuous distribution;
 
-\1 For similar resons as before, when possible it would be beneficial to widen and normalize sharply peaked distributions through invertible transforms such as log(x). If well separated, eventual peaks may be dequantized as well;
+\1 For similar resons as before, when possible it would be beneficial to widen and normalize steeply falling distributions through invertible transforms such as log(x). If well separated, eventual peaks may be dequantized as well;
 
 \1 Finally, we opted for \emph{saturating} long tails of distributions to some limiting values, in order to make it easier for the model to learn the pdf in the more populated region.
 \end{outline}
@@ -152,9 +152,9 @@ As discussed in Section \ref{sec:couplay}, the full model is composed of a \emph
 For each spline, the inputs are permuted and then splitted in half, sending half as parameters and half as argument of the \emph{spline transform}. The conditioning Gen-level variables \textbf{y} are sent as input to a complex 10 layer fully-connected \emph{residual} network (a different one for each transform) which defines the parameters for the spline. Its most relevant hyperparameters are the \emph{hidden\_dim}, the number of nodes per hidden layer, set to 256 for the muons model and to 298 for the jets one, the \emph{n\_bin}, the number of bins for the spline, set to 128 for both models and the \emph{n\_blocks} set to 10 for both and defining the number of hidden layers.
 Each network was defined with \texttt{ReLU} activation function and setting \texttt{batch\_norm=True}. The training procedure actually traverse the network in the opposite way, strarting from the training data and using the inverse transform to obtain normally distributed instances which can easily be evaluated in the NF loss function.
 
-We would like to emphasize the fact that because \emph{each transform} defines a separate network for learning the optimal spline parameters, the final models are quite large, especially for physics-based application standards. The muons model exceeds $54*10^6$ trainable parameters, corresponding to the various weights of the neurons in each layer and the batch norm parameters, while the jets model totals in at $48*10^6$ parameters. These large models were trained on around 5e6 muons or jets objects extracted as explained above, and the \emph{losses} were monitored at each epoch on a separate \emph{validation set} of about 4e5 samples to ensure that the models were not being over-optimized for the training set. Additionally, we saved the model state every 10 epochs and performed additional validation on a separate set of $10^5$ data to further avoid overfitting.
+We would like to emphasize the fact that because \emph{each transform} defines a separate network for learning the optimal spline parameters, the final models are quite large, especially for physics-based application standards. The muons model exceeds $54\cdot 10^6$ trainable parameters, corresponding to the various weights of the neurons in each layer and the batch norm parameters, while the jets model totals in at $48\cdot 10^6$ parameters. These large models were trained on around 5,000,000 muons or jets objects extracted as explained above, and the \emph{losses} were monitored at each epoch on a separate \emph{validation set} of about 400,000 samples to ensure that the models were not being over-optimized for the training set. Additionally, we saved the model state every 10 epochs and performed additional validation on a separate set of $10^5$ data to further avoid overfitting.
 
-As our \emph{optimizer} algorithm we choose the de-facto standard in the field, the \texttt{Adam} algorithm \cite{https://doi.org/10.48550/arxiv.1412.6980}, a complex and powerful algorithm for models optimization still based on the same basic principles of \emph{gradient descent} explained in Section \ref{sec:backprop}, with an initial \emph{learning rate} of $10^{-4}$ for muons and $10^{-5}$ for jets, reduced during training by the \emph{cosine annealing} procedure. The maximum epochs were set to 1000 for the muons model, giving its larger number of target variables, and to 500 for the jets one--this also means that the learning rate reduction due to cosine annealing will be different over training as it depends on the total epochs number.
+As our \emph{optimizer} algorithm we choose the de-facto standard in the field, the \texttt{Adam} algorithm \cite{https://doi.org/10.48550/arxiv.1412.6980}, a complex and powerful algorithm for models optimization still based on the same basic principles of \emph{gradient descent} explained in Section \ref{sec:backprop}, with an initial \emph{learning rate} of $10^{-4}$ for muons and $10^{-5}$ for jets, reduced during training by the \emph{cosine annealing} procedure (proposed in \cite{https://doi.org/10.48550/arxiv.1608.03983}). The maximum epochs were set to 1000 for the muons model, giving its larger number of target variables, and to 500 for the jets one--this also means that the learning rate reduction due to cosine annealing will be different over training as it depends on the total epochs number.
 
 Trainings were stopped respectively at epoch 580 for muons and at epoch 420 for jets, as we had reached a good convergence, despite both models showing signs for more improvements. Figure \ref{fig:losses} shows the models losses over the training epochs. The validation loss is plotted by averaging over the last 5 epochs, to display the overall trend instead of single, noisy variations. The values on the y-axis are the actual loss values, and they are different as they depend on both the number and the ranges of the target variables.
 
@@ -189,11 +189,11 @@ In the following we also compare some of the results to the CMS FastSim approach
 
 \paragraph{Jets}
 
-We show in Figure \ref{fig:jetsdists} four 1-d distributions from the total of 17 target variables obtained for jets. We emphasize once more that the model actually learned to generate the 17 values simultaneously, preserving the correct correlations as well as producing convincing distribution.
+We show in Figure \ref{fig:jetsdists} four 1-d distributions out of the total of 17 target variables obtained for jets. We emphasize once more that the model actually learned to generate the 17 values simultaneously, preserving the correct correlations as well as producing convincing distribution.
 
 Regarding the distributions, we observe that the model has correctly learned all the multi-modal, sharply peaked tagging distributions with Wasserstein scores of the order of $0,001$, testifying good convergence. The log scale of \texttt{btagDeepB} actually shows an instance of \emph{bridging}, where a small set of values were generated between two separate peaks. Single-mode distributions such as \texttt{ptRatio} have been larned as well, as were the Ids thanks to dequantization. The \texttt{jetId} outputs were rounded to the closest value between 0, 2 and 6, the only admissible ones.
 
-Finally, we also observe a worse performance on two distributions: \texttt{bRegCorr}, a rather simple, skewed one-mode distribution which is expected to improve with further training (current Wasserstein distance is $\approx$ 0.02), and \texttt{nConstituents}, plotted at the bottom of \ref{fig:jetsdists}. The latter result is probably in stronger disagreement because the target actually consist of integer values--as we discussed before, the NF approach expects continuous distributions, and so the model performs bridging in an attempt to obtain a reasonable continuous distribution. However, it has been observed in previous training for similar architectures that the model is actually capable of partially overcoming this limitation by brute force alone: if left in training for long enough it will eventually learn to ouput values close to the integer ones.
+Finally, we also observe a worse performance on two distributions: \texttt{bRegCorr}, a rather simple, skewed one-mode distribution which is expected to improve with further training (current Wasserstein distance is $\approx$ 0.02), and \texttt{nConstituents}, plotted at the bottom of \ref{fig:jetsdists}. The latter result is probably in stronger disagreement because the target actually consist of integer values--as we discussed before, the NF approach expects continuous distributions, and so the model performs bridging in an attempt to obtain a reasonable continuous distribution. However, it has been observed in previous training for similar architectures that the model is actually capable of partially overcoming this limitation by brute force alone: if left in training for long enough it may eventually learn to output values close to the integer ones.
 
 \begin{figure}
     \myfloatalign
@@ -229,7 +229,7 @@ We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned t
 
 \paragraph{Muons}
 
-For the muons, we obtained similar results--good, convincing general convergence and correlations apart from a subset of the target variable. It should be noted that a larger number of target variables for this case were actually Boolean Ids, and as discussed before were approached through dequantization. Figure \ref{fig:muonsdists} shows 4 distributions out of 22 target variables. Aside from good convergence on the firs two, we can observe that for a series of them, such as \texttt{dxyErr} and \texttt{dzErr} the training is complicated by the fact that the NanoAOD format stores the variables in a low-precision format: this is reflected by the jagged structure in the plot for FullSim and it causes the model to perform bridging to reach convergence.
+For the muons, we obtained similar results--good, convincing general convergence and correlations apart from a subset of the target variable. It should be noted that a larger number of target variables for this case were actually Boolean Ids, and as discussed before were approached through dequantization. Figure \ref{fig:muonsdists} shows 4 distributions out of 22 target variables. Aside from good convergence on the firs two, we can observe that for a series of them, such as the impact parameters errors \texttt{dxyErr} and \texttt{dzErr} the training is complicated by the fact that the NanoAOD format stores the variables in a low-precision format: this is reflected by the jagged structure in the plot for FullSim and it causes the model to perform bridging to reach convergence.
 
 \begin{figure}
     \myfloatalign
@@ -319,7 +319,7 @@ We conclude by presenting the general idea for an end-to-end analysis sample gen
     
 \end{figure}
 
-This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan}, \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (HMM) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
+This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan two-jets}, \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (HMM) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
 
 \begin{figure}
     \myfloatalign

@@ -1,7 +1,7 @@
 %************************************************
 \chapter{Data Analysis at the LHC}\label{ch:introduction}
 %************************************************
-The LHC produces over 40 millions proton-proton collisions per second in ATLAS or CMS detectors. The \emph{raw} data is made up of ADC counts from roughly 100 millions acquisition channels, meaning around \emph{4 PB/s of raw data} needed for storing all the events. The actual amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte), thanks to \emph{zero suppression}, which discards noise in the apparatus. This means that we are reaching 40 TB/s of data--far too much for any conventional data acquisition system to handle.
+The LHC produces over 40 millions proton-proton collisions per second in ATLAS or CMS detectors. The \emph{raw} detector has roughly 100 millions acquisition channels, meaning that if one was to read all of them for each event, it would need around \emph{4 PB/s of raw data} for storing all the events. The actual amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte), thanks to \emph{zero suppression}, which discards channels with a signal below the noise treshold in the apparatus. This means that we are reaching 40 TB/s of data--far too much for any conventional data acquisition system to handle.
 
 The trigger systems alleviate the problem by reducing the amount of data by a factor or 10$^{4}$, hence to 4 GB/s. Despite this, the constant need of cutting-edge resources and solutions, both in hardware and software, have been driving extremely fruitful research in the history of the LHC.
 
@@ -15,7 +15,7 @@ at analysis level and for testing the algorithms before deployment with data.
 Simulations help in a wide range of scenarios:
 
 \begin{outline}
-   \1  The simulation can provide us with detailed predictions of the expected SM background processes, allowing us to optimize our analysis according to the theoretical expected signatures. It can also target relatively rare processes originating from a hard interaction between twoproton components, which are signal or background for specific analyses. Single particles or hadronic jets can also be simulated for specific purposes;
+   \1  The simulation can provide us with detailed predictions of the expected SM processes, allowing us to optimize our analysis according to the theoretical expected signatures. It can also target relatively rare processes originating from a hard interaction between two proton components, which are signal or background for specific analyses;
 
 
 \1 Additionally, thanks to simulation we are able to study the performance of the detector on reconstruction algorithms, crucial for proper data taking.
@@ -174,7 +174,7 @@ reconstruction for tracking, based on smearing and truth information, in order t
 
 Performance of FastSim is validated regularly within the official CMS software release validation framework; overall, distributions in FastSim agree with FullSim within $\approx 10\%$ \cite{https://doi.org/10.48550/arxiv.1701.03850}. See Table \ref{tab:simfram} for a quick comparison with the others simulation approaches.
 
-\paragraph{Starting from final-state objects}
+\paragraph{Starting from final-state generator objects}
 
 In this kind of approach we try to skip detector simulation and digitization all together and go directly to the final objects that we would have reconstructed (electrons, muons, jets, missing transverse momentum, $\dots$). A popular framework is the one of \texttt{DELPHES} fast-simulation, see \cite{de_Favereau_2014}.
 
@@ -184,28 +184,29 @@ scattering are propagated to the calorimeters within a uniform magnetic field pa
 the beam direction. The particle energies are computed by smearing the initial long-lived
 visible particles momenta according to the detector resolution. As a result, jets, missing
 energy, isolated electrons, muons and photons, and taus can be reconstructed. It is oviously not meant to
-be used for advanced detector studies, for which more accurate tools are needed, but it can nonetheless perform quickly realistic physics studies without in-depth knowledge of the technicalities. It should be noted that this type of strategy currently makes up the HL-LHC studies workhorse, as it is capable of providing acceptable results in a fraction of the time needed by the other approaches.
+be used for advanced detector studies, for which more accurate tools are needed, but it can nonetheless perform quickly realistic physics studies without in-depth knowledge of the technicalities. It should be noted that this type of strategy currently makes up the HL-LHC studies workhorse, as it is capable of providing acceptable results in a fraction of the time needed by the other approaches. It should be noted that the content of a \texttt{DELPHES}' simulated event is also different from what is typically used in detector-data analyses and from the results of Full/FastSim. 
 
 
 \begin{table}
 \begin{adjustbox}{width={\textwidth},totalheight={\textheight},keepaspectratio}%
     \begin{tabular}{llll} \toprule
-        \tableheadline{Simulation framework} & \tableheadline{key aspects} & \tableheadline{speed} & \tableheadline{accuracy}\\ \midrule
-        FullSim & \tabitem detailed geometry; &  $\mathcal{O}(40$ s) for a t$\overline{\text{t}}$ event & Best\\
+        \tableheadline{Simulation framework} & \tableheadline{key aspects} & \tableheadline{speed} & \tableheadline{accuracy/limitations}\\ \midrule
+        FullSim & \tabitem detailed geometry; &  $\mathcal{O}(40$ s) for a t$\overline{\text{t}}$ event &\tabitem Best\\
         & \tabitem small-step tracking; & &\\
         & \tabitem \texttt{Geant4} material modelling; & &\\
         & \tabitem  detailed digitization; & &\\
         & \tabitem full reconstruction & &\\
         \midrule
-        FastSim & \tabitem simplified geometry; &  $\mathcal{O}(5$ s) for a t$\overline{\text{t}}$ event & Lacks \emph{fake tracks}\\
-        & \tabitem thin material layers; & &\\
-        & \tabitem simple analytical material modelling; & &\\
+        FastSim & \tabitem simplified geometry; &  $\mathcal{O}(5$ s) for a t$\overline{\text{t}}$ event & \tabitem Lacks \emph{fake tracks}; \\
+        & \tabitem thin material layers; & & \tabitem skips track and reco steps;\\
+        & \tabitem simple analytical material modelling; & &\tabitem some analysis data (e.g. trigger) not available\\
         & \tabitem  detailed digitization; & &\\
         & \tabitem full reconstruction with exceptions & &\\
         %postulant quo & westeuropee & sanctificatec \\
         \midrule
-        Delphes & \tabitem simple tracking system; &  $\mathcal{O}(0.01$ s) for a t$\overline{\text{t}}$ event & Limited reco pair correlations, 1-d smearing\\
-        & \tabitem smearing & &\\
+        Delphes & \tabitem simple tracking system; &  $\mathcal{O}(0.01$ s) for a t$\overline{\text{t}}$ event & \tabitem Limited reco pair correlations;  \\
+        & \tabitem smearing & & \tabitem 1-d smearing;\\
+        & & & \tabitem different analysis data format w.r.t. Full/FastSim\\
         %autem vulputate ex & parola & romanic \\
         %usu mucius iisque & studio & sanctificatef \\
         \bottomrule
