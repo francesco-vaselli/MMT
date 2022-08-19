@@ -83,12 +83,12 @@ Because soft activity depends upon the presence of additional charged particles,
 
 \section{FullSim vs FlashSim}
 
-We observe good results on distributions directly related to the simulated targets of FlashSim, even on samples such as EWK LLJJ which were not seen by the NF networks during training. Figure \ref{fig:selmuonpt} shows the $p_T$ for muons, which present negligible deviation when compared to the FullSim sample. The bottom panel shows the ratio between the FlashSim and the FullSim sample, were the chosen convention here and in the following has been to always divide by the FullSim.
+We observe good results on distributions directly related to the simulated targets of FlashSim, even on samples such as EWK LLJJ which were not seen by the NF networks during training. Figure \ref{fig:selmuonpt} shows the \texttt{pfRelIso\_04\_all} for lead muons passing the initial selection, which presents small deviations when compared to the FullSim sample, despite the lower number of FlashSim muons passing the selection. The bottom panel shows the ratio between the FlashSim and the FullSim sample, were the chosen convention here and in the following has been to always divide by the FullSim.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{gfx/ch6/EWK_LLJJ_SelectedMuon_pt____log.pdf}
-    \caption[Selected muon $p_T$]{There is close agreement for the selected muons between FullSim and FlashSim}
+    \includegraphics[width=\linewidth]{gfx/ch6/EWK_LLJJ_LeadMuon_pfRelIso04_all___PreSel_log.pdf}
+    \caption[Lead muon isolation]{There is close agreement for the lead muons between FullSim and FlashSim, despite the lower number of FlashSim muons passing the selection.}
     \label{fig:selmuonpt}
 \end{figure}
 
@@ -130,7 +130,7 @@ We show in Figure \ref{fig:DNNout} the outputs of the VBF DNN discriminator netw
     \caption[Angular distributions]{Background processes, such as (a), (b), and (c) are always decreasing, while signal processes ((d) and (e)) are increasing in the 0,3 range. All outputs are from data passing the pre-selection and being in the Signal region. }\label{fig:DNNout}
 \end{figure}
 
-Finally, another possible advantage that we wish to verify is the ability of handling the generation of samples with different \emph{theoretical variations} for the same process. This is the case, for example for the two samples of the Higgs signal, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} software \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim reference sample $REF_{Full}$, we computed its FlashSim $REF_{Flash}$ sample as well as that of another possible variation $VAR_{Flash}$. We would expect that the actual $VAR_{Full}$ may be re-obtained faster than a run of FullSim by the factorization:
+Another possible advantage that we wish to verify is the ability of handling the generation of samples with different \emph{theoretical variations} for the same process. This is the case, for example for the two samples of the Higgs signal, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} software \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim reference sample $REF_{Full}$, we computed its FlashSim $REF_{Flash}$ sample as well as that of another possible variation $VAR_{Flash}$. We would expect that the actual $VAR_{Full}$ may be re-obtained faster than a run of FullSim by the factorization:
 
 \[VAR_{Full} = REF_{Full} \frac{VAR_{Flash}}{REF_{Flash}}
 \]
@@ -146,7 +146,7 @@ as the ratio factors out the FlashSim differences and leaves out only the softwa
 
 \section{FlashSim vs Gen}
 
-A final test for the goodness of the proposed simulation approach is the comparison with the Gen-level information. Part of the chosen selection analysis objects may in fact be computed starting from Gen-level information alone, and thus we can ask ourselves if the FlashSim results are significantly different from those obtained with its inputs, the Gen values. In the following, we compare results for the Signal sample considering the three samples of FullSim, FlashSim and Gen.
+Another test for the goodness of the proposed simulation approach is the comparison with the Gen-level information. Part of the chosen selection analysis objects may in fact be computed starting from Gen-level information alone, and thus we can ask ourselves if the FlashSim results are significantly different from those obtained with its inputs, the Gen values. In the following, we compare results for the Signal sample considering the three samples of FullSim, FlashSim and Gen.
 
 For the $\log(z^*)$ angular distribution, as the angular resolution is already good at Gen level, Figure \ref{fig:zstargen} shows no significant deviations between the three samples.
 
@@ -184,4 +184,38 @@ Additionally, the importance of the interaction with the detector and of the rec
     \label{fig:dnngen}
    \end{figure}
    
-  These results of the present Chapter demonstrate that not only is FlashSim capable of producing different distributions from those of the bare Gen-level, but also that it can come close to the results yield by FullSim.
+\section{Upsampling}
+  Because the simulation and reconstruction steps are currently much slower than the generation one, when working with FullSim the default choice is to employ a different Gen-level sample for each event, to maximize the information contained in the final dataset. As our proposed FlashSim has demonstrated significant speed improvements, we decided to experiment with \emph{upsampling}; i.e. generating multiple final-state, NanoAOD-format events from the same Gen-level information. Due to the stochasticity of the simulation step, we expect to observe a distribution of different values. 
+  
+    \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch6/1upsampled_HMM_amcatnlo_DNN18Atan___SignalRegion_log_norm.pdf}
+    \caption[Upsampling]{For FlashSim upsampled by a factor of 10,000 we observe an actual distribution. We compare it to the single value returned by the conventional, 1-to-1 FlashSim procedure. The plot is normalized.}
+    \label{fig:1upHMM}
+   \end{figure}
+   
+   Figure \ref{fig:1upHMM} shows that our assumption is correct: if we generate 10,000 events from the same Signal POWHEG Gen-level value we observe a distribution spread around the single value returned from the conventional, 1-to-1 FlashSim approach. It is interesting to note that out of the 10,000 generated events only 7,633 pass the analysis selection and are being used to plot the VBF DNN Output distribution.
+   
+   The capacity for upsampling offers some important advantages. First of all, because we are generating more data, we can expect a reduction of the statistical error. If we compare the 1-to-1 histograms to those upsampled by a factor N and filled with a weight 1/N, we should see a reduction of $\sigma \rightarrow \sigma/\sqrt{\text{N}}$ thanks to the central limit theorem.
+   
+       \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch6/HMM_powheg_DNN18Atan____log_upsampled.pdf}
+    \caption[Upsampling error reduction]{The statistical error for each bin gets reduced by a factor $1/\sqrt{\text{N}} = 1/5$, as we expect. The relative error plotted in the first lower panel is the error per bin divided by the bin content. The latter panel shows the ratio between the 1-to-1 FlashSim and the upsampled, $1/25$ weight filled FlashSim. }
+    \label{fig:updnnHMM}
+   \end{figure}
+   
+   Figure \ref{fig:updnnHMM} shows the comparison for the Signal POWHEG VBF DNN Output between the 1-to-1 FlashSim and the FlashSim upsampled by a factor of 25 and with a weight of $1/25$ for the filling of histograms. The mean statistical error is 101.6 for the first case, which gets reduced to 20.3 for the upsampled dataset: exactly by a factor of $1/\sqrt{25} = 1/5$. The relative error, defined as the error per bin divided by the bin content, is also showed in the first lower panel and is clearly decreasing across all bins, while the ratio is approximately one, as expected.
+   
+   Another important advantage is that we may be able to obtain more smooth, convincing distributions for those cases where the low number of events is a limiting factor. One of such cases is the VBF DNN Output for the DY 2Jets dataset, which has high errors and a jagged distribution as only a fraction of events pass the selection.
+   
+          \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_DNN18Atan____log_upsampled.pdf}
+    \caption[Upsampling on DY]{Notice how the upsampling by a relatively small factor of 25 results into a more convincing distribution with lower errors. The upsampled FlashSim is plotted as a continuous line to allow for visual comparison of errorbars.}
+    \label{fig:updnnDY}
+   \end{figure}
+   
+   By performing an upsampling by a factor of 25 on a subset of the dataset, and comparing the results on the two subsets, we immediately see in Figure \ref{fig:updnnDY} that the resulting upsampled distribution not only has lower errors, but also manages to produce a more smooth and convincing distribution, without the jagged peaks given by the small sample size of the 1-to-1 case.
+   
+  These results of the present Chapter demonstrate that not only is FlashSim capable of producing different distributions from those of the bare Gen-level, but also that it can come close to the results yield by FullSim. Additionally, it can fully make use of Gen-level information through the upsampling procedure.

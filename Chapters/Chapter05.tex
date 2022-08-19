@@ -5,7 +5,7 @@
 Having discussed the importance and the challenges of event simulation at LHC, and having described the Deep Learning Normalizing Flows approach, we dedicate this chapter to the practical implementation of an end-to-end sample generator.
 The idea is to use NF models to \emph{learn} the mapping from our inputs (noise and generator-level information) to our outputs, consisting in the final-reduction NanoAOD analysis data format for the fully reconstructed data. Having learned the appropriate mapping, the generation of new samples is then trivial, as it consists of sampling a multidimensional Gaussian and adding the relevant generator information as conditioning to the learned function. This effectively means being able to skip both the FullSim simulation step, based on \texttt{Geant4}, as well as the reconstruction and digitization steps. The following chapter thus describes the variables chosen as inputs and as outputs of our networks, presenting and discussing the results obtained.
 
-The technicalities regarding the actual code implementation are briefly discussed in the Appendix \ref{ch:appx}, and the code use is hosted and documented in detail online \href{tbd}{at the following repository}\footnote{repository link, tbd}.
+For the interested reader, the code used will be hosted online \href{https://github.com/francesco-vaselli/FlashSim}{at the following repository}\footnote{https://github.com/francesco-vaselli/FlashSim}. A detailed documentation, containing all the code technicalities, is also being draft \href{https://francesco-vaselli.github.io/FlashSim/}{at the following page}\footnote{https://francesco-vaselli.github.io/FlashSim/}.
 
 \section{Target variables}
 
@@ -319,7 +319,7 @@ We conclude by presenting the general idea for an end-to-end analysis sample gen
     
 \end{figure}
 
-This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan two-jets}, \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (HMM) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
+This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan two-jets} (DY), \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (HMM) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
 
 \begin{figure}
     \myfloatalign
