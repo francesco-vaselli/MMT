@@ -8,10 +8,10 @@ We were able to successfully simulate physical target distributions with great a
 We also built a first prototype for an end-to-end sample generator in the standard CMS NanoAOD format, and actually deployed it at scale on millions of events, coming from the training process as well as new, previously unseen ones. 
 
 Finally, we demonstrated that the results obtained can be used in a real world scenario such as a complex, multivariate, MC based analysis as the VBF Channel of H$\rightarrow\mu^+\mu^-$. We computed the key derived quantities for the analysis for both the FullSim and the FlashSim samples, and we observed comparable results on the evalutation of the DNN classifier used in the corresponding CMS publication.
-Our approach was also able to provide interesting results regarding the generation of samples with different calculations of higher order QCD effects, being capable of reproducing the differences between competing approaches such as \texttt{POWHEG} and \texttt{MadGraph5\_aMC@NLO}. The speed of the proposed approach allowed us to make use of all the Gen-level information as well, through the technique of upsampling.
+Our approach was also able to provide interesting results regarding the generation of samples to be used as systematic variations when a FullSim reference exists, correctly reproducing the differences between competing approaches such as \texttt{POWHEG} and \texttt{MadGraph5\_aMC@NLO}. The speed of the proposed approach allowed us to make use of all the Gen-level information as well, through the technique of upsampling.
 
 \section{Towards a complete FlashSim}
-This work has also emphasized some limitations and peculiarities of the selected approach, pointing to the next steps to be take if the CMS Collaboration were to adopt the proposed method.
+This work has also emphasized some limitations and peculiarities of the selected approach, pointing to the next steps to be taken if the CMS Collaboration were to adopt the proposed method.
 
 The two major ones are discussed below.
 
@@ -49,9 +49,7 @@ Finally, we could tailor a more specific loss function for our class of models, 
 \section{Future research}
 The need for fast and reliable computing methods in the physical sciences, notably in the high-energy field, has fueled much of the technological progress of modern times. Despite this, the average physicist has generally little time to spend on innovating and improving its computing toolkit, and has to content himself with boilerplate solutions. This is especially true in highly specialized fields, such as HEP, which purse a wide variety of research directions.
 
-Specifically, in recent years, ML techniques have been massively adopted by scientific collaborations around the world. However, such tools remain geared towards the necessities of industry; much work remains to be done to enable the use of this technologies in hard sciences.
-
-As physicists with a keen interest in this type of applications, while still retaining useful domain knowledge, we are convinced that significant results could be achieved by pursuing the following research directions. 
+Specifically, in recent years, ML techniques have been massively adopted by scientific collaborations around the world. However, such tools remain geared towards the necessities of industry; much work remains to be done to enable the use of this technologies in hard sciences. As physicists with a keen interest in this type of applications, while still retaining useful domain knowledge, we are convinced that significant results could be achieved by pursuing the following research directions. 
 
 \subsection{Other Flow-based applications in HEP}
 
@@ -63,10 +61,6 @@ We already mentioned a series of possible approaches in Section \ref{sec:nfapp}.
 
 A promising way to address the unique challenges posed by HEP datasets is the introduction of \emph{Graph Networks} (GNs), which represent input and output data as graphs to exploit any invariance of the graph itself in order to perform the dimensionality reduction that is achieved in other popular ML algorithms. 
 The key idea behind GNs in HEP (specifically, in \emph{track reconstruction}) is to represent the data as a graph where the nodes are the hits (i.e. the individual measurements from tracking sensors) and nodes of subsequent layers are connected (with some pruning of nonphysical connections). The output is instead a graph made of several disconnected branches each representing an
-individual track (or track seed). A seminal work is the one presented by Qu and Gouskos \cite{pj2020}.
-
-
-The graph topology may be extended to the Normalizing Flow approach as well, as the autors of \cite{https://doi.org/10.48550/arxiv.2105.09016} showed: this could pave the way for an entirely new and powerful simulation approach at a completely different level from what discussed in the present work.
-
+individual track (or track seed). A seminal work on jet-tagging using this approach is the one presented by Qu and Gouskos \cite{pj2020}. The graph topology may be extended to the Normalizing Flow approach as well, as the autors of \cite{https://doi.org/10.48550/arxiv.2105.09016} showed: this could pave the way for an entirely new and powerful simulation approach at a completely different level from what discussed in the present work.
 Finally, a novel discipline born from \emph{Quantum Computing} and ML, known as \emph{Quantum Machine Learning} (QML) is already under serious investigation from the CERN scientific community, due to the potential and significant \emph{quantum} advantages thanks to the new computing devices known as \emph{quantum computer}s. 
 Advantages for NF could be investigated.

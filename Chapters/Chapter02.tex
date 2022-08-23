@@ -1,7 +1,7 @@
 %************************************************
 \chapter{Data Analysis at the LHC}\label{ch:introduction}
 %************************************************
-The LHC produces over 40 millions proton-proton collisions per second in ATLAS or CMS detectors. The \emph{raw} detector has roughly 100 millions acquisition channels, meaning that if one was to read all of them for each event, it would need around \emph{4 PB/s of raw data} for storing all the events. The actual amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte), thanks to \emph{zero suppression}, which discards channels with a signal below the noise treshold in the apparatus. This means that we are reaching 40 TB/s of data--far too much for any conventional data acquisition system to handle.
+The LHC produces about 40 millions bunch crossings per second in the various interaction points. The detector has roughly 100 millions acquisition channels, meaning that if one was to read all of them for each event, it would need around \emph{4 PB/s of raw data} for storing all the events. The actual amount of data collected for each event, including pile-up, is around 1 MB (1 Megabyte), thanks to \emph{zero suppression}, which discards channels with a signal below the noise treshold in the apparatus. This means that we are reaching 40 TB/s of data--far too much for any conventional data acquisition system to handle.
 
 The trigger systems alleviate the problem by reducing the amount of data by a factor or 10$^{4}$, hence to 4 GB/s. Despite this, the constant need of cutting-edge resources and solutions, both in hardware and software, have been driving extremely fruitful research in the history of the LHC.
 
@@ -43,7 +43,7 @@ states that the hadronic cross-section $\sigma_{pp}$ is a convolution of the par
 where function $f_i(x)$ is probability density that a parton of type i has a fraction x of the
 hadron energy. The final cross section may be evaluated by the single, non-trivial contributions $\hat{\sigma}_{ij}$.
 
-Apart from the hard interactions, i.e. parton-parton interactions with large momentum transfer which results into hard final-state particles, the other constituents of the proton can also interact. This
+Apart from the hard interactions, i.e. parton-parton interactions with large momentum transfer which results into high-momentum final-state particles, the other constituents of the proton can also interact. This
 usually results in a collection of softer particles, called \emph{underlying event} (UE). High momentum quarks and gluons involved in the collision will emit additional hard QCD radiation. Radiation
 from particles before the hard interaction is called \emph{initial-state-radiation} (ISR), whereas radiation off particles produced in the collision is called \emph{final-state-radiation} (FSR). All the quarks
 and gluons go through the hadronization process, forming colorless hadrons. Finally, unstable particles are going to decay. A representation of all these elements is shown in Figure \ref{fig:evgen}.          
@@ -71,7 +71,7 @@ All the various parts involved in this step can be summarized as:
 \end{outline}
 
 The first two are usually included in \emph{Matrix Elements generators}, while the last three are
-included in Parton Showering programs. Both use Monte Carlo techniques; some popular multi-purpose generators include \texttt{Pythia8} \cite{Bierlich:2022pfr}, \texttt{MadGraph} \cite{Alwall_2014} and \texttt{Sherpa} \cite{Bothmann_2019}.
+included in Parton Showering programs. Both use Monte Carlo techniques; some popular multi-purpose generators include \texttt{Pythia8} \cite{Bierlich:2022pfr}, \texttt{MadGraph} \cite{Alwall_2014} and \texttt{Sherpa} \cite{Bothmann_2019} as well as \texttt{POWHEG} \cite{Nason_2004} and \texttt{MadGraph5\_aMC@NLO} \cite{powpow}, wich will be more relevant in the following chapters.
 
 We can thus obtain a complete description of all the (stable) particles that come out of a collision between two protons under our theory only after a complex process involving several steps of modelling and calculations. At the end of this process a generated event is just a list of the particles produced and their kinematic properties.
 
@@ -99,7 +99,7 @@ At the end of this costly step, we are left with a long list of energy deposits,
 
 \subsection{Digitization} 
 
-The last part of the simulation process consists in turning the energy deposits into the actual signal outputted by the detector-- a process called digitization, once again specific for the CMS detector.
+The last part of the simulation process consists in turning the energy deposits into the actual signal outputted by the detector-- a process called digitization, once again specific for a given detector.
 
 The simple idea is to change the energies into the detector outputs – usually times, voltages, and currents, for example. We have to build in all the detector effects that we care about. Some are well known such as Birks’ law, for example; others are more complicated, like the change in light collected from a scintillator tile in the calorimeter depending on whether the energy is deposited right in the middle or on the edge. We can use the digitization to model some of the very low-energy physics that we don’t want to have to simulate in detail with \texttt{Geant4} but want to approximate to an average. Those are effects like the spread and collection of charge in a silicon module or the drift of ionized gas towards a wire.
 
@@ -128,7 +128,7 @@ Due to the length and the complexity of the process, its tremendous computation 
 \begin{outline}
     \1 7 PB of RAW data (including backup copies) and 3.5 PB of reconstructed data, 14 PB or RAW Monte Carlo and 7 PB of reconstructed simulation, for a total of 40 PB in a year;
     \1 The CPU resources employed in the end amounted to 70,000 cores, divided as follows:
-    \2 7000 cores for \emph{data reconstruction};
+    \2 10,000 cores for \emph{data reconstruction};
     \2 40,000 cores for Monte Carlo SIM and RECO steps;
     \2 20,000 for all the analysies (considering all the MC and data taking steps).
 \end{outline}

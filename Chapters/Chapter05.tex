@@ -214,7 +214,6 @@ The correlations between jets variables, inspected visually, show good agreement
     \label{fig:corrjet1}
 \end{figure}
 
-\graffito{get qgl nconstituens corr straight}
 We can also observe in Figure \ref{fig:corrjet2+3} how the models have learned to capture the correlations between the qgl score, which is correctly correlated to the number of constituents as a lower number of constituents is expected for the u, d, s quarks when compared to gluons. Additionally, correlations between the physical p$_T$ and mass distributions, obtained from the original p$_T$Ratio and massRatio outputs of the network, are learned as well.
 
 \begin{figure}
@@ -263,7 +262,7 @@ We can readily see that this is possible by focusing on specific results obtaine
     {\includegraphics[width=0.6\linewidth]{gfx/ch5/corrjet4.pdf}}\\
     \subfloat[]
     { \includegraphics[width=0.6\linewidth]{gfx/ch5/profhist.pdf}} 
-    \caption[Conditioning]{ (a) As we would expect the Gen-p$_T$ is crucial in determining the final-state p$_T$. Higher Gen-values correspond to higher reco-values. (b) For a previous iteration of the jet architecture, we see that the p$_T$Ratio decrease as the GenJet p$_T$ increases (highly energetic jets have a reconstructed p$_T$ closer to the Gen-value), but the RMS correctly decreases as well because of constant error terms being divided by larger Gen-values. The FastSim results on the same samples, shown in green, are less close to the target than our approach.}\label{fig:condit}
+    \caption[Conditioning]{ (a) As we would expect the Gen-p$_T$ is crucial in determining the final-state p$_T$. Higher Gen-values correspond to higher reco-values. (b) We see that the p$_T$Ratio (i.e. the \emph{jet response}) decreases as the GenJet p$_T$ increases (highly energetic jets have a reconstructed p$_T$ closer to the Gen-value), but the RMS correctly decreases as well because of constant error terms being divided by larger Gen-values. The FastSim results on the same samples, shown in green, are considerably worse than our approach.}\label{fig:condit}
     
 \end{figure}
 
@@ -280,7 +279,7 @@ Additionally, because the \texttt{partonFlavour} conditioning variable allow us 
     
 \end{figure}
 
-Because our results are not as close to FullSim as it was for 2-d correlations, we would like to compare them with other competing approaches to asses the goodness of our own methodology. In order to do so, for a previous configuration of the jets model, presented at the CMS Machine learning Forum of April 2022, we compared the ROC curves between FullSim, FastSim and FlashSim on a $10^{6}$ samples set (not previously seen during training). Results are shown in Figure \ref{fig:allrocs} shows the comparison. We can see that while the ROC between our approach and FullSim is actually indistiguishable for TPR higher than 0.8, the FastSim ROC completely \emph{overshoots} the target, due to oversimplifications in the simulation approach. With longer training times and additional loss terms addressing this type of conditioning, which is currently not considered by the model loss function, we are confident that the performance of FlashSim could be improved even more.
+Because our results are not as close to FullSim as it was for 2-d correlations, we would like to compare them with other competing approaches to asses the goodness of our own methodology. In order to do so, for a previous training with a lower number of jet target variables, presented at the CMS Machine learning Forum of April 2022, we compared the ROC curves between FullSim, FastSim and FlashSim on a $10^{6}$ samples set (not previously seen during training). Results are shown in Figure \ref{fig:allrocs} shows the comparison. We can see that while the ROC between our approach and FullSim is actually indistiguishable for TPR higher than 0.8, the FastSim ROC completely \emph{overshoots} the target, due to oversimplifications in the simulation approach. With longer training times and additional loss terms addressing this type of conditioning, which is currently not considered by the model loss function, we are confident that the performance of FlashSim could be improved even more.
 
 \begin{figure}
     \centering
@@ -299,7 +298,7 @@ What is more, the $10^{4}$ batch size for generation was limited only by the VRA
 
 \section{A prototype end-to-end analysis sample generator}\label{sec:progen}
 
-We conclude by presenting the general idea for an end-to-end analysis sample generator in the NanoAOD format. The key concept can be easily grasped through Figure \ref{fig:endtoend}: a FullSim NanoAOD file gets processed and its Gen-level values extracted for eventual preprocessing. Then, the values are passed to the two networks, which generate raw samples which are finally postprocessed to reobtaine physical distributions and combined into a single, NanoAOD-like file format.
+We conclude by presenting the general idea for an end-to-end analysis sample generator in the NanoAOD format. The key concept can be easily grasped through Figure \ref{fig:endtoend}: the Gen-level information gets extracted from a FullSim NanoAOD file. Then, the values are passed to the two networks, which generate raw samples which are finally postprocessed to reobtain physical distributions and combined into a single, NanoAOD-like file format.
 
 \begin{figure}
     \centering
@@ -319,7 +318,7 @@ We conclude by presenting the general idea for an end-to-end analysis sample gen
     
 \end{figure}
 
-This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan two-jets} (DY), \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (HMM) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving results independent from the input Gen variables.
+This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t}}$ process) for the H$\rightarrow\mu^+\mu^-$ study of \cite{Sirunyan_2021}. We actually extended the use of the generator to \emph{different physical processes}: \emph{Drell-Yan two-jets} (DY), \emph{Electroweak two-muons two-jets} (EWK LLJJ) and two \emph{Signal} (H$\rightarrow\mu^+\mu^-$) datasets were processed as well and stored for the comparison of the next chapter. The diagrams for the newly introduced processes are shown in Figure \ref{fig:newdiag}. Some results, showed in Figure \ref{fig:newsdists}, emphasize how our approach has correctly learned to simulate the interaction and reconstruction of the CMS detector, giving consistent results independently from the input process.
 
 \begin{figure}
     \myfloatalign
@@ -330,12 +329,11 @@ This prototype has been tested on the \emph{TTJets} dataset (t$\overline{\text{t
     
 \end{figure}
 
-The two signal datasets differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} method \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one.
-In total we processed more than 200 files, meaning several millions of events, in less than one day.
+The two signal datasets differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one sample is genarated with the \texttt{POWHEG} method \cite{Nason_2004}, the other with the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one.
 
 In the end, we proved that our networks can be integrated into the existing software base and can be used for obtaining files in the exact same standard of that used in current analysis at CMS. We were able to asses two major characteristics of our approach:
 
 \begin{outline}
-    \1 The NF networks are actually capable of tackling other processes, inherently different from the training one: both distributions and correlations maintain good accord with FullSim samples, despite considerable changes from the training set. This is a crucial property if we are to move away from the prototyping stage to a more realistic, full-scale and general-purpose NanoAOD simulator;
+    \1 The NF networks are actually capable of learning the detector simulation and reconstruction effect indipendetly of the input processes: both distributions and correlations maintain good accord with FullSim samples, despite considerable differences from the training set. This is a crucial property if we are to move away from the prototyping stage to a more realistic, full-scale and general-purpose NanoAOD simulator;
     \1 Considering the whole preprocessing/postprocessing/disk writing overhead, the whole process took about 440 second or 7 minutes on the typical NanoAOD file of the TTJets dataset (about $10^{6}$ events per file), once again testyfing to the speed of the current methodology.
 \end{outline}

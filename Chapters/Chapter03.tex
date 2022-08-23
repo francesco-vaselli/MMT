@@ -154,8 +154,8 @@ It is clear that the Perceptron does not respect this property, since an arbitra
     \label{fig:artneur}
 \end{figure}
 
-The particular choice of activation function defines the type of the neuron. The key characteristic is that the activation function should be \emph{differentiable}, to allow the computation of \eqref{eqn:yderiv}. Many possible choices have been explored and proposed in past years.
-\graffito{Note: The Perceptron can be seen as a generic neuron with the activation function set to the step function in $0$.}
+The particular choice of activation function defines the type of the neuron. The key characteristic is that the activation function should be \emph{differentiable}, to allow the computation of \eqref{eqn:yderiv}. Note that the Perceptron can be seen as a generic neuron with the activation function set to the step function in $0$. Many possible choices have been explored and proposed in past years.
+
 Historically, the \emph{Sigmoid} function has been the most popular choice:
 
 \[
@@ -213,7 +213,6 @@ that is, we have updated the parameters in a way which is reducing the loss, mea
 
 where we are assuming that the loss function may be expressed as an average of over cost functions for individual training examples. The dataset is processed multiple times as finite batches until the network reach some sort of global minimum for the loss function.
 
-\graffito{Get an appendix for this?}
 The only non trivial thing which remains to do is define the best way to compute $\nabla_w \mathcal{L}$. This can be done efficiently, with just one forward and one backward pass through the network, through the \emph{backpropagation} algorithm. Letting $\odot$ denote the \emph{elementwise} product of two vectors, we do as follows:
 
 \begin{outline}[enumerate]
