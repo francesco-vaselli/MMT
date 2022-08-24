@@ -10,11 +10,11 @@ We generated a FlashSim dataset from the Gen-level information of the existing N
 \1 The t$\overline{\text{t}}$ inclusive production (also used in training);
 \1 The DY+2J process;
 \1 The EWK production of $\mu\mu$+2J;
-\1 The Higgs VBF production of H, with the Higgs decaying into pairs of $\mu$.
+\1 The Higgs VBF production, with the Higgs decaying into pairs of $\mu$.
 \end{outline}
 
-We then performed the preliminary selection steps of the analysis presented in \cite{Sirunyan_2021}, specifically that of VBF Channel of H$\rightarrow\mu^+\mu^-$, for the reasons discussed previously.
-The objective was to verify that the selected objects distributions were close enough with those obtained from FullSim.
+We then performed the preliminary selection steps of the analysis presented in \cite{Sirunyan_2021}, specifically that of VBF Channel of H$\rightarrow\mu^+\mu^-$, for the reasons discussed previously in Section \ref{sec:targets}.
+The objective was to verify that the selected objects distributions were close enough to those obtained from FullSim.
 
 \subsection{Event selection}
 
@@ -32,7 +32,7 @@ In a similar way, we select the jets as those passing the following cuts:
 
 \begin{outline}
 \1 $p_T^{jet}>25$ GeV 
-\1 Additionally, for $p_T^{jet}<50$ GeV we require it to pass the PileUp Id algorithm;
+\1 Additionally, for $p_T^{jet}<50$ GeV we require it to pass the pile-up Id algorithm;
 \1  Jets passing the \emph{jet} Id algorithm;
 \1  $\abs{\eta_{jet}}<4.7$;
 \1 We also require that jets do not overlap with muons within a $\Delta R\leq0.4$ cone.
@@ -63,10 +63,10 @@ and the \emph{Zeppenfeld variable} $z^*$, defined from the \emph{rapidity y} as:
     {\includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_vs_HMM_powheg_Rpt___SignalRegion_log_normalizedc2.pdf}}\\
     \subfloat[]
     { \includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_vs_HMM_powheg_ll_zstar_log___PreSel_log_normalized.pdf}} 
-    \caption[Angular distributions]{ (a) The R($p_T$) distribution in the Signal region shows that FlashSim is struggling with the tails of the DY process, previously unseen during training. (b) The log($z^*$) (for the pre-selected objects in both regions) is clearly distributed differently for the two processes.}\label{fig:angulardist}
+    \caption[Angular distributions]{ (a) The R($p_T$) distribution in the Signal region shows that FlashSim is struggling with the tails of the DY process, previously unseen during training. (b) The log($z^*$) (for the pre-selected objects in both regions) is clearly distributed differently for the two processes. Plots are normalized.}\label{fig:angulardist}
 \end{figure}
 
-Figure \ref{fig:angulardist} shows the $R(p_T)$ and the $\log(z^*)$ for the Signal and the DY Background process, emphasizing how these quantities can be used to discriminate between the two. The Figure also introduces the FullSim vs FlashSim comparison and will be referenced in the following.
+Figure \ref{fig:angulardist} shows the $R(p_T)$ and the $\log(z^*)$ for the Signal and the DY Background process, emphasizing how these quantities can be used to discriminate between the two. The Figure also introduces the FullSim vs FlashSim comparison and will be referenced again in the following.
 
 \subsection{A DNN for event classification}
 The CMS Collaboration used a deep neural network (DNN) multivariate discriminant, trained to distinguish the expected signal from background events using kinematic input variables that characterize the signal and the main background processes in the VBF-SR. The signal is then extracted from a \emph{binned maximum-likelihood fit} to the output of the DNN discriminator simultaneously in the VBF-SR and the VBF-SB regions. 
@@ -103,7 +103,7 @@ We observe good results on distributions directly related to the simulated targe
     \label{fig:selmuonpt}
 \end{figure}
 
-However, for jets, the agreement is not as good as for muons. Figure \ref{fig:j1pt} shows that the $p_T$ for the second selected jet is not as high for FlashSim jets as it is for FullSim ones. We tried to explain this result by remembering that our current prototype of FlashSim is missing \emph{fakes} jets due to noise and PileUp, present in the other sample. In principle, higher-$p_T$ fake jets may be selected in place of the second event jet for some of the FullSim samples, explaining the deviation observed. In fact, fake jets have usually low-$p_T$, under 50 GeV, and we can see that our distribution is perfectly overlapping at high-$p_T$.
+However, for jets, the agreement is not as good as for muons. Figure \ref{fig:j1pt} shows that the $p_T$ for the second selected jet is not as high for FlashSim jets as it is for FullSim ones. We tried to explain this result by remembering that our current prototype of FlashSim is missing \emph{fakes} jets due to noise and pile-up, present in the other sample. In principle, higher-$p_T$ fake jets may be selected in place of the second event jet for some of the FullSim samples, explaining the deviation observed. In fact, fake jets have usually low-$p_T$, under 50 GeV, and we can see that our distribution is perfectly overlapping at high-$p_T$.
 
 \begin{figure}
     \centering
@@ -131,7 +131,7 @@ We show in Figure \ref{fig:DNNout} the outputs of the VBF DNN discriminator netw
     \caption[Angular distributions]{Background processes, such as (a), (b), and (c) are always decreasing, while signal processes ((d) and (e)) are increasing in the 0,3 range. All outputs are from data passing the pre-selection and being in the Signal region. }\label{fig:DNNout}
 \end{figure}
 
-An even greater accuracy may be obtained when a FullSim sample is already available and we need alternative samples for estimating systematic uncertainties, e.g.  different \emph{theoretical variations} for the same process. This is the case, for example for the two samples of the Higgs signal, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} software \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim reference sample $REF_{Full}$, we computed its FlashSim $REF_{Flash}$ sample as well as that of another possible variation $VAR_{Flash}$. We would expect that the actual $VAR_{Full}$ may be re-obtained faster than a run of FullSim by the factorization:
+An even greater accuracy may be obtained when a FullSim sample is already available and we need alternative samples for estimating systematic uncertainties, e.g.  different \emph{theoretical variations} for the same process. This is the case, for example, for the two samples of the Higgs signal, which differ in the theoretical technique employed for \emph{systematic inclusion of higher order QCD effects}: one employed the \texttt{POWHEG} software \cite{Nason_2004}, the other the \texttt{MadGraph5\_aMC@NLO} \cite{powpow} one. Suppose we had a FullSim reference sample $REF_{Full}$, we computed its FlashSim $REF_{Flash}$ sample as well as that of another possible variation $VAR_{Flash}$. We would expect that the actual $VAR_{Full}$ may be re-obtained faster than a run of FullSim by the factorization:
 
 \[VAR_{Full} = REF_{Full} \frac{VAR_{Flash}}{REF_{Flash}}
 \]
@@ -191,37 +191,58 @@ Additionally, the importance of the interaction with the detector and of the rec
     \begin{figure}
    \myfloatalign
     \subfloat[]
-    {\includegraphics[width=0.45\linewidth]{gfx/ch6/1upsampled_HMM_amcatnlo_DNN18Atan___SignalRegion_log_norm.pdf}}
+    {\includegraphics[width=0.8\linewidth]{gfx/ch6/1upsampled_HMM_amcatnlo_DNN18Atan___SignalRegion_log_norm.pdf}}\\
     \subfloat[]
-    { \includegraphics[width=0.45\linewidth]{gfx/ch6/1upsampled_HMM_amcatnlo_ll_zstar_log___SignalRegion_log_norm.pdf}} 
-    \caption[Upsampling]{For FlashSim upsampled by a factor of 10,000 we observe an actual distribution. We compare it to the single value returned by the conventional, 1-to-1 FlashSim procedure. The plot is normalized. (a) When the target variable depends on the simulation and reconstruction steps, we output a distribution. (b) Instead, for variables already well defined at Gen-level we observe a narrow peak around the FullSim value.}
+    { \includegraphics[width=0.8\linewidth]{gfx/ch6/1upsampled_HMM_amcatnlo_ll_zstar_log___SignalRegion_log_norm.pdf}} 
+    \caption[Upsampling]{For FlashSim upsampled by a factor of 10,000 we observe an actual distribution. We compare it to the single value returned by the conventional, 1-to-1 FlashSim procedure. The plots are normalized. (a) When the target variable depends on the simulation and reconstruction steps, we output a distribution. (b) Instead, for variables with high resolution the reconstructed value is very close to the generated one and no smearing is introduced by simulation+reconstruction.}
     \label{fig:1upHMM}
    \end{figure}
    
-   Figure \ref{fig:1upHMM} shows this is indeed the case: if we generate 10,000 events from the same Signal POWHEG Gen-level value we observe a distribution spread around the single value returned from the conventional, 1-to-1 FlashSim approach. It is interesting to note that out of the 10,000 generated events only 7,633 pass the analysis selection and are being used to plot the VBF DNN Output distribution.
+   Figure \ref{fig:1upHMM} shows this is indeed the case: if we generate 10,000 events from the same Signal POWHEG Gen-level value we observe a distribution spread around the single value returned from the conventional, 1-to-1 FlashSim approach, at least for those variables having a strong dependency on experimental resolution, such as the VBF DNN Output. The $\log(z^*)$ is instead sharply peaked around the FullSim value, as it is very precisely reconstructed, hence the simulation+reconstruction value is very close to the generated one. The stochasticity introduced by the Sim step is closely related to the selected variable, and we expect more significant advantages for those variables presenting a good spreading.
+   It is also interesting to note that out of the 10,000 generated events only 7,633 pass the analysis selection and are being used to plot the VBF DNN Output distribution.
    
-   The capacity for upsampling offers some important advantages. First of all, if FlashSim is capable of running at 33 kHz, the Gen production is becoming our bottleneck, hence reusing the Gen implies additional resource savings. Additionally, because we are generating more data, we can expect a reduction of the statistical error. If we compare the 1-to-1 histograms to those upsampled by a factor N and filled with the final pdf obtained by (bin content)/N, we expect a greater reduction of the errors for those variables heavily influenced by the interaction with the detector.
+   The capacity for upsampling offers some important advantages. First of all, if FlashSim is capable of running at 33 kHz, the Gen production is becoming our bottleneck, hence reusing the Gen implies additional resource savings. Additionally, because we are generating more data, we can expect a reduction of the statistical error; however we must correctly compute the uncertainties in this case.
+   
+   Usually, if we are interested in finding the discrete \emph{pdf} from an histogram, assuming a \emph{poisson} statistics the pdf \emph{i}-th bin and its error are defined as:
+   
+   \[pdf_i = \frac{\sum_{ev \in i}{w_{ev}}}{\sum_{ev}{w_{ev}}}; \quad 
+        \sigma_i = \frac{\sqrt{\sum_{ev \in i}{w_{ev}^2}}}{\sum_{ev}{w_{ev}}}\]
+    
+    Where the \emph{w}s are the weights for each event and they are typically set to 1.
+   In the upsampling case instead, we have N upsampled events with a common Gen-event (called \emph{folds}), and thus we obtain:
+   
+      \[pdf_i = \frac{\sum_{ev}\sum_{fold\in i}{w_{ev}}}{N_{fold}\sum_{ev}{w_{ev}}} = \frac{\sum_{ev}\sum_{fold\in i}{w_{ev}/N_{fold}}}{\sum_{ev}{w_{ev}}} =
+      \frac{\sum_{ev}{w_{ev}pdf_i^{ev}}}{\sum_{ev}{w_{ev}}}\]
+      
+    That is, each event may now enter multiple bins as it has been upsampled by a factor N--this is the same as saying that we can sum the pdf of each single event to obtain the final pdf. For the errors we consider folds from the same events entering different bins as uncorrelated, with a weight proportional to the number of folds entering the same bin. By recovering the initial error formula we get:
+    
+    \[\sigma_i = \frac{\sqrt{\sum_{ev}(\sum_{fold\in i}{w_{ev}/N_{fold})^2}}}{\sum_{ev}{w_{ev}}} =
+      \frac{\sqrt{\sum_{ev}{(w_{ev}pdf_i^{ev})^2}}}{\sum_{ev}{w_{ev}}}\]
+   
+   Practically speaking, for each event, we let the N upsampled events fill the histogram, and then defined the pdf of a single event as (bin content)/N, a quantity also used for determining the new statistical error. The resulting pdfs are then summed together to obtain the final histogram. This procedure is necessary to ensure that we are properly accounting for upsampled events filling the same bin--e.g. we want to have no difference between the 1-to-1 approach and the case where all events fill the same bin.
+   
+   As already discussed, we expect a greater reduction of the errors for those variables heavily influenced by the interaction with the detector.
    
        \begin{figure}
        \myfloatalign
     \subfloat[]
     {\includegraphics[width=0.8\linewidth]{gfx/ch6/HMM_powheg_DNN18Atan____log_upsampled.pdf}}\\
     \subfloat[]{\includegraphics[width=0.8\linewidth]{gfx/ch6/HMM_powheg_ll_zstar_log____log_upsampled.pdf}}
-    \caption[Upsampling error reduction]{(a)The statistical error for each bin gets reduced by a factor $1/2$, as the error for this plot is dominated by the experimental resolution. The relative error plotted in the first lower panel is the error per bin divided by the bin content. The latter panel shows the ratio between the upsampled, $1/25$ weight filled FlashSim and the 1-to-1 FlashSim. (b) When the variable is not dominated by experimental resolution, the error reduction is considerably smaller.}
+    \caption[Upsampling error reduction]{(a)The statistical error for each bin gets reduced by a factor $1/2$, as the error for this plot is dominated by the experimental resolution. The relative error plotted in the first lower panel is the error per bin divided by the bin content. The latter panel shows the ratio between the upsampled, pdf-filled FlashSim and the 1-to-1 FlashSim. (b) When the variable is not dominated by experimental resolution, the error reduction is considerably smaller.}
     \label{fig:updnnHMM}
    \end{figure}
    
-   Figure \ref{fig:updnnHMM} shows the comparison for the Signal POWHEG VBF DNN Output between the 1-to-1 FlashSim and the FlashSim upsampled by a factor of 25 and with a weight of $(\text{bin content})/25$ for the filling of histograms. The mean statistical error is 32.3 for the first case, which gets reduced to 14.2 for the upsampled dataset; approximately by a factor of $1/2$. The relative error, defined as the error per bin divided by the bin content, is also showed in the first lower panel and is clearly decreasing across all bins, while the ratio is approximately one, as expected. For variables already with good resolution already at Gen-level, such as $\log(z^*)$, we observe a smaller error reduction, as expected.
+   Figure \ref{fig:updnnHMM} shows the comparison for the Signal POWHEG VBF DNN Output between the 1-to-1 FlashSim and the FlashSim upsampled by a factor of 25, whose histogram was filled with the empirical pdfs as described above. The mean statistical error (defined as the mean for the square of the sum of weights squared) is 32.3 for the first case, which gets reduced to 14.2 for the upsampled dataset; approximately by a factor of $1/2$. The relative error, defined as the error per bin divided by the bin content, is also showed in the first lower panel and is clearly decreasing across all bins, while the ratio is approximately one, as expected. For variables reconstructed with very high resolution, i.e. when the simulation+reconstruction does not introduce any significant smearing, such as $\log(z^*)$, we observe a smaller error reduction (11.2 from 14.4), as expected.
    
-   Another important advantage is that we may be able to obtain more smooth, convincing distributions for those cases where the low number of events is a limiting factor. One of such cases is the VBF DNN Output for the DY 2Jets dataset, which has high errors and a jagged distribution as only a fraction of events pass the selection.
+   Another important advantage is that we may be able to obtain more smooth, convincing distributions for those cases where the low number of events is a limiting factor. One of such cases is the VBF DNN Output for the DY 2Jets dataset, which has high errors and a jagged distribution as only a tiny fraction of events pass the selection.
    
           \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{gfx/ch6/DY2Jets_DNN18Atan____log_upsampled.pdf}
-    \caption[Upsampling on DY]{Notice how the upsampling by a relatively small factor of 25 results into a smoother distribution with lower errors. The upsampled FlashSim is plotted as a continuous line to allow for visual comparison of errorbars. Notice the $1\cdot 10^{-1}$ filled bin due to the pdf-filling procedure.}
+    \caption[Upsampling on DY]{Notice how the upsampling by a relatively small factor of 25 results into a smoother distribution with lower errors. The upsampled FlashSim is plotted as a continuous line to allow for visual comparison of errorbars. Notice also the $1\cdot 10^{-1}$ filled bin due to the pdf-filling procedure.}
     \label{fig:updnnDY}
    \end{figure}
    
-   By performing an upsampling by a factor of 25 on a subset of the dataset, and comparing the results on the two subsets, we immediately see in Figure \ref{fig:updnnDY} that the resulting upsampled VBF DNN Output distribution not only has lower errors, but also manages to produce a more smoothly decreasing and convincing distribution, without the jagged peaks given by the small sample size of the 1-to-1 case.
+   By performing an upsampling by a factor of 25 and comparing the results, we immediately see in Figure \ref{fig:updnnDY} that the resulting upsampled VBF DNN Output distribution not only has lower errors, but also manages to produce a more smoothly decreasing and convincing distribution, without the jagged peaks given by the small sample size of the 1-to-1 case.
    
   The results of the present Chapter demonstrate that not only is FlashSim capable of producing different distributions from those of the bare Gen-level, but also that it can come close to the results yield by FullSim. Additionally, it can fully make use of Gen-level information through the upsampling procedure.

@@ -46,7 +46,7 @@ design therefore collisions happen every 25 ns, for a final event rate of about 
 
 \paragraph{Luminosity and pile-up}
 
-The collision rate of an accelerator is measured by its \emph{luminosity}. It's a measurement of the number of collisions that can be produced in a detector per cm$^{2}$(of process cross-section) and per second. The bigger is the value of L, the bigger is the number of collisions, making L a key parameter in the design of an accelerator.
+The collision rate of an accelerator is measured by its \emph{luminosity}. It's a measurement of the number of collisions that can be produced in a detector per cm$^{2}$ (of process cross-section) and per second. The bigger is the value of L, the bigger is the number of collisions, making L a key parameter in the design of an accelerator.
 
 Semi-qualitatively, we can define L from a series of key quantities. The \emph{transverse emittance} $\epsilon$ is a beam quality concept reflecting the process of bunch preparation (the injector chain), extending all the way back to the source for hadrons.
 Emittance can be defined as the smallest opening you can squeeze the beam through, and can also be considered as a measurement of the parallelism of a beam. It has units of length (usually measured in length times radiants) and can be measured in all three spatial dimensions. The dimension parallel to the motion of the particle is called the longitudinal emittance. The other two dimensions are referred to as the transverse emittances.
@@ -180,7 +180,7 @@ The full tracker material has a thickness of $\approx$ 0.5-1 $X_0$ and less than
         \frac{\sigma_E}{E} = \frac{a}{E} + \frac{b}{\sqrt{E}} + c
         \end{equation*}
         
-    where a $\approx$ 0.12 GeV is the noise term due the electronics and pileup, independently of the energy, b $\approx$ 2.8$\% \; \sqrt{\text{GeV}}$ is
+    where a $\approx$ 0.12 GeV is the noise term due the electronics and pile-up, independently of the energy, b $\approx$ 2.8$\% \; \sqrt{\text{GeV}}$ is
     the stochastic term which accounts mainly for the fluctuations in the photon conversions,
     and c $\approx$ 0.3$\%$ is a constant term related to the energy scale calibration.
     
@@ -210,25 +210,25 @@ four layers of muon detectors.
 The muon system provides information to identify muons and to measure the momentum
 and charge of high-$p_T$ muons. Additionally, two tasks are accomplished by the muon system thanks to its good time resolution: \emph{bunch crossing} identification and \emph{muon-triggering}.
 Three different gaseous detector technologies are used: \emph{drift tube} (DT) chambers and \emph{cathode strip} chambers (CSC), supplemented by a system of \emph{resistive plate} chambers (RPC). Both the DTs and the CSCs are primarily tracking detectors, but have also
-good time resolution. The RPCs instead are mainly used for their good time resolution.
+good time resolution. The RPCs are instead mainly used for their good time resolution.
 
 
 \paragraph{Trigger}
 
-The 40 MHz rate of proton-proton collisions and the pileup make it impossible to process
+The 40 MHz rate of proton-proton collisions and the pile-up make it impossible to process
 and store all the information provided by the detector. Most of the events are not interesting
 for physics analysis in any case, due the to fact that the total proton-proton cross section
 is more than 6 orders of magnitude larger compared to the cross section of interesting processes. The data needs to be reduced and selected trough a trigger system, whose crucial
 aspect is a fast and efficient real-time selection to record the useful events.
 
 In CMS the data reduction happens in two steps. The \emph{Level-1} (or L1) Trigger consists of programmable electronic devices, reducing  the event rate from an input of 40 MHz to an output of about 100 kHz. The
-\emph{High Level Trigger} (HLT) further decreases the event rate from about 100 kHz to about 1 kHz for data storage. The HLT is implemented by a computer farm composed of more than 30000 CPUs
+\emph{High Level Trigger} (HLT) further decreases the event rate from about 100 kHz to about 1 kHz for data storage. The HLT is implemented by a computer farm composed of more than 30,000 CPUs
 running software modules similar to the ones used for the offline reconstruction. 
 
 \paragraph{Offline reconstruction}\label{sec:offreco}
 This step is needed to transform the electronic outputs of the apparatus into a collection of physical objects needed for the analysis.
 Once the event has been selected by the trigger, a series of hundreds of algorithms is applied, each acting on different readouts.
-Particular complex and important algorithms include:
+Particularly complex and important algorithms include:
 
 \begin{outline}
     \1 The \emph{track reconstruction} algorithms identify tracks from the single hits in the tracker region. It is an \emph{iterative} algorithm, which is run multiple times starting from easier, non-displaced tracks of higher $p_T$. It has three major steps for each iteration: \emph{seeding} or initialization, then \emph{pattern matching} to identify possible candidates of a track and \emph{track fitting} to identify the most convincing candidate tracks.
@@ -243,7 +243,7 @@ Particular complex and important algorithms include:
 
 \paragraph{Luminosity and Pile-up}
 
- The LHC designed luminosity of 10$^{34}$ cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking, and a new data taking has just started with a goal of 2 10$^{34}$ cm$^{-2}$ s$^{-1}$. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
+ The LHC design luminosity of 10$^{34}$ cm$^{-2}$ s$^{-1}$ has been achieved and exceeded in the last three years of data taking, and a new data taking has just started with a goal of $2\cdot 10^{34}$ cm$^{-2}$ s$^{-1}$. Integrated luminosity recorded by CMS and employable for physics analyses are 35.9 fb$^{-1}$ for 2016, 41.53 fb$^{-1}$ for 2017, and 60.0 fb$^{-1}$ for 2018.
 
 As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileup} shows its increase over the various years.
 
@@ -256,10 +256,10 @@ As discussed above this also meant an increase in pile-up: Figure \ref{fig:pileu
 
 \section{Physics program and measurements}
 
-Being a general-purpose experiment, CMS is capable of performing a wide range of interesting and insightful measurements. Aside from the discovery of the Higgs boson and the study of its couplings, which will be discussed below in greater detail, we mention briefly the other directions of CMS research:
+Being a general-purpose experiment, CMS is capable of performing a wide range of interesting and insightful measurements. Aside from the discovery of the Higgs boson and the study of its couplings, which will be discussed below in greater detail, here we briefly mention the other directions of CMS research:
 
 \begin{outline}
-    \1 The \emph{SM physics} programme includes all the studies of the LHC data with the goals of measuring fundamental parameters of the Standard Model of particle physics. The cross-sections of a large variety of processes happening during the beam collisions are determined with the best precision possible and compared to the most up-to-date theory calculations, from the most common to the rarest of them all. Fundamental parameters of the theory such as masses of elementary particles and gauge couplings are measured to verify the effectiveness of the predictions, and any deviations of data from the Standard Model are quantified. The various \emph{couplings} expected between particles are investigated in detail. As an example, the \emph{Vector Boson Scattering} is a series of processes such as $W^{\pm} Z \rightarrow W^{\pm} Z$, however, it can admit higher-order couplings to the Higgs boson as $W^{\pm} Z \rightarrow H^{\pm} \rightarrow W^{\pm} Z$ which are to be investigated to compare their productions to what is expected from theory;
+    \1 The \emph{SM physics} programme includes all the studies of the LHC data with the goals of measuring fundamental parameters of the Standard Model of particle physics. The cross-sections of a large variety of processes happening during the beam collisions are determined with the best precision possible and compared to the most up-to-date theoretical calculations, from the most common to the rarest. Fundamental parameters of the theory such as masses of elementary particles and gauge couplings are measured to verify the effectiveness of the predictions, and any deviations of data from the Standard Model are quantified. The various \emph{couplings} expected between particles are investigated in detail. As an example, the \emph{Vector Boson Scattering} is a series of processes such as $W^{+}W^{-}\rightarrow W^{+}W^{-}$ and $ZZ \rightarrow ZZ$, however, it can admit higher-order couplings to the Higgs boson as $ZZ \rightarrow H^{\pm} \rightarrow ZZ$ which are to be investigated to compare their productions to what is expected from theory;
     
     \1 The \emph{Top Quark physics} programme consists in the precision measurements of the properties of the top quark, the heaviest particle in the standard model. The top-quark mass is one of the most important properties as it is a key parameter for calculations in the standard model. The top group also aims to establish measurements of rare production modes of the top quark in association with other particles, and search for new couplings of the top quark. It also aims to improve our understanding of top quark production and decay processes in order to improve background predictions as well as providing indirect proof for physics searches beyond the standard model;
     

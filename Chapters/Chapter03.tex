@@ -5,7 +5,7 @@
 
 In recent years, \emph{machine learning} techniques have been massively adopted by scientific collaboration around the world. In particular, a paradigm known as \emph{Deep Learning}, which leverages multiple layers of \emph{artificial neurons} trained through the use of a \emph{loss function} and \emph{backpropagation}, has achieved a wide range of applications.
 
-The present chapter will give to the reader a concise but hopefully complete overview of the building blocks behind the recent success of Deep Learning. A great introduction, which served the writer well in its own approach to the field, is the one by Michael Nielsen \cite{nielsenneural}. Towards the conclusion we turn to the class of \emph{generative models}, paving the way for the next chapter discussion.
+The present chapter will give the reader a concise but hopefully complete overview of the building blocks behind the recent success of Deep Learning. A great (basic) introduction, which served the writer well in its own approach to the field, is the one by Michael Nielsen \cite{nielsenneural}. Towards the conclusion we turn to the class of \emph{generative models}, paving the way for the next Chapter discussion.
 	
 
 \section{Neural Networks}
@@ -68,7 +68,7 @@ Given a set of inputs and their desired outputs, the weights can be tuned (or \e
 \begin{outline}[enumerate]
     \1 Initialize the weights. Weights may be initialized to $0$ or to a small random value;
     \1 For each example j in our training set D, perform the following steps over the input $\mathbf {x}_{j}$ and desired output t$_{j}$:
-    \2 Calculate the actual output: $y(n)_j = \mathbf{w}\cdot\mathbf{x} + w_0 $
+    \2 Calculate the actual output: $y_j(n) = \mathbf{w}\cdot\mathbf{x} + w_0 $
     \2 Update the weights:  $w_{i}(n+1)=w_{i}(n)\;{\boldsymbol {+}}\;r\cdot (t_{j}-y_{j}(n))x_{j,i}$
     \1 The second step may be repeated until the iteration error \\
     $\frac{1}{s} \sum_{j=1}^{s}|t_{j}-y_{j}(n)|$ is less than a user-specified error threshold $\gamma$, or a predetermined number of iterations have been completed.
@@ -89,7 +89,7 @@ Nonetheless, the simple ideas behind this architecture are actually at the heart
 
 Turning back once more to our biological brain, we can observe that it is actually made up by \emph{billions} of neurons. Intuitively, we would expect that an artificial network made up of multiple artificial neurons would demonstrate better capacities than a single neuron--and unsurprisingly that's how it is. 
 
-Figure \ref{fig:firstnn} shows a first example of a proper feedforward neural \emph{network}: an ensemble of neurons organized in \emph{layers}, where each layer is \emph{fully connected} to the neurons in the previous one. One early result, sparking the interest in the field, showed that a neural network with just \emph{one} hidden layer with a large enough number of neurons can approximate any arbitrary function \emph{f} \cite{HORNIK1989359}.
+Figure \ref{fig:firstnn} shows a first example of a proper feedforward \emph{neural network}: an ensemble of neurons organized in \emph{layers}, where each layer is \emph{fully connected} to the neurons in the previous one. One early result, sparking the interest in the field, showed that a neural network with just \emph{one} hidden layer with a large enough number of neurons can approximate any arbitrary function \emph{f} \cite{HORNIK1989359}.
 
 \begin{figure}
     \centering
@@ -211,7 +211,7 @@ that is, we have updated the parameters in a way which is reducing the loss, mea
     \1 For each batch, update the weights as $ \Delta \mathbf{w} = - \eta \sum_n \nabla_w \mathcal{L}^n$
 \end{outline}
 
-where we are assuming that the loss function may be expressed as an average of over cost functions for individual training examples. The dataset is processed multiple times as finite batches until the network reach some sort of global minimum for the loss function.
+where we are assuming that the loss function may be expressed as an average over cost functions for individual training examples. The dataset is processed multiple times as finite batches until the network reaches some sort of global minimum for the loss function.
 
 The only non trivial thing which remains to do is define the best way to compute $\nabla_w \mathcal{L}$. This can be done efficiently, with just one forward and one backward pass through the network, through the \emph{backpropagation} algorithm. Letting $\odot$ denote the \emph{elementwise} product of two vectors, we do as follows:
 
@@ -257,7 +257,7 @@ The idea is to define different blocks composed of one or more layers, and then 
 This simple modification addresses a common problem in deep architectures. When the model saturates the problem, it starts to overfit, especially in later layers; by defining a residual block we may simply allow the network to learn an identity mapping and avoid the issue.
 
 \paragraph{Batch Normalization}
-\emph{Batch normalisation} normalises a layer input by subtracting the batch mean and dividing it by the batch standard deviation, while defining a \emph{scale} and a \emph{shift} parameters for each neuron to avoid losing representation power due to this rescaling of the inputs. The method was first introduced in \cite{https://doi.org/10.48550/arxiv.1502.03167}, and it has been tested in a large variety of models, proving that it is an effective way of contrasting common training instabilities and for speeding up convergence.
+\emph{Batch normalization} normalises a layer input by subtracting the batch mean and dividing it by the batch standard deviation, while defining a \emph{scale} and a \emph{shift} parameters for each neuron to avoid losing representation power due to this rescaling of the inputs. The method was first introduced in \cite{https://doi.org/10.48550/arxiv.1502.03167}, and it has been tested in a large variety of models, proving that it is an effective way of contrasting common training instabilities and for speeding up convergence.
 
 \paragraph{Cosine Annealing}
 Cosine Annealing is a type of learning rate schedule that has the effect of starting with a large learning rate that is relatively rapidly decreased to a minimum value before being increased rapidly again. The resetting of the learning rate acts like a simulated restart of the learning process and the re-use of good weights as the starting point of the restart is referred to as a \emph{warm restart} in contrast to a \emph{cold restart} where a new set of small random numbers may be used as a starting point. The proper formula its:
@@ -277,7 +277,7 @@ A well developed subset of deep learning models, \emph{Generative models} are a 
 
 \paragraph{Generative Adversarial Networks}
 
-Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GANs for short) are a framework for training powerful generative models. Two neural networks contest with each other in a game (in the form of a zero-sum game, where one agent's gain is another agent's loss): the generative network G learns to map from a latent (usually gaussian) noise space to a data distribution of interest, while the discriminator network D distinguishes candidates produced by the generator from the true data distribution. G's training objective is to increase the error rate of D by producing samples so close to the target that D misclassifies them consistently as coming from the real samples. The framework is illustrated in Figure \ref{fig:gan}.
+Introduced by Goodfellow et al. \cite{gan}, Generative Adversarial Networks (GANs for short) are a framework for training powerful generative models. Two neural networks contest with each other in a game (in the form of a zero-sum game, where one agent's gain is another agent's loss): the generative network G learns to map from a latent (usually Gaussian) noise space to a data distribution of interest, while the discriminator network D distinguishes candidates produced by the generator from the true data distribution. G's training objective is to increase the error rate of D by producing samples so close to the target that D misclassifies them consistently as coming from the real samples. The framework is illustrated in Figure \ref{fig:gan}.
 
 
 \begin{figure}
